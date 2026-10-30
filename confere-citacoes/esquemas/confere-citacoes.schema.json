@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "confere-citacoes.schema.json",
+  "type": "object",
+  "required": ["versao_schema", "referencia", "citacao", "paginas", "fontes", "supressao", "pontas", "equivalentes"],
+  "additionalProperties": false,
+  "properties": {
+    "versao_schema": { "const": 1 },
+    "referencia": { "$ref": "#/$defs/expressao" },
+    "citacao": { "$ref": "#/$defs/expressao" },
+    "paginas": {
+      "type": "object",
+      "required": ["separador", "intervalo"],
+      "additionalProperties": false,
+      "properties": {
+        "separador": { "type": "string", "minLength": 1 },
+        "intervalo": { "type": "string", "minLength": 1 }
+      }
+    },
+    "fontes": {
+      "type": "object",
+      "required": ["arquivo", "titulo_pagina", "ignorar"],
+      "additionalProperties": false,
+      "properties": {
+        "arquivo": { "type": "string", "pattern": "\\{fonte\\}" },
+        "titulo_pagina": { "type": "string", "pattern": "\\{rotulo\\}.*\\{arquivo\\}|\\{arquivo\\}.*\\{rotulo\\}" },
+        "ignorar": { "type": "array", "items": { "$ref": "#/$defs/bloco" } }
+      }
+    },
+    "supressao": { "type": "string", "minLength": 1 },
+    "pontas": { "type": "string" },
+    "equivalentes": { "type": "array", "items": { "type": "string", "minLength": 2 } }
+  },
+  "$defs": {
+    "expressao": { "type": "string", "minLength": 1 },
+    "bloco": {
+      "type": "object",
+      "required": ["abre", "fecha"],
+      "additionalProperties": false,
+      "properties": {
+        "abre": { "$ref": "#/$defs/expressao" },
+        "fecha": { "$ref": "#/$defs/expressao" }
+      }
+    }
+  }
+}

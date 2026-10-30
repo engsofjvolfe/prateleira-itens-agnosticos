@@ -1,0 +1,18 @@
+{
+  "versao_schema": 1,
+  "padroes_livres": ["^#"],
+  "prefixos": [
+    "{", "!", "if", "then", "else", "elif", "while", "until", "do",
+    "env", "time", "nohup", "nice", "timeout", "stdbuf", "xargs", "exec", "command", "builtin", "sudo", "doas",
+    "-exec", "-execdir", "-ok", "-okdir"
+  ],
+  "buscas": [
+    {"comando": "grep", "opcoes_do_padrao": ["-e", "--regexp"], "opcoes_de_arquivo": ["-f", "--file"]},
+    {"comando": "egrep", "opcoes_do_padrao": ["-e", "--regexp"], "opcoes_de_arquivo": ["-f", "--file"]},
+    {"comando": "fgrep", "opcoes_do_padrao": ["-e", "--regexp"], "opcoes_de_arquivo": ["-f", "--file"]},
+    {"comando": "rg", "opcoes_do_padrao": ["-e", "--regexp"], "opcoes_de_arquivo": ["-f", "--file"]},
+    {"comando": "ag", "opcoes_do_padrao": [], "opcoes_de_arquivo": []},
+    {"comando": "ack", "opcoes_do_padrao": ["--match"], "opcoes_de_arquivo": []},
+    {"comando": "git grep", "opcoes_do_padrao": ["-e"], "opcoes_de_arquivo": ["-f"]}
+  ]
+}

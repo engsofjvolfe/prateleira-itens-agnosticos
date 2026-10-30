@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "itens-numerados.schema.json",
+  "type": "object",
+  "required": ["versao_schema", "formas", "grupo", "documentos"],
+  "additionalProperties": false,
+  "properties": {
+    "versao_schema": { "const": 1 },
+    "formas": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["item", "sumario", "separador"],
+      "properties": {
+        "item": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/forma" } },
+        "sumario": { "type": "array", "items": { "$ref": "#/$defs/forma" } },
+        "numero_sozinho": { "type": "string", "minLength": 1 },
+        "separador": { "type": "string", "minLength": 1 }
+      }
+    },
+    "grupo": { "type": "integer" },
+    "documentos": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/documento" } }
+  },
+  "$defs": {
+    "forma": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["expressao", "serie"],
+      "properties": {
+        "expressao": { "type": "string", "pattern": "\\(\\?P<numero>" },
+        "serie": { "type": "string", "minLength": 1 },
+        "linhas_do_titulo": { "type": "integer" },
+        "so_se_no_sumario": { "type": "boolean" }
+      }
+    },
+    "faixa": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["de", "ate"],
+      "properties": { "de": { "type": "integer" }, "ate": { "type": "integer" } }
+    },
+    "documento": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["transcricao", "sumario", "corpo"],
+      "properties": {
+        "transcricao": { "type": "string", "minLength": 1 },
+        "sumario": { "type": "array", "items": { "$ref": "#/$defs/faixa" } },
+        "corpo": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/faixa" } }
+      }
+    }
+  }
+}

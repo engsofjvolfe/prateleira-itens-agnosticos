@@ -1,0 +1,29 @@
+{
+ "versao_schema": 1,
+ "estragos": [
+  {"nome": "conferir-grava", "arquivo": "grava_ou_confere.py",
+   "de": "    if conferir:\n", "para": "    if False:\n"},
+  {"nome": "igual-sem-comparar", "arquivo": "grava_ou_confere.py",
+   "de": "arquivo.is_file() and arquivo.read_text(encoding=CODIFICACAO) == texto", "para": "arquivo.is_file()"},
+  {"nome": "sem-arquivo-sem-conferir", "arquivo": "grava_ou_confere.py",
+   "de": "igual = arquivo.is_file() and ", "para": "igual = "},
+  {"nome": "mensagens-trocadas", "arquivo": "grava_ou_confere.py",
+   "de": "print(em_dia if igual else falta)", "para": "print(falta if igual else em_dia)"},
+  {"nome": "falta-sai-com-zero", "arquivo": "grava_ou_confere.py",
+   "de": "return 0 if igual else 1", "para": "return 0"},
+  {"nome": "sem-criar-pastas", "arquivo": "grava_ou_confere.py",
+   "de": "    arquivo.parent.mkdir(parents=True, exist_ok=True)\n", "para": ""},
+  {"nome": "sem-mensagem-de-gravado", "arquivo": "grava_ou_confere.py",
+   "de": "    print(gravado)\n", "para": ""},
+  {"nome": "gravado-sai-com-um", "arquivo": "grava_ou_confere.py",
+   "de": "    print(gravado)\n    return 0\n", "para": "    print(gravado)\n    return 1\n"},
+  {"nome": "outra-codificacao", "arquivo": "grava_ou_confere.py",
+   "de": "CODIFICACAO = \"utf-8\"", "para": "CODIFICACAO = \"latin-1\""},
+  {"nome": "caminho-em-texto-falha", "arquivo": "grava_ou_confere.py",
+   "de": "    arquivo = Path(arquivo)\n", "para": ""},
+  {"nome": "opcao-desligada", "arquivo": "grava_ou_confere.py",
+   "de": "action=\"store_true\"", "para": "action=\"store_false\""},
+  {"nome": "ajuda-perdida", "arquivo": "grava_ou_confere.py",
+   "de": "help=ajuda", "para": "help=None"}
+ ]
+}

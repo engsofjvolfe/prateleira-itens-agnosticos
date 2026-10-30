@@ -1,0 +1,108 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "historico-de-arquivo.schema.json",
+  "type": "object",
+  "required": ["versao_schema", "transcricoes", "eventos", "uso", "resultado", "ferramentas", "saida"],
+  "additionalProperties": false,
+  "properties": {
+    "versao_schema": { "const": 1 },
+    "transcricoes": {
+      "type": "object",
+      "required": ["padrao", "codificacao"],
+      "additionalProperties": false,
+      "properties": {
+        "padrao": { "$ref": "#/$defs/nome" },
+        "codificacao": { "$ref": "#/$defs/nome" }
+      }
+    },
+    "eventos": {
+      "type": "object",
+      "required": ["hora", "sessao", "mensagem", "conteudo", "tipo", "texto"],
+      "additionalProperties": false,
+      "properties": {
+        "hora": { "$ref": "#/$defs/nome" },
+        "sessao": { "$ref": "#/$defs/nome" },
+        "mensagem": { "$ref": "#/$defs/nome" },
+        "conteudo": { "$ref": "#/$defs/nome" },
+        "tipo": { "$ref": "#/$defs/nome" },
+        "texto": { "$ref": "#/$defs/nome" }
+      }
+    },
+    "uso": {
+      "type": "object",
+      "required": ["tipo", "id", "nome", "entrada", "caminho"],
+      "additionalProperties": false,
+      "properties": {
+        "tipo": { "$ref": "#/$defs/nome" },
+        "id": { "$ref": "#/$defs/nome" },
+        "nome": { "$ref": "#/$defs/nome" },
+        "entrada": { "$ref": "#/$defs/nome" },
+        "caminho": { "$ref": "#/$defs/nome" }
+      }
+    },
+    "resultado": {
+      "type": "object",
+      "required": ["tipo", "id", "conteudo"],
+      "additionalProperties": false,
+      "properties": {
+        "tipo": { "$ref": "#/$defs/nome" },
+        "id": { "$ref": "#/$defs/nome" },
+        "conteudo": { "$ref": "#/$defs/nome" }
+      }
+    },
+    "ferramentas": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/ferramenta" } },
+    "saida": {
+      "type": "object",
+      "required": ["codificacao", "extensao", "lista", "ilegiveis", "rotulos", "separador", "secao", "sem_resultado"],
+      "additionalProperties": false,
+      "properties": {
+        "codificacao": { "$ref": "#/$defs/nome" },
+        "extensao": { "type": "string" },
+        "lista": { "$ref": "#/$defs/nome" },
+        "ilegiveis": { "$ref": "#/$defs/nome" },
+        "rotulos": {
+          "type": "object",
+          "required": ["numero", "arquivo", "sessao", "hora", "ferramenta", "caminho", "transcricao", "linha",
+                       "resultado"],
+          "additionalProperties": false,
+          "properties": {
+            "numero": { "$ref": "#/$defs/nome" },
+            "arquivo": { "$ref": "#/$defs/nome" },
+            "sessao": { "$ref": "#/$defs/nome" },
+            "hora": { "$ref": "#/$defs/nome" },
+            "ferramenta": { "$ref": "#/$defs/nome" },
+            "caminho": { "$ref": "#/$defs/nome" },
+            "transcricao": { "$ref": "#/$defs/nome" },
+            "linha": { "$ref": "#/$defs/nome" },
+            "resultado": { "$ref": "#/$defs/nome" }
+          }
+        },
+        "separador": { "type": "string" },
+        "secao": {
+          "type": "object",
+          "required": ["antes", "depois"],
+          "additionalProperties": false,
+          "properties": {
+            "antes": { "type": "string" },
+            "depois": { "type": "string" }
+          }
+        },
+        "sem_resultado": { "type": "string" }
+      }
+    }
+  },
+  "$defs": {
+    "nome": { "type": "string", "minLength": 1 },
+    "nomes": { "type": "array", "items": { "$ref": "#/$defs/nome" } },
+    "ferramenta": {
+      "type": "object",
+      "required": ["nome", "campos", "resultado"],
+      "additionalProperties": false,
+      "properties": {
+        "nome": { "$ref": "#/$defs/nome" },
+        "campos": { "$ref": "#/$defs/nomes" },
+        "resultado": { "type": "boolean" }
+      }
+    }
+  }
+}

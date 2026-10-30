@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "extrator.schema.json",
+  "type": "object",
+  "required": ["versao_schema", "padrao", "leitores"],
+  "additionalProperties": false,
+  "properties": {
+    "versao_schema": { "const": 1 },
+    "padrao": { "$ref": "#/$defs/padrao" },
+    "trocas": { "$ref": "#/$defs/trocas" },
+    "leitores": { "type": "object", "additionalProperties": { "$ref": "#/$defs/leitor" } }
+  },
+  "$defs": {
+    "texto": { "type": "string", "minLength": 1 },
+    "textos": { "type": "array", "items": { "$ref": "#/$defs/texto" } },
+    "caractere": { "type": "string", "pattern": "^.$" },
+    "trocas": { "type": "object", "additionalProperties": { "type": "string" } },
+    "padrao": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["titulo_pagina", "rotulo_numerada", "rotulo_sem_numero", "rotulo_sem_paginas", "sem_texto",
+                   "escape", "escapar", "escapar_no_comeco", "tabela"],
+      "properties": {
+        "titulo_pagina": { "type": "string", "pattern": "\\{rotulo\\}.*\\{arquivo\\}|\\{arquivo\\}.*\\{rotulo\\}" },
+        "rotulo_numerada": { "type": "string", "pattern": "\\{numero\\}" },
+        "rotulo_sem_numero": { "$ref": "#/$defs/texto" },
+        "rotulo_sem_paginas": { "$ref": "#/$defs/texto" },
+        "sem_texto": { "$ref": "#/$defs/texto" },
+        "escape": { "$ref": "#/$defs/caractere" },
+        "escapar": { "type": "array", "items": { "$ref": "#/$defs/caractere" } },
+        "escapar_no_comeco": { "$ref": "#/$defs/textos" },
+        "destaques": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["abre", "fecha"],
+            "properties": { "abre": { "$ref": "#/$defs/texto" }, "fecha": { "$ref": "#/$defs/texto" } }
+          }
+        },
+        "tabela": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["inicio", "meio", "fim", "separador"],
+          "properties": {
+            "inicio": { "type": "string" },
+            "meio": { "$ref": "#/$defs/texto" },
+            "fim": { "type": "string" },
+            "separador": { "$ref": "#/$defs/texto" }
+          }
+        }
+      }
+    },
+    "leitor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["extensoes", "opcoes"],
+      "properties": {
+        "modulo": { "type": "string", "pattern": "^[a-z0-9_]+$" },
+        "extensoes": { "type": "array", "items": { "type": "string", "pattern": "^\\.[^.\\s]+$" } },
+        "opcoes": { "type": "object" }
+      }
+    }
+  }
+}

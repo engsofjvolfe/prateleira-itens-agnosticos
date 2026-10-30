@@ -1,0 +1,26 @@
+{
+  "versao_schema": 1,
+  "estragos": [
+    {"nome": "fora-ao-contrario", "arquivo": "registra.py", "de": "if partes[\"ferramenta\"] not in config[\"fora_do_registro\"]:", "para": "if partes[\"ferramenta\"] in config[\"fora_do_registro\"]:"},
+    {"nome": "falha-que-deixa-rodar", "arquivo": "evento.py", "de": "sys.exit(barra_com)", "para": "sys.exit(0)"},
+    {"nome": "codigo-que-barra-fixo", "arquivo": "evento.py", "de": "sys.exit(barra_com)", "para": "sys.exit(2)"},
+    {"nome": "erro-calado", "arquivo": "evento.py", "de": "file=sys.stderr", "para": "file=sys.stdout"},
+    {"nome": "qualquer-evento", "arquivo": "evento.py", "de": "if partes[\"evento\"] != EVENTO:", "para": "if False:"},
+    {"nome": "parte-que-falta-sem-dizer-a-chave", "arquivo": "evento.py", "de": "    if faltam:\n", "para": "    if False:\n"},
+    {"nome": "listas-sem-conferir", "arquivo": "evento.py", "de": "dados.lista(valor[chave], f\"{caminho}: {chave}\", dados.texto)", "para": "pass"},
+    {"nome": "partes-de-qualquer-tipo", "arquivo": "evento.py", "de": "dados.texto(partes[parte], f\"o evento: {parte}\")", "para": "pass"},
+    {"nome": "grava-no-comeco", "arquivo": "registro.py", "de": "os.O_WRONLY | os.O_APPEND | os.O_CREAT", "para": "os.O_WRONLY | os.O_CREAT"},
+    {"nome": "chaves-a-mais", "arquivo": "dados.py", "de": "if chaves is not None and set(valor) != set(chaves):", "para": "if False:"},
+    {"nome": "texto-como-lista", "arquivo": "dados.py", "de": "if not isinstance(valor, list):", "para": "if False:"},
+    {"nome": "tudo-livre", "arquivo": "cancela.py", "de": "if partes[\"ferramenta\"] in config[\"livres\"]:", "para": "if True:"},
+    {"nome": "qualquer-pasta", "arquivo": "cancela.py", "de": "if Path(partes[\"pasta\"]).resolve() != raiz:", "para": "if False:"},
+    {"nome": "so-o-comeco", "arquivo": "cancela.py", "de": "achada = re.fullmatch(candidata[\"forma\"], valor)", "para": "achada = re.match(candidata[\"forma\"], valor)"},
+    {"nome": "regra-de-outra-ferramenta", "arquivo": "cancela.py", "de": "if candidata[\"ferramenta\"] != ferramenta:", "para": "if False:"},
+    {"nome": "fonte-que-sumiu", "arquivo": "cancela.py", "de": "if not tem(raiz, candidata[\"fonte\"][\"arquivo\"], candidata[\"fonte\"][\"trecho\"]):", "para": "if False:"},
+    {"nome": "arquivo-sempre-tem", "arquivo": "cancela.py", "de": "return texto in dados.le_texto(caminho if caminho.is_absolute() else raiz / caminho)", "para": "return True"},
+    {"nome": "fonte-pela-pasta-do-terminal", "arquivo": "cancela.py", "de": "dados.le_texto(caminho if caminho.is_absolute() else raiz / caminho)", "para": "dados.le_texto(caminho)"},
+    {"nome": "sem-documentacao", "arquivo": "cancela.py", "de": "if DOCUMENTADA not in valor:", "para": "if True:"},
+    {"nome": "nome-repetido", "arquivo": "cancela.py", "de": "if repetidos:", "para": "if False:"},
+    {"nome": "parte-de-qualquer-nome", "arquivo": "cancela.py", "de": "if not PARTE.fullmatch(f\"<<{nome}>>\"):", "para": "if False:"}
+  ]
+}

@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "custo-de-agentes.schema.json",
+  "type": "object",
+  "required": ["versao_schema", "transcricoes", "eventos", "uso", "comeco", "colunas"],
+  "additionalProperties": false,
+  "properties": {
+    "versao_schema": { "const": 1 },
+    "transcricoes": {
+      "type": "object",
+      "required": ["padrao", "codificacao"],
+      "additionalProperties": false,
+      "properties": {
+        "padrao": { "$ref": "#/$defs/nome" },
+        "codificacao": { "$ref": "#/$defs/nome" }
+      }
+    },
+    "eventos": {
+      "type": "object",
+      "required": ["tipo", "pergunta", "mensagem", "conteudo", "uso"],
+      "additionalProperties": false,
+      "properties": {
+        "tipo": { "$ref": "#/$defs/nome" },
+        "pergunta": { "$ref": "#/$defs/nome" },
+        "mensagem": { "$ref": "#/$defs/nome" },
+        "conteudo": { "$ref": "#/$defs/nome" },
+        "uso": { "$ref": "#/$defs/nome" }
+      }
+    },
+    "uso": {
+      "type": "object",
+      "required": ["entrada", "saida"],
+      "additionalProperties": false,
+      "properties": {
+        "entrada": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/nome" } },
+        "saida": { "$ref": "#/$defs/nome" }
+      }
+    },
+    "comeco": {
+      "type": "object",
+      "required": ["letras"],
+      "additionalProperties": false,
+      "properties": {
+        "letras": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "colunas": {
+      "type": "object",
+      "required": ["transcricao", "turnos", "contexto_maximo", "processado", "saida", "comeco"],
+      "additionalProperties": false,
+      "properties": {
+        "transcricao": { "$ref": "#/$defs/nome" },
+        "turnos": { "$ref": "#/$defs/nome" },
+        "contexto_maximo": { "$ref": "#/$defs/nome" },
+        "processado": { "$ref": "#/$defs/nome" },
+        "saida": { "$ref": "#/$defs/nome" },
+        "comeco": { "$ref": "#/$defs/nome" }
+      }
+    }
+  },
+  "$defs": {
+    "nome": { "type": "string", "minLength": 1 }
+  }
+}

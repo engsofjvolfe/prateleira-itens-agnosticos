@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "destino-da-limpeza.schema.json",
+  "type": "object",
+  "required": ["versao_schema", "estado"],
+  "additionalProperties": false,
+  "properties": {
+    "versao_schema": { "const": 1 },
+    "estado": { "type": "string", "minLength": 1 }
+  }
+}

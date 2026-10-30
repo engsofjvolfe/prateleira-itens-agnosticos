@@ -1,0 +1,107 @@
+{
+ "versao_schema": 1,
+ "estragos": [
+  {
+   "nome": "conta-um-tipo-so",
+   "arquivo": "contar.py",
+   "de": "docs[d][\"tipos\"].update(lugares.valor(t, \"tipo\"))",
+   "para": "docs[d][\"tipos\"].update(lugares.valor(t, \"tipo\")[:1])"
+  },
+  {
+   "nome": "aula-nao-soma",
+   "arquivo": "contar.py",
+   "de": "docs[d][\"aulas\"][t[\"aula\"]] += 1",
+   "para": "docs[d][\"aulas\"][t[\"aula\"]] = 1"
+  },
+  {
+   "nome": "marca-nao-conta",
+   "arquivo": "contar.py",
+   "de": "docs[d][\"marcas\"].update(lugares.marcas(t, regras))",
+   "para": "pass"
+  },
+  {
+   "nome": "problema-da-classe-some",
+   "arquivo": "contar.py",
+   "de": "problemas.append((t[\"id\"], classe[1]))",
+   "para": "pass"
+  },
+  {
+   "nome": "sai-zero-com-problema",
+   "arquivo": "contar.py",
+   "de": "1 if problemas else 0",
+   "para": "0"
+  },
+  {
+   "nome": "assunto-errado",
+   "arquivo": "separar.py",
+   "de": "(classe == (\"assunto\",)) if documento is None",
+   "para": "(classe != (\"estudo\",)) if documento is None"
+  },
+  {
+   "nome": "documento-de-todos-aceito",
+   "arquivo": "separar.py",
+   "de": "a.documento not in lugares.documentos_de_conteudo(regras)",
+   "para": "False"
+  },
+  {
+   "nome": "forma-sem-molde",
+   "arquivo": "entrada.py",
+   "de": "extrator_comum.le_conferido(a.forma, MOLDES / \"forma-analise.schema.json\")",
+   "para": "extrator_comum.le_json(a.forma)"
+  },
+  {
+   "nome": "regras-sem-molde",
+   "arquivo": "entrada.py",
+   "de": "extrator_comum.le_conferido(a.regras, MOLDES / \"regras.schema.json\")",
+   "para": "extrator_comum.le_json(a.regras)"
+  },
+  {
+   "nome": "erro-sai-zero",
+   "arquivo": "entrada.py",
+   "de": "return 1",
+   "para": "return 0"
+  },
+  {
+   "nome": "erro-nao-diz-o-que-houve",
+   "arquivo": "entrada.py",
+   "de": "else f\"ERRO: {e}\")",
+   "para": "else \"ERRO\")"
+  },
+  {
+   "nome": "chave-sem-o-nome",
+   "arquivo": "entrada.py",
+   "de": "f\"ERRO: falta a informação {e}\"",
+   "para": "\"ERRO: falta uma informação\""
+  },
+  {
+   "nome": "chave-que-falta-nao-e-erro",
+   "arquivo": "entrada.py",
+   "de": "ERROS = (extrator_comum.ErroDeDados, KeyError, ValueError, TypeError)",
+   "para": "ERROS = (extrator_comum.ErroDeDados, ValueError, TypeError)"
+  },
+  {
+   "nome": "saida-sem-pasta",
+   "arquivo": "entrada.py",
+   "de": "caminho.parent.mkdir(parents=True, exist_ok=True)",
+   "para": "pass"
+  },
+  {
+   "nome": "tipo-errado-nao-e-erro",
+   "arquivo": "entrada.py",
+   "de": "ERROS = (extrator_comum.ErroDeDados, KeyError, ValueError, TypeError)",
+   "para": "ERROS = (extrator_comum.ErroDeDados, KeyError, ValueError)"
+  },
+  {
+   "nome": "codigo-do-trabalho-ignorado",
+   "arquivo": "entrada.py",
+   "de": "return codigo",
+   "para": "return 0"
+  },
+  {
+   "nome": "saida-nao-gravada",
+   "arquivo": "entrada.py",
+   "de": "gravar(a.saida, texto)",
+   "para": "pass"
+  }
+ ]
+}
