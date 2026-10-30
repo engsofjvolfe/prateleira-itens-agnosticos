@@ -8,8 +8,10 @@ delas; trecho que aparece em duas paginas; equivalentes; espacos e quebras de li
 diferentes; pedacos partidos na supressao, com pontas; pagina de rotulo que nao e numero;
 trecho que so esta num bloco ignorado ou antes da primeira pagina; maiusculas; paginas que
 nao se leem; fonte que nao existe ou com bloco que nao fecha; referencia sem trecho e
-trecho sem referencia; configuracao e argumentos que nao servem (codigo 2, a configuracao
-tambem num texto sem citacao); duas rodadas dao o mesmo. Uso:
+trecho sem referencia; pedacos na ordem da fonte, com um pedaco que aparece antes e depois
+do outro; supressao no comeco e no fim; pedacos fora da ordem; supressao com so pontas ou
+so espaco entre os pedacos; configuracao e argumentos que nao servem (codigo 2, a
+configuracao tambem num texto sem citacao); duas rodadas dao o mesmo. Uso:
     python3 -I teste_confere_citacoes.py <pasta do confere_citacoes.py> <pasta de trabalho nova>
 """
 import json
@@ -71,7 +73,7 @@ FONTES.mkdir()
 REF, ABRE, FECHA = marca(), marca(), marca()
 SEP, INTERVALO = SORTEIO.choice([(",", "~"), (";", "-"), ("/", "~")])
 SUPRESSAO = SORTEIO.choice(["[...]", "(…)", "<-->"])
-PONTAS = " .,;:"
+PONTAS = ".,;:"  # sem o espaco: entre dois pedacos, o espaco nunca conta como omitido
 TITULO = f"{marca()} {{rotulo}} {marca()} {{arquivo}} {marca()}"
 IMAGEM_ABRE, IMAGEM_FECHA = marca(), marca()
 MODELO_ARQUIVO = f"{palavra()}-{{fonte}}.{palavra()}"
@@ -110,6 +112,8 @@ P2_INICIO, P2_FIM = frase(5), frase(5)
 P5_A, P5_B = frase(4), frase(4)
 P6_A, P6_B = frase(4), frase(4)
 P8 = f"{frase(3)} {palavra()}é{palavra()} {frase(2)}"  # com letra que o NFD decompoe
+Q1, Q2, Q3, Q4, Q5 = frase(3), frase(3), frase(4), frase(4), frase(4)  # para a ordem e a supressao
+Q5_PALAVRAS = Q5.split()
 FONTE = palavra()
 grava_fonte(FONTE, [
     ANTES,
@@ -117,6 +121,8 @@ grava_fonte(FONTE, [
     titulo(B, 2), frase(6), IMAGEM_ABRE + " " + palavra(), P3, IMAGEM_FECHA, frase(5), P2_INICIO,
     titulo(C, 3), P2_FIM + ".", f"{P5_A}  \t’{P5_B}’ {frase(3)}", P4 + ".", frase(6),
     titulo(D, 4), frase(3), P7, P8, frase(4),
+    f"{Q2} {frase(3)} {Q1} {frase(3)} {Q2} {frase(3)} {Q1}.",  # Q2 antes e depois do primeiro Q1
+    f"{Q4} {frase(3)} {Q3},", Q5,  # Q4 antes de Q3; entre Q3 e Q5, so a ponta e o espaco
 ])
 QUEBRADA = palavra()  # fonte com um bloco ignorado que nao fecha
 grava_fonte(QUEBRADA, [titulo(A, 1), frase(6), IMAGEM_ABRE, frase(4), titulo(B, 2), frase(6)])
@@ -158,6 +164,8 @@ certos, _ = monta([
     (cita(FONTE, D, unicodedata.normalize("NFD", P8)), None),
     (cita(FONTE, pags(A, C), P4), None),
     (cita(FONTE, pags(B, A), "  ".join(P1_PALAVRAS)), None),
+    (cita(FONTE, D, f"{Q1} {SUPRESSAO} {Q2}"), None),
+    (cita(FONTE, D, f"{SUPRESSAO} {Q3}, {SUPRESSAO}"), None),
 ])
 errados, ESPERADOS = monta([
     (cita(FONTE, B, P1), 1),
@@ -172,6 +180,9 @@ errados, ESPERADOS = monta([
     ([cita(FONTE, A, P1)[0], frase(4)], 0),
     ([cita(FONTE, A, P1)[1]], 0),
     (cita(FONTE, A, f"{' '.join(P1_PALAVRAS[:3])} {SUPRESSAO} {frase(4)}"), 1),
+    (cita(FONTE, D, f"{Q3} {SUPRESSAO} {Q4}"), 1),
+    (cita(FONTE, D, f"{Q3} {SUPRESSAO} {Q5}"), 1),
+    (cita(FONTE, D, f"{' '.join(Q5_PALAVRAS[:2])} {SUPRESSAO} {' '.join(Q5_PALAVRAS[2:])}"), 1),
 ])
 CERTO, ERRADO, SEM_CITACAO = (TRABALHO / f"{palavra()}.md" for _ in range(3))
 CERTO.write_text("\n".join(certos) + "\n", encoding="utf-8")

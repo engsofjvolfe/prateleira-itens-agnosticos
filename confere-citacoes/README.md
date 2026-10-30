@@ -2,8 +2,9 @@
 
 Confere as citações de textos Markdown contra as transcrições das fontes: cada trecho
 citado precisa estar, letra por letra, na fonte que a referência nomeia, e nas páginas que
-ela dá. Serve a qualquer texto que cita uma fonte transcrita em páginas, como os textos de
-estudo que citam um livro.
+ela dá, com os pedaços na ordem da fonte e cada supressão no lugar de alguma coisa. Serve a
+qualquer texto que cita uma fonte transcrita em páginas, como os textos de estudo que citam
+um livro.
 
 Usa só a biblioteca padrão do Python e o `extrator_comum.py`, do
 [extrator](../extrator/README.md), que lê a configuração pelo molde dela e divide a
@@ -29,6 +30,11 @@ reconhecida pela expressão `citacao`, com o grupo `trecho`.
 - **Trecho:** partido na marca de `supressao`; cada pedaço, sem os caracteres das `pontas`
   nas duas pontas, precisa aparecer na fonte, e pelo menos uma das vezes em que aparece
   precisa cair só em páginas citadas. Pedaço vazio não conta.
+- **Ordem e supressão:** os pedaços aparecem na fonte na ordem do trecho, cada um depois do
+  fim do anterior, e entre um e o seguinte a fonte tem alguma coisa além dos caracteres das
+  `pontas` e dos espaços: a supressão marca o que foi omitido, e não pode estar onde nada
+  foi. Cada pedaço vale pela primeira vez em que aparece nas páginas citadas depois do
+  anterior. A supressão no começo ou no fim do trecho não se confere.
 - **Comparação:** os dois lados vão para NFC; cada caractere de um grupo de `equivalentes`
   vira o primeiro do grupo; cada trecho de espaços (com quebras de linha) vira um espaço só.
   Maiúsculas contam.
@@ -37,6 +43,7 @@ reconhecida pela expressão `citacao`, com o grupo `trecho`.
 | --- | --- |
 | trecho que não está na fonte (a mensagem avisa quando difere só em maiúsculas) | linha do trecho |
 | trecho que só está em páginas não citadas (a mensagem diz em quais está) | linha do trecho |
+| pedaço fora da ordem da fonte, ou supressão que não omite nada (só pontas e espaços entre dois pedaços) | linha do trecho |
 | páginas que não se leem (parte vazia, intervalo ao contrário ou que não é de números) | linha da referência |
 | fonte que não existe, que não se lê em UTF-8 ou com bloco ignorado que não fecha | linha da referência |
 | referência sem a linha do trecho logo depois | linha da referência |

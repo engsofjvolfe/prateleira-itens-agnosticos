@@ -28,6 +28,8 @@ prateleira segue o [Versionamento Semântico](https://semver.org/lang/pt-BR/spec
   `ganchos/protocolo`: o que o molde de cada um confere, como o campo que falta, o texto ou
   a lista vazios, os limites e a versão do protocolo, sai da conferência à mão, e o erro
   diz o caminho do valor.
+- `confere-citacoes`: os pedaços de um trecho têm de estar na fonte na ordem do trecho, e
+  cada supressão entre dois deles tem de omitir alguma coisa além das pontas e dos espaços.
 - `extrator`: o leitor de molde do módulo comum confere o molde inteiro — o tipo, o valor
   fixo e a lista de valores, o tamanho, a forma do texto, os limites, os itens, os campos
   obrigatórios, o `allOf` e o `if`, com `$ref` para a raiz e para `$defs` — e diz o caminho

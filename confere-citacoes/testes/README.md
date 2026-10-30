@@ -11,12 +11,16 @@ conta os erros que saíram.
 - Passam: trecho na página citada; trecho que cruza duas páginas, citado com o intervalo;
   trecho que aparece em duas páginas, citado com a segunda; equivalentes trocados; espaços,
   tabulações e quebras de linha diferentes; pedaços partidos na supressão, com pontas;
-  página de rótulo que não é número; letra decomposta (NFD); páginas soltas separadas.
+  página de rótulo que não é número; letra decomposta (NFD); páginas soltas separadas;
+  pedaços na ordem da fonte, com um pedaço que aparece antes e depois do outro; supressão
+  no começo e no fim do trecho.
 - Dão `ERRO` na linha certa: trecho com página errada; trecho que cruza duas páginas citado
   com uma só; trecho que só está num bloco ignorado ou antes da primeira página; trecho com
   outras maiúsculas; pedaço que falta junto de um que está; intervalo ao contrário; parte de
   página vazia; fonte que não existe; fonte com bloco ignorado que não fecha; referência sem
-  trecho; trecho sem referência.
+  trecho; trecho sem referência; pedaços fora da ordem da fonte; supressão com só uma ponta
+  e espaço, ou só espaço, entre os pedaços (as pontas do teste não têm o espaço, que nunca
+  conta como omitido).
 - Saem com 2, sem conferir: configuração com campo desconhecido, sem um campo, com
   expressão que não compila ou sem um grupo, com modelo de arquivo de outro campo, com grupo
   de equivalentes de um caractere, com supressão vazia, também num texto sem citação; pasta

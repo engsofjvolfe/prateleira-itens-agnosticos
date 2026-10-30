@@ -6,7 +6,10 @@ ela da.
 Uma citacao e uma linha de referencia (com a fonte e as paginas), reconhecida por uma
 expressao da configuracao, seguida da linha do trecho, reconhecida por outra. O trecho e
 partido na marca de supressao; cada pedaco, sem as pontas dadas, precisa aparecer na
-fonte, e pelo menos uma das vezes em que aparece precisa cair so nas paginas citadas. A
+fonte, e pelo menos uma das vezes em que aparece precisa cair so nas paginas citadas. Os
+pedacos precisam aparecer na ordem do trecho, cada um depois do fim do anterior, e entre
+um e o seguinte a fonte precisa ter alguma coisa alem das pontas e dos espacos: a
+supressao marca o que foi omitido, e nao pode estar onde nada foi. A
 fonte e o arquivo que o modelo da configuracao nomeia, na pasta das fontes; as paginas
 dela vem do modelo do titulo de pagina (o mesmo do extrator), e as linhas dos blocos que a
 configuracao manda ignorar (como as imagens) nao contam. Na comparacao, o texto vai para
@@ -147,17 +150,41 @@ def ocorrencias(texto, pedaco):
 
 
 def confere_pedaco(pedaco, fonte, citadas):
-    """None quando o pedaco esta na fonte so nas paginas citadas, em pelo menos uma das vezes
-    em que aparece; senao, o motivo."""
+    """(posicoes, motivo): as posicoes, em ordem, das vezes em que o pedaco aparece na fonte
+    so nas paginas citadas, e None; ou nenhuma posicao e o motivo, quando nao ha nenhuma."""
     texto, rotulos = fonte
-    paginas = [set(rotulos[i:i + len(pedaco)]) for i in ocorrencias(texto, pedaco)]
+    paginas = {i: set(rotulos[i:i + len(pedaco)]) for i in ocorrencias(texto, pedaco)}
     if not paginas:
         dica = " (difere só em maiúsculas)" if pedaco.lower() in texto.lower() else ""
-        return f"trecho que não está na fonte{dica}: {pedaco[:MOSTRA]}"
-    if any(p <= citadas for p in paginas):
-        return None
-    achadas = ", ".join(sorted(set().union(*paginas), key=chave_de_pagina))
-    return f"trecho que está na(s) p. {achadas}, fora das citadas: {pedaco[:MOSTRA]}"
+        return [], f"trecho que não está na fonte{dica}: {pedaco[:MOSTRA]}"
+    posicoes = [i for i, p in paginas.items() if p <= citadas]
+    if posicoes:
+        return posicoes, None
+    achadas = ", ".join(sorted(set().union(*paginas.values()), key=chave_de_pagina))
+    return [], f"trecho que está na(s) p. {achadas}, fora das citadas: {pedaco[:MOSTRA]}"
+
+
+def omite_algo(entre, pontas):
+    """Se o que a fonte tem entre dois pedacos tem alguma letra alem das pontas e dos espacos."""
+    return any(c not in pontas and not c.isspace() for c in entre)
+
+
+def confere_sequencia(achados, texto, pontas):
+    """None quando os pedacos aparecem na fonte na ordem do trecho, com alguma coisa omitida
+    entre cada um e o seguinte; senao, o motivo. achados: [(pedaco, posicoes)], na ordem do
+    trecho, cada pedaco com as posicoes em que esta nas paginas citadas. Cada pedaco fica na
+    primeira posicao que serve: a mais cedo deixa mais lugar aos seguintes, entao, se ela nao
+    leva ate o fim, nenhuma leva."""
+    fim = None
+    for pedaco, posicoes in achados:
+        # texto[fim:i] e vazio quando i <= fim: a mesma conta barra o pedaco fora da ordem
+        servem = posicoes if fim is None else [i for i in posicoes if omite_algo(texto[fim:i], pontas)]
+        if not servem:
+            motivo = ("supressão que não omite nada antes de" if max(posicoes) >= fim
+                      else "trecho fora da ordem da fonte")
+            return f"{motivo}: {pedaco[:MOSTRA]}"
+        fim = servem[0] + len(pedaco)
+    return None
 
 
 def confere_texto(arquivo, conf, pasta, lidas):
@@ -187,11 +214,16 @@ def confere_texto(arquivo, conf, pasta, lidas):
         elif isinstance(fonte, str):
             erros.append((k + 1, fonte))
         else:
+            achados = []
             for pedaco in pedacos_do_trecho(cit.group("trecho"), conf):
                 pedacos += 1
-                motivo = confere_pedaco(pedaco, fonte, citadas)
+                posicoes, motivo = confere_pedaco(pedaco, fonte, citadas)
                 if motivo:
                     erros.append((k + 2, motivo))
+                achados.append((pedaco, posicoes))
+            motivo = confere_sequencia(achados, fonte[0], conf["pontas"]) if all(p for _, p in achados) else None
+            if motivo:
+                erros.append((k + 2, motivo))
         k += 2
     return erros, citacoes, pedacos
 
