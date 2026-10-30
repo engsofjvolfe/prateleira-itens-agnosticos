@@ -16,9 +16,10 @@ Tres entradas: a configuracao do extrator, lida como o extrator a le, contra o m
 pagina, para dividir a transcricao em paginas, e as marcas de destaque e o escape, que se
 tiram da linha antes de reconhecer um item), a configuracao dos itens (as formas de linha,
 o tamanho do grupo e, para cada documento, a transcricao e as faixas de paginas do sumario
-e do corpo; campo que o molde dela nao conhece e erro) e o arquivo de saida, um JSON com
-os itens, os problemas e os grupos de cada documento. Os caminhos da configuracao dos
-itens partem de --raiz (padrao: a pasta atual).
+e do corpo; lida pelo molde dela, que pega o campo que ele nao conhece, o que falta e o
+valor de outro tipo ou fora da forma) e o arquivo de saida, um JSON com os itens, os
+problemas e os grupos de cada documento. Os caminhos da configuracao dos itens partem de
+--raiz (padrao: a pasta atual).
 
 Uma forma de item e uma expressao regular com os grupos "numero" e, se houver, "titulo";
 o numero e uma sequencia de partes separadas pelo "separador" das formas, cada parte um
@@ -180,9 +181,8 @@ def problemas_do_sumario(sumario, itens):
 
 def grupos(sumario, itens, tamanho):
     """Os grupos de entradas do sumario, cada um com os itens do corpo que ficam desde a
-    primeira entrada dele ate antes da primeira do grupo seguinte."""
-    if tamanho < 1:
-        raise ErroDeDados(f"o tamanho do grupo tem de ser 1 ou mais, e {tamanho}")
+    primeira entrada dele ate antes da primeira do grupo seguinte; o tamanho, 1 ou mais, o
+    molde da configuracao ja conferiu."""
     if not itens:
         return []
     posicao = {}
@@ -228,9 +228,8 @@ def main(argv=None):
         confere_padrao(padrao)
         config = le_conferido(a.itens, MOLDE)
         saida = [documento(d, config, padrao, a.raiz) for d in config["documentos"]]
-    except (ErroDeDados, KeyError, ValueError, TypeError) as e:
-        detalhe = f"falta a informação {e}" if isinstance(e, KeyError) else str(e)
-        print(f"ERRO: {detalhe}")
+    except (ErroDeDados, ValueError) as e:  # ValueError: a faixa ou o numero que nao servem
+        print(f"ERRO: {e}")
         print("Nada foi gravado.")
         return 1
     a.saida.parent.mkdir(parents=True, exist_ok=True)

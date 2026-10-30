@@ -17,7 +17,7 @@
         "separador": { "type": "string", "minLength": 1 }
       }
     },
-    "grupo": { "type": "integer" },
+    "grupo": { "type": "integer", "minimum": 1 },
     "documentos": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/documento" } }
   },
   "$defs": {

@@ -375,8 +375,8 @@ def main(argv=None):
     try:
         config, documentos = le_entradas(a.configuracao, a.documentos)
         prontos = prepara(config, documentos, a.raiz, a.so, a.substituir)
-    except (ErroDeDados, KeyError) as e:
-        print(f"ERRO: falta a informação {e}" if isinstance(e, KeyError) else f"ERRO: {e}")
+    except ErroDeDados as e:
+        print(f"ERRO: {e}")
         print("Nada foi gravado.")
         return 1
     for saida, texto, resumo in prontos:

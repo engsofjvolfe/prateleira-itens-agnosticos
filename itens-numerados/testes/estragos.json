@@ -110,6 +110,12 @@
    "para": "config = json.loads(a.itens.read_text(encoding=\"utf-8\"))"
   },
   {
+   "nome": "itens-grupo-menor-que-um-aceito",
+   "arquivo": "esquemas/itens-numerados.schema.json",
+   "de": "\"grupo\": { \"type\": \"integer\", \"minimum\": 1 }",
+   "para": "\"grupo\": { \"type\": \"integer\" }"
+  },
+  {
    "nome": "itens-configuracao-do-extrator-sem-molde",
    "arquivo": "itens.py",
    "de": "padrao = le_configuracao(a.extrator)[\"padrao\"]",

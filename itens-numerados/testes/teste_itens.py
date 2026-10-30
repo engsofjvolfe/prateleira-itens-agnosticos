@@ -372,6 +372,7 @@ erro("expressao-ruim", "expressão que não compila",
 erro("sem-sumario", "falta de informação", formas={k: v for k, v in FORMAS.items() if k != "sumario"})
 erro("faixa-ruim", "faixa fora das páginas", corpo=[{"de": 3, "ate": PAGINAS + 5}])
 erro("grupo-zero", "grupo de tamanho zero", grupo=0)
+erro("grupo-negativo", "grupo de tamanho negativo", grupo=-SORTEIO.randint(1, 9))
 erro("campo-desconhecido", "campo que o molde não conhece",
      formas=dict(FORMAS, item=[dict(FORMAS["item"][0], linhas_do_titul=1)] + FORMAS["item"][1:]))
 erro("padrao-desconhecido", "campo da configuração do extrator que o molde dela não conhece",

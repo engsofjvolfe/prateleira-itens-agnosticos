@@ -42,6 +42,8 @@ prateleira segue o [Versionamento Semântico](https://semver.org/lang/pt-BR/spec
 - `ganchos/regras-de-codigo`: a configuração é lida pelo leitor de molde do módulo comum,
   que diz o caminho de cada valor fora do molde, e não mais por uma conferência própria,
   que parava no primeiro.
+- `itens-numerados`: o tamanho do grupo menor que 1 é pego pelo molde da configuração, que
+  diz o caminho do campo.
 - `moldes`: o molde da forma e o das regras pegam o campo que falta, o valor de outro tipo
   e o texto ou a lista vazios, com o caminho do valor; a forma e as regras conferem à mão
   só o que o molde não vê, e a entrada errada deixa de ser pega pelo `KeyError` e pelo
