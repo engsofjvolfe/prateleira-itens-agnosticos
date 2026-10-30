@@ -18,12 +18,12 @@ Pode barrar a mais, nunca a menos: uma palavra que aparece depois de um prefixo 
 sem extensão, ou de uma extensão que a lista `sem_conferencia` não traz, pede a
 conferência.
 
-Usa só a biblioteca padrão do Python; lê o comando de terminal com a
+Usa só a biblioteca padrão do Python; lê a configuração pelo molde dela com o
+`extrator_comum.py`, do [extrator](../../extrator/README.md), o comando de terminal com a
 [leitura-do-terminal](../leitura-do-terminal/README.md) e o protocolo do programa com o
-[protocolo](../protocolo/README.md), das pastas irmãs, e o protocolo usa o
-`extrator_comum.py`, do [extrator](../../extrator/README.md). Nenhum texto, nome de
-ferramenta ou lista de comandos fica no código: tudo vem da configuração, do protocolo e dos
-arquivos de texto.
+[protocolo](../protocolo/README.md), das pastas irmãs. Nenhum texto, nome de ferramenta ou
+lista de comandos fica no código: tudo vem da configuração, do protocolo e dos arquivos de
+texto.
 
 ## Como rodar
 

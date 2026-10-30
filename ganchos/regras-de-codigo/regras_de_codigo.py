@@ -1,7 +1,7 @@
-"""Gancho para as regras de código.
+"""Gancho para as regras de codigo.
 
-Um só programa para os eventos ligados a ele; o evento vem no JSON que o programa que roda o
-gancho manda pela entrada padrão.
+Um so programa para os eventos ligados a ele; o evento vem no JSON que o programa que roda o
+gancho manda pela entrada padrao.
 
 - Antes de uma chamada de ferramenta que escreve arquivo: anota o arquivo; no
   primeiro arquivo da tarefa, entrega as regras antes da escrita. O arquivo de
@@ -9,18 +9,19 @@ gancho manda pela entrada padrão.
   um texto ou uma planilha, fica de fora; os outros, sem extensao ou de
   extensao que a lista nao traz, entram.
 - Antes de uma chamada do terminal: bloqueia o comando que escreve em arquivo,
-  roda código escrito dentro dele ou não pode ser lido.
+  roda codigo escrito dentro dele ou nao pode ser lido.
 - No fim de uma resposta: com arquivos anotados, trava o encerramento e pede a
-  conferência; na volta da conferência, libera. Nos dois casos a anotação é
+  conferencia; na volta da conferencia, libera. Nos dois casos a anotacao e
   apagada.
 
-As listas e a pasta da anotação vêm da configuração (--config), conferida contra
-o molde dela; os textos, dos arquivos dados no comando: as regras (--regras), a
-ordem de conferir (--fim) e o aviso do bloqueio (--bloqueio). O evento, as
-ferramentas e as respostas vêm do protocolo do programa (--protocolo), lido pelo
-protocolo.py, da pasta irmã protocolo, que dá também o arquivo da anotação de cada
-sessão, com o nome tirado do id dela. O comando de terminal é lido pelo
-leitura_do_terminal.py, da pasta irmã leitura-do-terminal. Só biblioteca padrão.
+As listas e a pasta da anotacao vem da configuracao (--config), lida pelo molde dela com o
+extrator_comum.py, do extrator, que fica duas pastas acima (na prateleira, em
+ganchos/<peca>/) ou na pasta irma (numa copia de teste); os textos, dos arquivos dados no
+comando: as regras (--regras), a ordem de conferir (--fim) e o aviso do bloqueio
+(--bloqueio). O evento, as ferramentas e as respostas vem do protocolo do programa
+(--protocolo), lido pelo protocolo.py, da pasta irma protocolo, que da tambem o arquivo da
+anotacao de cada sessao, com o nome tirado do id dela. O comando de terminal e lido pelo
+leitura_do_terminal.py, da pasta irma leitura-do-terminal. So biblioteca padrao.
 """
 import argparse
 import json
@@ -28,8 +29,10 @@ import sys
 from pathlib import Path
 
 PASTA = Path(__file__).resolve().parent
-for pasta in (PASTA.parent / "leitura-do-terminal", PASTA.parent / "protocolo"):  # as pastas irmas
-    sys.path.insert(0, str(pasta))
+for pasta in (PASTA.parent.parent / "extrator", PASTA.parent / "extrator", PASTA.parent / "leitura-do-terminal",
+              PASTA.parent / "protocolo"):
+    sys.path.insert(0, str(pasta))  # a ultima posta e a primeira lida
+from extrator_comum import le_conferido  # noqa: E402
 from leitura_do_terminal import (DUPLICACAO, ESCRITA, FECHA_DESCRITOR, OPCAO, TEXTO_EMBUTIDO,  # noqa: E402
                                  ComandoIlegivel, eh_redirecionamento, lidos, opcao_bate, posicoes_de_comando)
 import protocolo  # noqa: E402
@@ -37,70 +40,15 @@ import protocolo  # noqa: E402
 MOLDE = PASTA / "esquemas" / "regras-de-codigo.schema.json"
 CODIFICACAO = "utf-8"
 
-# Partes do JSON Schema que a conferência entende.
-TIPOS = {"object": dict, "array": list, "string": str, "integer": int}
-REFERENCIA = "$ref"
-REFERENCIA_LOCAL = "#/"
-SEPARADOR_DE_CAMINHO = "/"
-
 # Textos.
 QUEBRA = "\n"
 ITEM_DE_LISTA = "- "
 SEPARADOR_DE_TEXTOS = QUEBRA * 2
 
 
-class ForaDoMolde(ValueError):
-    """Dado que o molde não aceita; a mensagem diz onde e o quê."""
-
-
-def resolver(molde, raiz):
-    while REFERENCIA in molde:
-        alvo = raiz
-        for parte in molde[REFERENCIA][len(REFERENCIA_LOCAL):].split(SEPARADOR_DE_CAMINHO):
-            alvo = alvo[parte]
-        molde = alvo
-    return molde
-
-
-def conferir_forma(dados, molde, raiz, onde=SEPARADOR_DE_CAMINHO):
-    """Erro no primeiro dado fora do molde: tipo, valor fixo, tamanho mínimo, campo que falta
-    ou que o molde não conhece."""
-    molde = resolver(molde, raiz)
-    tipo = molde.get("type")
-    if tipo is not None and not isinstance(dados, TIPOS[tipo]):
-        raise ForaDoMolde(f"{onde}: {tipo}")
-    if "const" in molde and dados != molde["const"]:
-        raise ForaDoMolde(f"{onde}: {molde['const']!r}")
-    minimo = molde.get("minLength", molde.get("minItems", 0))
-    if isinstance(dados, (str, list)) and len(dados) < minimo:
-        raise ForaDoMolde(f"{onde}: vazio")
-    if isinstance(dados, list):
-        for numero, item in enumerate(dados):
-            conferir_forma(item, molde.get("items", {}), raiz, f"{onde}{numero}{SEPARADOR_DE_CAMINHO}")
-    if isinstance(dados, dict):
-        faltam = [campo for campo in molde.get("required", []) if campo not in dados]
-        if faltam:
-            raise ForaDoMolde(f"{onde}: faltam {faltam}")
-        campos, outros = molde.get("properties", {}), molde.get("additionalProperties", True)
-        for chave, valor in dados.items():
-            dentro = f"{onde}{chave}{SEPARADOR_DE_CAMINHO}"
-            if chave in campos:
-                conferir_forma(valor, campos[chave], raiz, dentro)
-            elif outros is False:
-                raise ForaDoMolde(f"{onde}{chave}: campo desconhecido")
-            elif isinstance(outros, dict):
-                conferir_forma(valor, outros, raiz, dentro)
-
-
-def ler_json(caminho):
-    return json.loads(Path(caminho).read_text(encoding=CODIFICACAO))
-
-
 def ler_configuracao(caminho):
     arquivo = Path(caminho).resolve()
-    dados = ler_json(arquivo)
-    molde = ler_json(MOLDE)
-    conferir_forma(dados, molde, molde)
+    dados = le_conferido(arquivo, MOLDE)
     terminal = dados["terminal"]
     return {
         "estado": arquivo.parent / dados["estado"],
@@ -121,7 +69,7 @@ def juntar(caminhos):
     return SEPARADOR_DE_TEXTOS.join(Path(c).read_text(encoding=CODIFICACAO).strip() for c in caminhos)
 
 
-# ---- análise do comando de terminal ----
+# ---- analise do comando de terminal ----
 
 def destino_livre(terminal, operador, destino):
     if destino is None or destino[1]:
@@ -162,8 +110,8 @@ def comando_que_escreve(terminal, palavras):
 
 
 def parte_que_escreve(terminal, comando):
-    """Primeira parte do comando, ou de um comando de dentro dele, que escreve em arquivo ou roda código escrito
-    nele; None se não há."""
+    """Primeira parte do comando, ou de um comando de dentro dele, que escreve em arquivo ou roda codigo escrito
+    nele; None se nao ha."""
     for partes, simples in lidos(comando):
         achado = redirecionamento_que_escreve(terminal, partes)
         for palavras in simples:
@@ -219,7 +167,7 @@ def no_fim(config, proto, partes, anotacao):
     return protocolo.resposta(proto, "trava", motivo)
 
 
-TRATADORES = {"antes": antes, "fim": no_fim}  # pelo nome que o protocolo.py dá a cada evento
+TRATADORES = {"antes": antes, "fim": no_fim}  # pelo nome que o protocolo.py da a cada evento
 
 
 def main(argumentos=None):
