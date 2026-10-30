@@ -29,8 +29,9 @@ confundir com o texto, é `ERRO`.
 No fim, uma linha por documento, com quantos itens, grupos e problemas, e uma linha
 `CONFERIR` por problema, com a linha da transcrição. Sai com código 1 quando há problema; a
 saída é gravada assim mesmo, com os problemas. Com `ERRO` (uma expressão que não compila,
-uma informação que falta, um campo que o molde não conhece, uma faixa fora das páginas, um
-grupo de tamanho zero, um padrão em que a marca se confunde com o texto), nada é gravado.
+que diz o campo dela; uma informação que falta, um campo que o molde não conhece, uma faixa
+fora das páginas, um grupo de tamanho zero, um padrão em que a marca se confunde com o
+texto), nada é gravado.
 
 ## O que confere
 

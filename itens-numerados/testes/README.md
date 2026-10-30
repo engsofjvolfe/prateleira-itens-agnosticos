@@ -20,7 +20,9 @@ O teste confere regras que valem para qualquer documento, nunca uma lista pronta
 - os grupos, com vários tamanhos e também com um sumário que começa depois dos primeiros
   itens: cada item fica num grupo só, na ordem, e cada grupo começa onde deve, com o
   número de entradas certo e as páginas do primeiro e do último item;
-- todo erro para tudo, sem gravar nada, e duas rodadas dão a mesma saída.
+- todo erro para tudo, sem gravar nada; a expressão que não compila, de uma forma do corpo,
+  de uma do sumário ou a do número sozinho, dá o erro que diz o campo dela; duas rodadas dão
+  a mesma saída.
 
 Precisa do `extrator_comum.py`, do extrator, na pasta irmã `extrator/` ou na mesma pasta.
 Diz `0 falha(s)` quando passa; senão, uma linha `FALHA` para cada conferência que não

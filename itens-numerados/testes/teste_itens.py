@@ -20,7 +20,9 @@ Os testes conferem regras que valem para qualquer documento, nunca uma lista pro
     comeca na primeira vez que aparece uma entrada do sumario; cada um tem o tamanho em
     entradas, menos o ultimo, que tem de 1 ao tamanho; as paginas de cada grupo sao a do
     primeiro e a do ultimo item;
-  - todo erro para tudo, sem gravar nada; duas rodadas dao a mesma saida.
+  - todo erro para tudo, sem gravar nada; a expressao que nao compila, de uma forma do
+    corpo, de uma do sumario ou a do numero sozinho, da o erro que diz o campo dela; duas
+    rodadas dao a mesma saida.
 Uso:
     python3 -I teste_itens.py <pasta de itens.py> <pasta de trabalho nova>
 Precisa do extrator_comum.py, do extrator, na pasta irma "extrator" ou na mesma pasta.
@@ -50,6 +52,7 @@ PADRAO = {"titulo_pagina": "=== {rotulo} / folha {arquivo} ===", "rotulo_numerad
           "destaques": {"forte": {"abre": "<<", "fecha": ">>"}},
           "tabela": {"inicio": "#", "meio": "#", "fim": "#", "separador": "-"}}
 SEP = ":"
+SOZINHO = "numero_sozinho"  # a forma da linha do sumario que e so o numero, pelo README
 FORMAS = {
     "item": [
         {"expressao": rf"^(?P<numero>\d+(?:{SEP}\d+)+)(?:\s+(?P<titulo>\S.*))?$", "serie": "corpo",
@@ -62,7 +65,7 @@ FORMAS = {
         {"expressao": rf"^(?P<numero>\d+(?:{SEP}\d+)*)\s+(?P<titulo>.+?)\s*\.{{2,}}", "serie": "corpo"},
         {"expressao": r"^Anexo (?P<numero>[A-Z])\s+(?P<titulo>.+?)\s*\.{2,}", "serie": "anexo"},
     ],
-    "numero_sozinho": rf"^\d+(?:{SEP}\d+)*$",
+    SOZINHO: rf"^\d+(?:{SEP}\d+)*$",
     "separador": SEP,
 }
 LETRAS = string.ascii_letters + "áâãçéêíóôõú"
@@ -362,13 +365,27 @@ for nome, erro_ in ERROS.items():
 # ---------- erros: param tudo e nada e gravado ----------
 
 
-def erro(nome, descricao, **kw):
+def erro(nome, descricao, diz=None, **kw):
+    """Confere que o caso e erro, sem gravar nada; com diz, que a mensagem diz esse texto."""
     cod, out, d, saida = roda(nome, TEXTO, PAGINAS, **kw)
-    confere(cod == 1 and out.startswith("ERRO") and not saida.exists(), f"{descricao} é erro, sem gravar nada: {out}")
+    fala = "" if diz is None else f", e diz {diz!r}"
+    confere(cod == 1 and out.startswith("ERRO") and not saida.exists() and (diz is None or diz in out),
+            f"{descricao} é erro, sem gravar nada{fala}: {out}")
 
 
-erro("expressao-ruim", "expressão que não compila",
-     formas=dict(FORMAS, item=[{"expressao": "(?P<numero>[", "serie": "corpo"}]))
+def com_forma_ruim(tipo):
+    """(formas, campo): as formas com a expressao de uma forma sorteada do tipo dado trocada
+    por uma que nao compila, e o campo dela."""
+    k = SORTEIO.randrange(len(FORMAS[tipo]))
+    ruins = [dict(f, expressao="(?P<numero>[") if i == k else f for i, f in enumerate(FORMAS[tipo])]
+    return dict(FORMAS, **{tipo: ruins}), f"formas/{tipo}/{k}/expressao"
+
+
+for tipo in ("item", "sumario"):
+    formas_, campo_ = com_forma_ruim(tipo)
+    erro(f"expressao-ruim-{tipo}", f"expressão de forma do {tipo} que não compila", campo_, formas=formas_)
+erro("numero-sozinho-ruim", "expressão do número sozinho que não compila", f"formas/{SOZINHO}",
+     formas=dict(FORMAS, **{SOZINHO: f"({SEP}"}))
 erro("sem-sumario", "falta de informação", formas={k: v for k, v in FORMAS.items() if k != "sumario"})
 erro("faixa-ruim", "faixa fora das páginas", corpo=[{"de": 3, "ate": PAGINAS + 5}])
 erro("grupo-zero", "grupo de tamanho zero", grupo=0)

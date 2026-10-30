@@ -12,22 +12,24 @@ numeracao deles. Para cada documento:
     ficam debaixo das entradas dele e as paginas do arquivo que eles ocupam.
 
 Tres entradas: a configuracao do extrator, lida como o extrator a le, contra o molde dela
-(dela se usa o padrao: o modelo do titulo de
-pagina, para dividir a transcricao em paginas, e as marcas de destaque e o escape, que se
-tiram da linha antes de reconhecer um item), a configuracao dos itens (as formas de linha,
-o tamanho do grupo e, para cada documento, a transcricao e as faixas de paginas do sumario
-e do corpo; lida pelo molde dela, que pega o campo que ele nao conhece, o que falta e o
-valor de outro tipo ou fora da forma) e o arquivo de saida, um JSON com os itens, os
-problemas e os grupos de cada documento. Os caminhos da configuracao dos itens partem de
---raiz (padrao: a pasta atual).
+(dela se usa o padrao: o modelo do titulo de pagina, para dividir a transcricao em paginas,
+e as marcas de destaque e o escape, que se tiram da linha antes de reconhecer um item), a
+configuracao dos itens (as formas de linha, o tamanho do grupo e, para cada documento, a
+transcricao e as faixas de paginas do sumario e do corpo; lida pelo molde dela, que pega o
+campo que ele nao conhece, o que falta e o valor de outro tipo ou fora da forma) e o arquivo
+de saida, um JSON com os itens, os problemas e os grupos de cada documento. Os caminhos da
+configuracao dos itens partem de --raiz (padrao: a pasta atual).
 
 Uma forma de item e uma expressao regular com os grupos "numero" e, se houver, "titulo";
 o numero e uma sequencia de partes separadas pelo "separador" das formas, cada parte um
-numero ou uma letra (A = 1). Cada forma tem a sua "serie" (por exemplo, as secoes e os anexos): a sequencia se
-confere dentro de cada serie. Opcoes da forma: "linhas_do_titulo", quantas linhas
-seguintes, nao vazias, fazem o titulo quando a linha nao o traz; "so_se_no_sumario", para
-aceitar o item so quando o sumario tem a entrada com o mesmo numero e a linha comeca pelo
-titulo dela (assim uma nota de rodape numerada nao passa por item).
+numero ou uma letra (A = 1). Cada forma tem a sua "serie" (por exemplo, as secoes e os
+anexos): a sequencia se confere dentro de cada serie. Opcoes da forma: "linhas_do_titulo",
+quantas linhas seguintes, nao vazias, fazem o titulo quando a linha nao o traz;
+"so_se_no_sumario", para aceitar o item so quando o sumario tem a entrada com o mesmo numero
+e a linha comeca pelo titulo dela (assim uma nota de rodape numerada nao passa por item). A
+expressao de cada forma e a do numero sozinho ("numero_sozinho", a linha do sumario que e
+so o numero e se junta a seguinte) se compilam pelo compila do modulo comum: a que nao
+compila e erro que diz o campo dela.
 
 Uso:
     python3 -I itens.py <configuracao do extrator.json> <itens.json> <saida.json>
@@ -44,10 +46,12 @@ from pathlib import Path
 PASTA = Path(__file__).resolve().parent
 for pasta in (PASTA.parent / "extrator", PASTA):  # na prateleira, o extrator fica na pasta irma
     sys.path.insert(0, str(pasta))
-from extrator_comum import (ErroDeDados, confere_padrao, le_conferido, le_configuracao,  # noqa: E402
+from extrator_comum import (ErroDeDados, compila, confere_padrao, le_conferido, le_configuracao,  # noqa: E402
                             paginas_da_transcricao, paginas_das_faixas, texto_simples)
 
 MOLDE = PASTA / "esquemas" / "itens-numerados.schema.json"  # o molde da configuracao dos itens
+LISTAS_DE_FORMAS = ("item", "sumario")  # as listas de formas de linha, cada forma com a expressao dela
+SOZINHO = "numero_sozinho"  # a forma da linha do sumario que e so o numero e se junta a seguinte
 
 DIGITOS = re.compile(r"^\d+$")
 LETRA = re.compile(r"^[A-Za-z]$")
@@ -80,11 +84,16 @@ def normal(texto):
     return " ".join(texto.split()).casefold()
 
 
-def compila(formas):
-    try:
-        return [dict(f, rx=re.compile(f["expressao"])) for f in formas]
-    except re.error as e:
-        raise ErroDeDados(f"expressão de forma que não compila: {e}")
+def expressoes(config, chave):
+    """As expressoes das formas (o campo chave da configuracao), compiladas pelo compila do
+    modulo comum, que diz o campo da que nao compila: {"item": [forma com a expressao em rx],
+    "sumario": [...], "junta": a do numero sozinho, ou None sem ele}."""
+    formas = config[chave]
+    saida = {k: [dict(f, rx=compila(f["expressao"], f"o campo {chave}/{k}/{i}/expressao"))
+                 for i, f in enumerate(formas[k])] for k in LISTAS_DE_FORMAS}
+    sozinho = formas.get(SOZINHO)
+    saida["junta"] = compila(sozinho, f"o campo {chave}/{SOZINHO}") if sozinho is not None else None
+    return saida
 
 
 def linhas_das_faixas(paginas, faixas, padrao):
@@ -200,16 +209,16 @@ def grupos(sumario, itens, tamanho):
     return out
 
 
-def documento(doc, config, padrao, raiz):
+def documento(doc, config, formas, padrao, raiz):
+    """O resultado de um documento, com as formas ja compiladas (expressoes)."""
     caminho = raiz / doc["transcricao"]
     try:
         texto = caminho.read_text(encoding="utf-8")
     except OSError as e:
         raise ErroDeDados(f"{doc['transcricao']}: não se lê ({e})")
     paginas = paginas_da_transcricao(texto, padrao["titulo_pagina"])
-    formas = {k: compila(v) for k, v in config["formas"].items() if k in ("item", "sumario")}
-    junta = re.compile(config["formas"]["numero_sozinho"]) if config["formas"].get("numero_sozinho") else None
-    sumario = entradas_do_sumario(linhas_das_faixas(paginas, doc["sumario"], padrao), formas["sumario"], junta)
+    sumario = entradas_do_sumario(linhas_das_faixas(paginas, doc["sumario"], padrao), formas["sumario"],
+                                  formas["junta"])
     itens = itens_do_corpo(linhas_das_faixas(paginas, doc["corpo"], padrao), formas["item"], sumario)
     problemas = problemas_da_sequencia(itens, config["formas"]["separador"]) + problemas_do_sumario(sumario, itens)
     return {"transcricao": doc["transcricao"], "itens": itens, "problemas": problemas,
@@ -227,7 +236,8 @@ def main(argv=None):
         padrao = le_configuracao(a.extrator)["padrao"]
         confere_padrao(padrao)
         config = le_conferido(a.itens, MOLDE)
-        saida = [documento(d, config, padrao, a.raiz) for d in config["documentos"]]
+        formas = expressoes(config, "formas")
+        saida = [documento(d, config, formas, padrao, a.raiz) for d in config["documentos"]]
     except (ErroDeDados, ValueError) as e:  # ValueError: a faixa ou o numero que nao servem
         print(f"ERRO: {e}")
         print("Nada foi gravado.")

@@ -62,6 +62,24 @@
    "para": "for"
   },
   {
+   "nome": "itens-numero-sozinho-pelo-re",
+   "arquivo": "itens.py",
+   "de": "compila(sozinho, f\"o campo {chave}/{SOZINHO}\")",
+   "para": "re.compile(sozinho)"
+  },
+  {
+   "nome": "itens-numero-sozinho-sem-o-campo",
+   "arquivo": "itens.py",
+   "de": "f\"o campo {chave}/{SOZINHO}\"",
+   "para": "\"a expressão\""
+  },
+  {
+   "nome": "itens-forma-sem-o-lugar",
+   "arquivo": "itens.py",
+   "de": "f\"o campo {chave}/{k}/{i}/expressao\"",
+   "para": "f\"o campo {chave}/{k}/0/expressao\""
+  },
+  {
    "nome": "itens-sem-juntar-numero-sozinho",
    "arquivo": "itens.py",
    "de": "if junta and junta.match(l.strip()):",

@@ -46,6 +46,8 @@ prateleira segue o [Versionamento Semântico](https://semver.org/lang/pt-BR/spec
   que parava no primeiro.
 - `itens-numerados`: o tamanho do grupo menor que 1 é pego pelo molde da configuração, que
   diz o caminho do campo.
+- `itens-numerados`: a expressão do número sozinho e a de cada forma se compilam pelo
+  módulo comum, e a que não compila é erro que diz o campo dela.
 - `moldes`: o molde da forma e o das regras pegam o campo que falta, o valor de outro tipo
   e o texto ou a lista vazios, com o caminho do valor; a forma e as regras conferem à mão
   só o que o molde não vê, e a entrada errada deixa de ser pega pelo `KeyError` e pelo
