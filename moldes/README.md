@@ -34,8 +34,9 @@ esperam o assunto, aula por aula. Cada trecho ocupa duas linhas: a primeira com 
 tipos, os grupos (depois de `g`), os caminhos, as marcas (depois de `m`) e o destino
 (depois de `→`); a segunda com o texto.
 
-Na leitura pelos moldes, campo que o molde não conhece é erro. Cada erro que o script acha
-na entrada dá uma linha `ERRO`, que diz o que está errado; ele sai com código 1 e nada é
+Na leitura pelos moldes, o campo que o molde não conhece, o que falta e o valor de outro
+tipo ou fora da forma são erro, que diz o caminho do valor. Cada erro que o script acha na
+entrada dá uma linha `ERRO`, que diz o que está errado; ele sai com código 1 e nada é
 gravado.
 
 ## A forma das análises
@@ -88,9 +89,8 @@ maior, como o formato de um material: o molde fecha só o que elas usam.
 | `grupos` | cada grupo (`id`, `nome`); `pelo_assunto: true` quando o documento do trecho do grupo vem do assunto dele, decidido numa leitura |
 | `documentos` | cada documento (`id`, `nome`) recebe os trechos de um dos `grupos` dele, ou de um dos `caminhos`, ou todos (`todos: true`); os que não recebem todos são os documentos de conteúdo |
 
-As regras se conferem contra a forma: cada marca tem texto e papel, e todo papel dela está
-na forma; todo caminho de um documento é um dos valores do campo do caminho, quando o campo
-diz os valores.
+As regras se conferem contra a forma: todo papel de cada marca está na forma; todo caminho
+de um documento é um dos valores do campo do caminho, quando o campo diz os valores.
 
 ## As classes dos trechos
 
@@ -161,10 +161,11 @@ que não está entre as aulas, que vem depois da última ou que não tem trecho 
 
 Não rodam sozinhas: os scripts desta pasta, e os de um projeto que as copie, as importam.
 
-- `analises.py` — lê as análises da pasta pela forma, depois de conferir a forma; monta o
-  id de um trecho e lê um id, ou o começo dele, em partes; e dá a chave que põe textos em
-  ordem comparando pelo valor os números de dentro deles, com o próprio texto para
-  desempatar.
+- `analises.py` — lê as análises da pasta pela forma, já conferida pelo molde dela, depois
+  de conferir o que o molde não vê (o nome de campo repetido e o papel em mais de um campo,
+  em nenhum ou num campo que não dá lista); monta o id de um trecho e lê um id, ou o começo
+  dele, em partes; e dá a chave que põe textos em ordem comparando pelo valor os números de
+  dentro deles, com o próprio texto para desempatar.
 - `lugares.py` — a classe, as marcas e os documentos de cada trecho, pelas regras; confere
   as regras contra a forma.
 - `relatorio.py` — a tabela em markdown, as ordenações e a tabela das classes.

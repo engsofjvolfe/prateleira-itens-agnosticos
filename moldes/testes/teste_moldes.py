@@ -41,9 +41,9 @@ Os testes conferem regras que valem para qualquer forma, nunca uma lista pronta:
     lugar sai na lista certa; as perguntas de cada trecho de depois vao so para aulas ate a
     ultima; a ordem dos lugares nao muda o que fica; entradas que se contradizem sao erro
     que diz cada uma;
-  - forma, regras e analises erradas: a conferencia da parte errada (a forma, as regras ou
-    a leitura) e a que pega o erro e diz o que esta errado, e a leitura das analises pelas
-    regras para com o erro dessa parte;
+  - forma, regras e analises erradas no que o molde nao ve: a conferencia da parte errada
+    (a forma, as regras ou a leitura) e a que pega o erro e diz o que esta errado, e a
+    leitura das analises pelas regras para com o erro dessa parte;
   - duas rodadas dao a mesma saida.
 Uso:
     python3 -I teste_moldes.py <pasta da peca> <pasta de trabalho nova> [--semente N]

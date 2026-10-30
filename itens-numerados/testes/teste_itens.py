@@ -238,7 +238,8 @@ def roda(nome, texto, paginas, grupo=2, formas=FORMAS, padrao=PADRAO, corpo=None
     (pasta / "manual.md").write_text(texto, encoding="utf-8")
     config = {"versao_schema": 1, "formas": formas, "grupo": grupo, "documentos": [
         {"transcricao": "manual.md", "sumario": [{"de": 2, "ate": 2}], "corpo": corpo or [{"de": 3, "ate": paginas}]}]}
-    for arq, dados in (("extrator.json", {"versao_schema": 1, "padrao": padrao}), ("itens.json", config)):
+    extrator = {"versao_schema": 1, "padrao": padrao, "leitores": {}}
+    for arq, dados in (("extrator.json", extrator), ("itens.json", config)):
         (pasta / arq).write_text(json.dumps(dados, ensure_ascii=False), encoding="utf-8")
     r = subprocess.run([sys.executable, "-I", str(PECA / "itens.py"), str(pasta / "extrator.json"),
                         str(pasta / "itens.json"), str(pasta / "saida.json"), "--raiz", str(pasta)],

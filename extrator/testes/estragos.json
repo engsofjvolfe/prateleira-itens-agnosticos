@@ -2,36 +2,6 @@
  "versao_schema": 1,
  "estragos": [
   {
-   "nome": "campo-que-falta-aceito",
-   "arquivo": "extrator_comum.py",
-   "de": "            raise ErroDeDados(f\"falta o campo {caminho}\")",
-   "para": "            return None"
-  },
-  {
-   "nome": "campo-de-outro-tipo-aceito",
-   "arquivo": "extrator_comum.py",
-   "de": "    if not isinstance(valor, tipos) or (isinstance(valor, bool) and bool not in tipos):",
-   "para": "    if False:"
-  },
-  {
-   "nome": "campo-booleano-como-numero",
-   "arquivo": "extrator_comum.py",
-   "de": " or (isinstance(valor, bool) and bool not in tipos)",
-   "para": ""
-  },
-  {
-   "nome": "campo-so-o-primeiro-nivel",
-   "arquivo": "extrator_comum.py",
-   "de": "    for parte in caminho.split(\"/\"):",
-   "para": "    for parte in caminho.split(\"/\")[:1]:"
-  },
-  {
-   "nome": "expressao-ruim-quebra",
-   "arquivo": "extrator_comum.py",
-   "de": "        raise ErroDeDados(f\"o campo {caminho} não compila como expressão regular: {e}\")",
-   "para": "        raise"
-  },
-  {
    "nome": "pdf-tira-hifen",
    "arquivo": "leitor_pdf.py",
    "de": "\" \".join(p for p, _ in linha) if",
@@ -270,18 +240,6 @@
    "arquivo": "leitor_pdf.py",
    "de": "if ocr and contexto.get(\"pular_ocr\"):",
    "para": "if False:"
-  },
-  {
-   "nome": "campo-desconhecido-aceito",
-   "arquivo": "extrator_comum.py",
-   "de": "elif outros is False:\n                out.append(",
-   "para": "elif False:\n                out.append("
-  },
-  {
-   "nome": "molde-sem-ref",
-   "arquivo": "extrator_comum.py",
-   "de": "while \"$ref\" in molde:",
-   "para": "while False:"
   },
   {
    "nome": "opcao-desconhecida-aceita",

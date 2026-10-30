@@ -13,7 +13,7 @@
   "$defs": {
     "texto": { "type": "string", "minLength": 1 },
     "textos": { "type": "array", "items": { "$ref": "#/$defs/texto" } },
-    "caractere": { "type": "string", "pattern": "^.$" },
+    "caractere": { "type": "string", "minLength": 1, "maxLength": 1 },
     "trocas": { "type": "object", "additionalProperties": { "type": "string" } },
     "padrao": {
       "type": "object",

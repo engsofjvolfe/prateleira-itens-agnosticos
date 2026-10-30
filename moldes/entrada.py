@@ -3,8 +3,9 @@ O que os scripts desta pasta fazem do mesmo jeito, num lugar so: as quatro entra
 comando (a pasta das analises, a forma delas, as regras de lugar e o arquivo de saida), a
 leitura delas, o aviso de erro e a gravacao da saida.
 
-A forma das analises e as regras sao lidas contra os moldes delas, em esquemas/ (campo que
-o molde nao conhece e erro), e as regras sao conferidas contra a forma. Precisa do
+A forma das analises e as regras sao lidas contra os moldes delas, em esquemas/ (o campo
+que o molde nao conhece, o que falta e o valor de outro tipo ou fora da forma sao erro, que
+diz o caminho do valor), e as regras sao conferidas contra a forma. Precisa do
 extrator_comum.py, do extrator, na pasta irma "extrator" ou na mesma pasta.
 """
 import argparse
@@ -18,7 +19,8 @@ import extrator_comum  # noqa: E402
 import lugares  # noqa: E402
 
 MOLDES = PASTA / "esquemas"  # os moldes da forma das analises e das regras
-ERROS = (extrator_comum.ErroDeDados, KeyError, ValueError, TypeError)  # o que uma entrada errada levanta
+# o que uma entrada errada levanta: o erro da leitura pelo molde e o das conferencias que ele nao faz (ValueError)
+ERROS = (extrator_comum.ErroDeDados, ValueError)
 
 
 def argumentos(descricao, saida):
@@ -43,7 +45,7 @@ def ler(a):
 
 def erro(e):
     """Mostra o erro de uma entrada e que nada foi gravado; devolve o codigo de saida."""
-    print(f"ERRO: falta a informação {e}" if isinstance(e, KeyError) else f"ERRO: {e}")
+    print(f"ERRO: {e}")
     print("Nada foi gravado.")
     return 1
 

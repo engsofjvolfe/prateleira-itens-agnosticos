@@ -61,9 +61,9 @@ Eles conferem regras que valem para qualquer forma, nunca uma lista pronta. O
   sai na lista certa; as perguntas de cada trecho de depois vão só para aulas até a última;
   a ordem dos lugares não muda o que fica; entradas que se contradizem são erro que diz
   cada uma;
-- na forma, nas regras e nas análises erradas, a conferência da parte errada (a forma, as
-  regras ou a leitura) é a que pega o erro e diz o que está errado, e a leitura das análises
-  pelas regras para com o erro dessa parte;
+- na forma, nas regras e nas análises erradas no que o molde não vê, a conferência da parte
+  errada (a forma, as regras ou a leitura) é a que pega o erro e diz o que está errado, e a
+  leitura das análises pelas regras para com o erro dessa parte;
 - duas rodadas dão a mesma saída.
 
 O `teste_contar_e_separar.py`:
@@ -74,9 +74,8 @@ O `teste_contar_e_separar.py`:
   assunto; a lista de um documento que não é de conteúdo é `ERRO` e não é gravada;
 - sem erro, a saída é gravada, numa pasta que o script cria quando ela ainda não existe, e
   a contagem traz a tabela das classes;
-- forma, regras e análises erradas dão `ERRO`, que diz o que está errado, e nada é
-  gravado; um número onde as regras pedem uma lista, que nenhuma conferência olha, dá
-  `ERRO` no trabalho do script;
+- forma, regras e análises erradas dão `ERRO`, que diz o que está errado (no que o molde
+  pega, o caminho do valor), e nada é gravado;
 - duas rodadas dão a mesma saída, e a ordem em que os arquivos foram criados não muda nada;
   com problema nas análises, a contagem sai com código 1, e sem problema, com 0.
 

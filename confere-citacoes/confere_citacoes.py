@@ -29,8 +29,7 @@ from pathlib import Path
 PASTA = Path(__file__).resolve().parent
 for pasta in (PASTA.parent / "extrator", PASTA):  # na prateleira, a peca extrator fica na pasta irma
     sys.path.insert(0, str(pasta))
-from extrator_comum import (ErroDeDados, campo, expressao, le_conferido,  # noqa: E402
-                            paginas_da_transcricao, preenche)
+from extrator_comum import ErroDeDados, expressao, le_conferido, paginas_da_transcricao, preenche  # noqa: E402
 
 MOLDE = PASTA / "esquemas" / "confere-citacoes.schema.json"
 GRUPOS = {"referencia": ("fonte", "paginas"), "citacao": ("trecho",)}  # os grupos que cada expressao tem de ter
@@ -39,26 +38,20 @@ MOSTRA = 80  # quantas letras do pedaco a mensagem mostra
 
 
 def le_configuracao(caminho):
-    """A configuracao, conferida contra o molde, com as expressoes compiladas e os grupos conferidos."""
+    """A configuracao, conferida contra o molde, com as expressoes compiladas; os grupos delas e
+    o modelo do arquivo, que o molde nao ve, conferidos aqui."""
     dados = le_conferido(caminho, MOLDE)
     conf = {nome: expressao(dados, nome) for nome in GRUPOS}
     for nome, grupos in GRUPOS.items():
         faltam = [g for g in grupos if g not in conf[nome].groupindex]
         if faltam:
             raise ErroDeDados(f"a expressão {nome} não tem o(s) grupo(s) {faltam}")
-    for nome, caminho_ in (("separador", "paginas/separador"), ("intervalo", "paginas/intervalo"),
-                           ("arquivo", "fontes/arquivo"), ("titulo_pagina", "fontes/titulo_pagina"),
-                           ("supressao", "supressao"), ("pontas", "pontas")):
-        conf[nome] = campo(dados, caminho_, str)
-    for nome in ("separador", "intervalo", "supressao"):
-        if not conf[nome]:
-            raise ErroDeDados(f"o campo {nome} está vazio")
+    conf.update(separador=dados["paginas"]["separador"], intervalo=dados["paginas"]["intervalo"],
+                arquivo=dados["fontes"]["arquivo"], titulo_pagina=dados["fontes"]["titulo_pagina"],
+                supressao=dados["supressao"], pontas=dados["pontas"])
     preenche(conf["arquivo"], fonte="")  # um campo que nao seja {fonte} e erro agora, nao no meio da conferencia
-    conf["ignorar"] = [(expressao(b, "abre"), expressao(b, "fecha")) for b in campo(dados, "fontes/ignorar", list)]
-    grupos = campo(dados, "equivalentes", list)
-    if not all(isinstance(g, str) and len(g) > 1 for g in grupos):
-        raise ErroDeDados("cada grupo de equivalentes tem de ser um texto com dois caracteres ou mais")
-    conf["equivalentes"] = {c: g[0] for g in grupos for c in g}
+    conf["ignorar"] = [(expressao(b, "abre"), expressao(b, "fecha")) for b in dados["fontes"]["ignorar"]]
+    conf["equivalentes"] = {c: g[0] for g in dados["equivalentes"] for c in g}
     return conf
 
 

@@ -14,9 +14,8 @@ Os testes conferem regras que valem para qualquer forma, nunca uma lista pronta:
     assunto; a lista de um documento que nao e de conteudo e ERRO e nao grava;
   - sem erro, a saida e gravada, numa pasta que o script cria quando ela ainda nao existe,
     e a contagem traz a tabela das classes;
-  - forma, regras e analises erradas dao ERRO, que diz o que esta errado, e nada e gravado;
-    um numero onde as regras pedem uma lista, que nenhuma conferencia olha, da ERRO no
-    trabalho do script;
+  - forma, regras e analises erradas dao ERRO, que diz o que esta errado (no que o molde
+    pega, o caminho do valor), e nada e gravado;
   - duas rodadas dao a mesma saida, e a ordem em que os arquivos foram criados nao muda
     nada; com problema nas analises, a contagem sai com codigo 1, e sem problema, com 0.
 Uso:

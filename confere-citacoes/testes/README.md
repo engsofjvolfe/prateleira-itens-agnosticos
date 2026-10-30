@@ -19,8 +19,8 @@ conta os erros que saíram.
   trecho; trecho sem referência.
 - Saem com 2, sem conferir: configuração com campo desconhecido, sem um campo, com
   expressão que não compila ou sem um grupo, com modelo de arquivo de outro campo, com grupo
-  de equivalentes de um caractere, com supressão vazia; pasta das fontes ou texto que não
-  existe; texto que não se lê em UTF-8.
+  de equivalentes de um caractere, com supressão vazia, também num texto sem citação; pasta
+  das fontes ou texto que não existe; texto que não se lê em UTF-8.
 - Duas rodadas dão o mesmo.
 
 Diz `0 falha(s)` quando passa; senão, uma linha `FALHA` para cada conferência que não

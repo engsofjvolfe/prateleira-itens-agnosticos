@@ -60,7 +60,7 @@
       }
     },
     "leituras": { "type": "array", "items": { "$ref": "#/$defs/leitura" } },
-    "resumos": { "type": "array", "items": { "$ref": "#/$defs/nome" } }
+    "resumos": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/nome" } }
   },
   "$defs": {
     "nome": { "type": "string", "minLength": 1 },

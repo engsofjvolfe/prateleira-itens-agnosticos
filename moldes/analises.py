@@ -1,6 +1,7 @@
 """
 Le as analises por aula escritas numa forma declarada num arquivo de dados: a forma das
-analises, com o molde em esquemas/forma-analise.schema.json.
+analises, com o molde em esquemas/forma-analise.schema.json. A forma chega ja lida pelo molde
+dela; a leitura das analises confere so o que o molde nao ve.
 
 A forma diz o padrao dos nomes dos arquivos e o que vem antes da chave da aula no nome; o
 comeco de uma linha de titulo, que fecha o slide, e o de uma linha que abre um slide, com o
@@ -147,44 +148,27 @@ def inteiro(bruto, campo, vazio):
     return bruto.strip()
 
 
-FORMAS = {  # cada forma de campo: a lista de textos que ela pede, se o valor e uma lista e como se le
-    "lista": {"pede": "separadores", "em_lista": True, "le": em_lista},
-    "pedacos": {"pede": "separadores", "em_lista": True, "le": em_pedacos},
-    "presenca": {"pede": "valores", "em_lista": True, "le": presentes},
-    "texto": {"pede": None, "em_lista": False, "le": inteiro},
+FORMAS = {  # cada forma de campo, como o molde da forma declara: se o valor e uma lista e como se le
+    "lista": {"em_lista": True, "le": em_lista},
+    "pedacos": {"em_lista": True, "le": em_pedacos},
+    "presenca": {"em_lista": True, "le": presentes},
+    "texto": {"em_lista": False, "le": inteiro},
 }
 
 
-def textos(lista):
-    """Se e uma lista com pelo menos um texto, e nenhum texto vazio."""
-    return isinstance(lista, list) and bool(lista) and all(isinstance(t, str) and t for t in lista)
-
-
 def erros_da_forma(forma):
-    """Os problemas da forma que a leitura nao pode deixar passar, cada um numa frase: nenhum
-    campo; nome de campo repetido; forma de campo desconhecida, ou sem a lista de textos que
-    ela pede; papel desconhecido, em mais de um campo, em nenhum, ou num campo cujo valor nao
-    e lista quando o papel pede lista."""
+    """Os problemas da forma, ja conferida pelo molde dela, que a leitura nao pode deixar
+    passar e o molde nao ve, cada um numa frase: nome de campo repetido; papel em mais de um
+    campo, em nenhum, ou num campo cujo valor nao e lista quando o papel pede lista."""
     campos = forma["campos"]
-    if not campos:
-        return ["a forma não tem campo nenhum"]
     nomes = [c["nome"] for c in campos]
     erros = [f"o campo {n!r} aparece mais de uma vez" for n in sorted({n for n in nomes if nomes.count(n) > 1})]
     donos = {p: [] for p in PAPEIS}
     for c in campos:
         papel = c.get("papel")
-        if papel is not None and papel not in donos:
-            erros.append(f"campo {c['nome']!r}: papel desconhecido {papel!r}")
-        elif papel is not None:
+        if papel is not None:
             donos[papel].append(c["nome"])
-        como = FORMAS.get(c["forma"])
-        if como is None:
-            erros.append(f"campo {c['nome']!r}: forma desconhecida {c['forma']!r}")
-            continue
-        if como["pede"] and not textos(c.get(como["pede"])):
-            erros.append(f"campo {c['nome']!r}: a forma {c['forma']!r} pede {como['pede']!r}, "
-                         "uma lista de textos sem texto vazio")
-        if papel in PAPEIS_EM_LISTA and not como["em_lista"]:
+        if papel in PAPEIS_EM_LISTA and not FORMAS[c["forma"]]["em_lista"]:
             erros.append(f"campo {c['nome']!r}: o papel {papel!r} pede um valor em lista, "
                          f"e a forma {c['forma']!r} não dá lista")
     for papel, donos_do_papel in donos.items():
@@ -269,9 +253,9 @@ def ler_analise(caminho, forma):
 
 def ler_analises(pasta, forma):
     """(trechos, notas por aula, aulas em ordem natural) dos arquivos da pasta que seguem o
-    padrao da forma. ErroDeForma quando a forma tem problema (todos numa mensagem), quando
-    nenhum arquivo segue o padrao, quando dois arquivos dao a mesma aula, numa linha fora da
-    forma e quando um id se repete."""
+    padrao da forma, ja conferida pelo molde dela. ErroDeForma quando a forma tem problema
+    que o molde nao ve (todos numa mensagem), quando nenhum arquivo segue o padrao, quando
+    dois arquivos dao a mesma aula, numa linha fora da forma e quando um id se repete."""
     erros = erros_da_forma(forma)
     if erros:
         raise ErroDeForma("a forma das análises: " + "; ".join(erros))

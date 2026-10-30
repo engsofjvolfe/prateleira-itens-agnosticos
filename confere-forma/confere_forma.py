@@ -34,44 +34,36 @@ from pathlib import Path
 PASTA = Path(__file__).resolve().parent
 for pasta in (PASTA.parent / "extrator", PASTA):  # na prateleira, a peca extrator fica na pasta irma
     sys.path.insert(0, str(pasta))
-from extrator_comum import ErroDeDados, campo, expressao, le_conferido  # noqa: E402
+from extrator_comum import ErroDeDados, expressao, le_conferido  # noqa: E402
 
 MOLDE = PASTA / "esquemas" / "confere-forma.schema.json"
 CODIFICACAO = "utf-8"
 PALAVRA = re.compile(r"\w+")  # o que se conta como palavra
-ITENS_DA_ABERTURA = ("igual", "padrao")  # cada item da abertura tem um destes, e so um
 
 
-def item_da_abertura(item, k):
-    """("igual", texto) ou ("padrao", expressao compilada) de um item da abertura."""
-    if not isinstance(item, dict) or len([c for c in ITENS_DA_ABERTURA if c in item]) != 1:
-        raise ErroDeDados(f"o item {k + 1} da abertura tem de ter um só destes campos: {list(ITENS_DA_ABERTURA)}")
+def item_da_abertura(item):
+    """("igual", texto) ou ("padrao", expressao compilada) de um item da abertura, que o molde
+    ja conferiu ter um so dos dois."""
     if "igual" in item:
-        return "igual", campo(item, "igual", str)
+        return "igual", item["igual"]
     return "padrao", expressao(item, "padrao")
 
 
 def le_configuracao(caminho):
-    """A configuracao, conferida contra o molde, com as expressoes compiladas."""
+    """A configuracao, conferida contra o molde, com as expressoes compiladas; o grupo do titulo
+    e o minimo que passa do maximo, que o molde nao ve, conferidos aqui."""
     dados = le_conferido(caminho, MOLDE)
-    conf = {"abertura": [item_da_abertura(item, k) for k, item in enumerate(campo(dados, "abertura", list))]}
+    conf = {"abertura": [item_da_abertura(item) for item in dados["abertura"]]}
     for nome, caminho_ in (("secao", "secao"), ("divisor", "divisor"), ("fecho_abre", "fecho/abre"),
                            ("fecho_continua", "fecho/continua"), ("italico_fora", "italico/fora_de"),
                            ("palavras_fora", "palavras/fora_de")):
         conf[nome] = expressao(dados, caminho_)
     if "titulo" not in conf["secao"].groupindex:
         raise ErroDeDados("a expressão secao não tem o grupo titulo")
-    conf["titulos"] = campo(dados, "titulos", list)
-    conf["nomes"] = campo(dados, "italico/nomes", list)
-    conf["marcas"] = campo(dados, "italico/marcas", list)
-    for lista in ("titulos", "nomes", "marcas"):
-        if not all(isinstance(x, str) and x for x in conf[lista]):
-            raise ErroDeDados(f"cada item de {lista} tem de ser um texto que não está vazio")
-    conf["proibidos"] = []
-    for regra in campo(dados, "proibidos", list):
-        exceto = expressao(regra, "exceto") if isinstance(regra, dict) and "exceto" in regra else None
-        conf["proibidos"].append((campo(regra, "nome", str), expressao(regra, "padrao"), exceto))
-    conf["minimo"], conf["maximo"] = campo(dados, "palavras/minimo", int), campo(dados, "palavras/maximo", int)
+    conf.update(titulos=dados["titulos"], nomes=dados["italico"]["nomes"], marcas=dados["italico"]["marcas"],
+                minimo=dados["palavras"]["minimo"], maximo=dados["palavras"]["maximo"])
+    conf["proibidos"] = [(regra["nome"], expressao(regra, "padrao"),
+                          expressao(regra, "exceto") if "exceto" in regra else None) for regra in dados["proibidos"]]
     if conf["minimo"] > conf["maximo"]:
         raise ErroDeDados("o mínimo de palavras é maior que o máximo")
     return conf

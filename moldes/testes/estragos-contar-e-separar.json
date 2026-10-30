@@ -64,32 +64,26 @@
   {
    "nome": "erro-nao-diz-o-que-houve",
    "arquivo": "entrada.py",
-   "de": "else f\"ERRO: {e}\")",
-   "para": "else \"ERRO\")"
+   "de": "print(f\"ERRO: {e}\")",
+   "para": "print(\"ERRO\")"
   },
   {
-   "nome": "chave-sem-o-nome",
+   "nome": "erro-da-conferencia-nao-e-erro",
    "arquivo": "entrada.py",
-   "de": "f\"ERRO: falta a informação {e}\"",
-   "para": "\"ERRO: falta uma informação\""
+   "de": "ERROS = (extrator_comum.ErroDeDados, ValueError)",
+   "para": "ERROS = (extrator_comum.ErroDeDados,)"
   },
   {
-   "nome": "chave-que-falta-nao-e-erro",
+   "nome": "erro-do-molde-nao-e-erro",
    "arquivo": "entrada.py",
-   "de": "ERROS = (extrator_comum.ErroDeDados, KeyError, ValueError, TypeError)",
-   "para": "ERROS = (extrator_comum.ErroDeDados, ValueError, TypeError)"
+   "de": "ERROS = (extrator_comum.ErroDeDados, ValueError)",
+   "para": "ERROS = (ValueError,)"
   },
   {
    "nome": "saida-sem-pasta",
    "arquivo": "entrada.py",
    "de": "caminho.parent.mkdir(parents=True, exist_ok=True)",
    "para": "pass"
-  },
-  {
-   "nome": "tipo-errado-nao-e-erro",
-   "arquivo": "entrada.py",
-   "de": "ERROS = (extrator_comum.ErroDeDados, KeyError, ValueError, TypeError)",
-   "para": "ERROS = (extrator_comum.ErroDeDados, KeyError, ValueError)"
   },
   {
    "nome": "codigo-do-trabalho-ignorado",
@@ -102,6 +96,72 @@
    "arquivo": "entrada.py",
    "de": "gravar(a.saida, texto)",
    "para": "pass"
+  },
+  {
+   "nome": "chave-que-falta-aceita",
+   "arquivo": "esquemas/forma-analise.schema.json",
+   "de": "\"separador_campos\", \"vazio\", ",
+   "para": "\"separador_campos\", "
+  },
+  {
+   "nome": "forma-sem-campos-aceita",
+   "arquivo": "esquemas/forma-analise.schema.json",
+   "de": "\"campos\": { \"type\": \"array\", \"minItems\": 1, ",
+   "para": "\"campos\": { \"type\": \"array\", "
+  },
+  {
+   "nome": "forma-desconhecida-passa",
+   "arquivo": "esquemas/forma-analise.schema.json",
+   "de": "\"forma\": { \"enum\": [\"lista\", \"pedacos\", \"presenca\", \"texto\"] }",
+   "para": "\"forma\": { \"type\": \"string\" }"
+  },
+  {
+   "nome": "lista-sem-separadores-passa",
+   "arquivo": "esquemas/forma-analise.schema.json",
+   "de": "        { \"if\": { \"properties\": { \"forma\": { \"const\": \"lista\" } } }, \"then\": { \"required\": [\"separadores\"] } },\n",
+   "para": ""
+  },
+  {
+   "nome": "pedacos-sem-separadores-passa",
+   "arquivo": "esquemas/forma-analise.schema.json",
+   "de": "        { \"if\": { \"properties\": { \"forma\": { \"const\": \"pedacos\" } } }, \"then\": { \"required\": [\"separadores\"] } },\n",
+   "para": ""
+  },
+  {
+   "nome": "valor-vazio-aceito",
+   "arquivo": "esquemas/forma-analise.schema.json",
+   "de": "\"items\": { \"type\": \"string\", \"minLength\": 1 } },",
+   "para": "\"items\": { \"type\": \"string\" } },"
+  },
+  {
+   "nome": "papel-desconhecido-passa",
+   "arquivo": "esquemas/forma-analise.schema.json",
+   "de": "\"papel\": { \"enum\": [\"tipo\", \"grupo\", \"caminho\", \"destino\"] }",
+   "para": "\"papel\": { \"type\": \"string\" }"
+  },
+  {
+   "nome": "regras-sem-marcas-aceitas",
+   "arquivo": "esquemas/regras.schema.json",
+   "de": "\"required\": [\"fora\", \"marcas\", \"grupos\", \"documentos\"],",
+   "para": "\"required\": [\"fora\", \"grupos\", \"documentos\"],"
+  },
+  {
+   "nome": "marca-sem-texto-passa",
+   "arquivo": "esquemas/regras.schema.json",
+   "de": "\"texto\": { \"type\": \"string\", \"minLength\": 1 },",
+   "para": "\"texto\": { \"type\": \"string\" },"
+  },
+  {
+   "nome": "marca-sem-papel-passa",
+   "arquivo": "esquemas/regras.schema.json",
+   "de": "\"textos\": { \"type\": \"array\", \"minItems\": 1, ",
+   "para": "\"textos\": { \"type\": \"array\", "
+  },
+  {
+   "nome": "grupos-de-outro-tipo-aceitos",
+   "arquivo": "esquemas/regras.schema.json",
+   "de": "\"grupos\": { \"$ref\": \"#/$defs/textos_ou_nenhum\" },",
+   "para": "\"grupos\": true,"
   }
  ]
 }

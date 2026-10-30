@@ -1,11 +1,12 @@
 """
-O que o extrator, os leitores dele e as pecas que leem as transcricoes dele fazem do
-mesmo jeito, num lugar so: ler um arquivo de dados JSON, achar nele o campo que o molde
-nao conhece, pegar um campo dos dados com o tipo pedido, compilar a expressao regular de
-um campo, ler a configuracao do extrator contra o molde dela, conferir o padrao,
-preencher um modelo do padrao, reconhecer o titulo de pagina que o modelo faz, dividir uma transcricao
-em paginas, juntar os pedacos de uma linha com destaques, tirar de uma linha as marcas de
-destaque e os escapes e expandir faixas de paginas.
+O que o extrator, os leitores dele e as outras pecas da prateleira fazem do mesmo jeito,
+num lugar so: ler um arquivo de dados JSON e conferi-lo contra o molde dele (JSON Schema),
+que antes e conferido contra o molde dos moldes (o que o leitor de molde entende), pegar um
+campo dos dados com o tipo pedido, compilar a expressao regular de um campo, ler a
+configuracao do extrator contra o molde dela, conferir o padrao, preencher um modelo do
+padrao, reconhecer o titulo de pagina que o modelo faz, dividir uma transcricao em paginas,
+juntar os pedacos de uma linha com destaques, tirar de uma linha as marcas de destaque e os
+escapes e expandir faixas de paginas.
 """
 
 import json
@@ -14,6 +15,11 @@ from pathlib import Path
 
 CAMPO = re.compile(r"\{(\w+)\}")
 MOLDES = Path(__file__).resolve().parent / "esquemas"  # o molde de cada entrada do extrator, com o nome dela
+MOLDE_DOS_MOLDES = MOLDES / "molde.schema.json"  # as palavras do JSON Schema que o leitor entende, e o valor de cada
+
+# O tipo do Python de cada tipo do JSON Schema.
+TIPOS = {"object": dict, "array": list, "string": str, "integer": int, "number": (int, float), "boolean": bool,
+         "null": type(None)}
 
 
 class ErroDeDados(Exception):
@@ -27,40 +33,181 @@ def le_json(caminho):
         raise ErroDeDados(f"{caminho}: não se lê como JSON em UTF-8 ({e})")
 
 
-def campos_desconhecidos(dados, molde, raiz=None, onde=""):
-    """[caminho de cada campo dos dados que o molde nao conhece]: em todo objeto em que o
-    molde diz os campos ("properties") e nao aceita outros ("additionalProperties": false).
-    Segue o "$ref" dentro do proprio molde, o "items" das listas e o "additionalProperties"
-    que e um molde."""
-    raiz = molde if raiz is None else raiz
-    while "$ref" in molde:
-        alvo = raiz
-        for parte in molde["$ref"][2:].split("/"):
-            alvo = alvo[parte]
-        molde = alvo
-    out = []
-    if isinstance(dados, dict):
-        campos, outros = molde.get("properties", {}), molde.get("additionalProperties", True)
-        for chave, valor in dados.items():
-            if chave in campos:
-                out += campos_desconhecidos(valor, campos[chave], raiz, f"{onde}/{chave}")
-            elif outros is False:
-                out.append(f"{onde}/{chave}")
-            elif isinstance(outros, dict):
-                out += campos_desconhecidos(valor, outros, raiz, f"{onde}/{chave}")
-    elif isinstance(dados, list) and isinstance(molde.get("items"), dict):
-        for k, valor in enumerate(dados):
-            out += campos_desconhecidos(valor, molde["items"], raiz, f"{onde}/{k}")
-    return out
+def mostra(valor):
+    """O valor JSON escrito como no JSON, para a mensagem de erro."""
+    return json.dumps(valor, ensure_ascii=False)
+
+
+def do_tipo(valor, tipo):
+    """Se o valor JSON e do tipo do molde. O booleano nao e numero, e o inteiro e o numero
+    escrito sem ponto, como o Python o le."""
+    if tipo not in TIPOS:
+        raise ErroDeDados(f"o molde usa um tipo que o leitor não conhece: {tipo!r}")
+    return isinstance(valor, TIPOS[tipo]) and (tipo == "boolean" or not isinstance(valor, bool))
+
+
+def tipo_de(valor):
+    """O tipo do JSON Schema de um valor JSON, o mais estreito."""
+    return next(t for t in TIPOS if do_tipo(valor, t))
+
+
+def igual(a, b):
+    """Se dois valores JSON sao o mesmo: o booleano so e igual a booleano, o numero a numero
+    de mesmo valor, e listas e objetos, item por item."""
+    if isinstance(a, list) and isinstance(b, list):
+        return len(a) == len(b) and all(igual(x, y) for x, y in zip(a, b))
+    if isinstance(a, dict) and isinstance(b, dict):
+        return a.keys() == b.keys() and all(igual(a[k], b[k]) for k in a)
+    numeros = [do_tipo(v, "number") for v in (a, b)]
+    if all(numeros):
+        return a == b
+    return not any(numeros) and type(a) is type(b) and a == b
+
+
+def junta(erros):
+    """Os erros [(caminho, motivo)] numa linha so, cada um com o caminho ("/" e a raiz)."""
+    return "; ".join(f"{onde or '/'}: {motivo}" for onde, motivo in erros)
+
+
+def compila(texto, onde):
+    """A expressao regular do texto, compilada; erro (ErroDeDados) que diz onde ela esta
+    quando nao compila."""
+    try:
+        return re.compile(texto)
+    except re.error as e:
+        raise ErroDeDados(f"{onde} não compila como expressão regular: {e}")
+
+
+def referido(referencia, raiz):
+    """O molde para que a referencia aponta: a raiz ("#") ou um molde de $defs ("#/$defs/nome",
+    com "~1" no lugar de "/" e "~0" no de "~" no nome), como o molde dos moldes ja conferiu."""
+    alvo = raiz
+    for parte in referencia.split("/")[1:]:
+        parte = parte.replace("~1", "/").replace("~0", "~")
+        if parte not in alvo:
+            raise ErroDeDados(f"o molde aponta para o que ele não tem: {referencia!r}")
+        alvo = alvo[parte]
+    return alvo
+
+
+def fora_do_texto(dados, molde, onde):
+    erros = []
+    if len(dados) < molde.get("minLength", 0):
+        erros.append((onde, f"{mostra(dados)} tem menos de {molde['minLength']} caractere(s)"))
+    if "maxLength" in molde and len(dados) > molde["maxLength"]:
+        erros.append((onde, f"{mostra(dados)} tem mais de {molde['maxLength']} caractere(s)"))
+    if "pattern" in molde:
+        forma = compila(molde["pattern"], f"a forma {mostra(molde['pattern'])} do molde")
+        if not forma.search(dados):
+            erros.append((onde, f"{mostra(dados)} não segue a forma {molde['pattern']}"))
+    return erros
+
+
+def fora_do_numero(dados, molde, onde):
+    erros = []
+    if "minimum" in molde and dados < molde["minimum"]:
+        erros.append((onde, f"{mostra(dados)} é menor que {molde['minimum']}"))
+    if "maximum" in molde and dados > molde["maximum"]:
+        erros.append((onde, f"{mostra(dados)} é maior que {molde['maximum']}"))
+    return erros
+
+
+def fora_da_lista(dados, molde, raiz, onde):
+    erros = []
+    if len(dados) < molde.get("minItems", 0):
+        erros.append((onde, f"tem menos de {molde['minItems']} item(ns)"))
+    if "maxItems" in molde and len(dados) > molde["maxItems"]:
+        erros.append((onde, f"tem mais de {molde['maxItems']} item(ns)"))
+    if molde.get("uniqueItems"):
+        erros += [(f"{onde}/{k}", f"{mostra(v)} repete um item de antes") for k, v in enumerate(dados)
+                  if any(igual(v, w) for w in dados[:k])]
+    for k, valor in enumerate(dados):
+        erros += fora_do_molde(valor, molde.get("items", True), raiz, f"{onde}/{k}")
+    return erros
+
+
+def fora_do_objeto(dados, molde, raiz, onde):
+    erros = [(f"{onde}/{c}", "falta") for c in molde.get("required", []) if c not in dados]
+    if len(dados) < molde.get("minProperties", 0):
+        erros.append((onde, f"tem menos de {molde['minProperties']} campo(s)"))
+    if "maxProperties" in molde and len(dados) > molde["maxProperties"]:
+        erros.append((onde, f"tem mais de {molde['maxProperties']} campo(s)"))
+    campos, outros = molde.get("properties", {}), molde.get("additionalProperties", True)
+    for chave, valor in dados.items():
+        if chave in campos:
+            erros += fora_do_molde(valor, campos[chave], raiz, f"{onde}/{chave}")
+        elif outros is False:
+            erros.append((f"{onde}/{chave}", "campo que o molde não conhece"))
+        else:
+            erros += fora_do_molde(valor, outros, raiz, f"{onde}/{chave}")
+    return erros
+
+
+def confere_molde(molde):
+    """Erro (ErroDeDados) que diz cada lugar do molde fora do molde dos moldes: uma palavra
+    que o leitor nao entende, ou o valor dela que nao e da forma que ela pede."""
+    dos_moldes = le_json(MOLDE_DOS_MOLDES)
+    erros = fora_do_molde(molde, dos_moldes, dos_moldes)
+    if erros:
+        raise ErroDeDados(f"o molde sai do que o leitor entende ({MOLDE_DOS_MOLDES.name}): {junta(erros)}")
+
+
+def fora_do_molde(dados, molde, raiz=None, onde="", seguidas=frozenset()):
+    """[(caminho, motivo)] de cada valor dos dados fora do molde (JSON Schema), com o caminho
+    dentro dos dados ("/a/0/b"; "" e a raiz). Antes, o molde e conferido contra o molde dos
+    moldes, que diz as palavras que o leitor confere e as que nao conferem: o que o leitor
+    nao confere nunca passa calado. O pattern e a expressao regular do Python, buscada no
+    texto; o $ref vai a raiz ("#") ou a um molde de $defs. O tipo que o leitor nao conhece, a
+    referencia para o que o molde nao tem ou que volta a ela mesma sem passar a um valor de
+    dentro e a forma que nao compila sao erro (ErroDeDados). raiz e seguidas sao da
+    conferencia de dentro: o molde inteiro, ja conferido, e as referencias ja seguidas no
+    mesmo valor."""
+    if raiz is None:
+        confere_molde(molde)
+        raiz = molde
+    if isinstance(molde, bool):
+        return [] if molde else [(onde, "o molde não aceita valor aqui")]
+    erros = []
+    if "$ref" in molde:
+        if molde["$ref"] in seguidas:
+            raise ErroDeDados(f"a referência do molde volta a ela mesma: {molde['$ref']!r}")
+        erros += fora_do_molde(dados, referido(molde["$ref"], raiz), raiz, onde, seguidas | {molde["$ref"]})
+    tipos = molde.get("type", list(TIPOS))
+    tipos = tipos if isinstance(tipos, list) else [tipos]
+    if not any([do_tipo(dados, t) for t in tipos]):  # todos, para que o tipo desconhecido nunca passe
+        return erros + [(onde, f"é {tipo_de(dados)}, e não {' ou '.join(tipos)}")]
+    if "const" in molde and not igual(dados, molde["const"]):
+        erros.append((onde, f"{mostra(dados)} não é {mostra(molde['const'])}"))
+    if "enum" in molde and not any(igual(dados, v) for v in molde["enum"]):
+        erros.append((onde, f"{mostra(dados)} não é um destes: {mostra(molde['enum'])}"))
+    if isinstance(dados, str):
+        erros += fora_do_texto(dados, molde, onde)
+    elif do_tipo(dados, "number"):
+        erros += fora_do_numero(dados, molde, onde)
+    elif isinstance(dados, list):
+        erros += fora_da_lista(dados, molde, raiz, onde)
+    elif isinstance(dados, dict):
+        erros += fora_do_objeto(dados, molde, raiz, onde)
+    for parte in molde.get("allOf", []):
+        erros += fora_do_molde(dados, parte, raiz, onde, seguidas)
+    if "if" in molde:
+        ramo = "else" if fora_do_molde(dados, molde["if"], raiz, onde, seguidas) else "then"
+        erros += fora_do_molde(dados, molde.get(ramo, True), raiz, onde, seguidas)
+    return erros
 
 
 def le_conferido(caminho, molde):
-    """Os dados de um arquivo JSON, com erro quando ele tem campo que o molde (o arquivo do
-    JSON Schema) nao conhece -- um nome escrito errado nao passa em silencio."""
-    dados = le_json(caminho)
-    desconhecidos = campos_desconhecidos(dados, le_json(molde))
-    if desconhecidos:
-        raise ErroDeDados(f"{caminho}: campo(s) que o molde {Path(molde).name} não conhece: {desconhecidos}")
+    """Os dados de um arquivo JSON, conferidos contra o molde (o arquivo do JSON Schema) pelo
+    fora_do_molde: erro (ErroDeDados) que diz cada valor fora dele, com o caminho dentro do
+    arquivo -- um nome escrito errado, um campo que falta ou um valor de outro tipo nao
+    passam em silencio. O erro do proprio molde diz o arquivo dele."""
+    dados, regras = le_json(caminho), le_json(molde)
+    try:
+        erros = fora_do_molde(dados, regras)
+    except ErroDeDados as e:
+        raise ErroDeDados(f"{molde}: {e}")
+    if erros:
+        raise ErroDeDados(f"{caminho}: fora do molde {Path(molde).name}: {junta(erros)}")
     return dados
 
 
@@ -81,11 +228,7 @@ def campo(dados, caminho, tipo):
 
 def expressao(dados, caminho):
     """A expressao regular do campo de texto, compilada; erro claro quando nao compila."""
-    texto = campo(dados, caminho, str)
-    try:
-        return re.compile(texto)
-    except re.error as e:
-        raise ErroDeDados(f"o campo {caminho} não compila como expressão regular: {e}")
+    return compila(campo(dados, caminho, str), f"o campo {caminho}")
 
 
 def le_configuracao(caminho):
@@ -95,16 +238,15 @@ def le_configuracao(caminho):
 
 
 def confere_padrao(padrao):
-    """Erro quando uma marca do padrao pode se confundir com o texto. O escape e cada item
-    de "escapar" sao um caractere so; o proprio escape esta entre os que se escapam (assim
-    uma barra do texto nao vira escape), e cada caractere das marcas de destaque tambem
-    (assim um asterisco do texto nao vira marca); o escape nao esta nas marcas de destaque
-    (senao o escape seguido do caractere da marca seria as duas coisas); cada marca de
-    destaque e de um destaque so; e a marca entre duas celulas de tabela tem um caractere
-    que se escapa (assim o texto de uma celula nao a divide em duas)."""
+    """Erro quando uma marca do padrao, ja conferido pelo molde (o escape e cada item de
+    "escapar" sao um caractere so), pode se confundir com o texto. O proprio escape esta
+    entre os que se escapam (assim uma barra do texto nao vira escape), e cada caractere das
+    marcas de destaque tambem (assim um asterisco do texto nao vira marca); o escape nao esta
+    nas marcas de destaque (senao o escape seguido do caractere da marca seria as duas
+    coisas); cada marca de destaque e de um destaque so; e a marca entre duas celulas de
+    tabela tem um caractere que se escapa (assim o texto de uma celula nao a divide em
+    duas)."""
     escape, escapar = padrao["escape"], padrao["escapar"]
-    if len(escape) != 1 or any(len(c) != 1 for c in escapar):
-        raise ErroDeDados(f"o escape e cada item de \"escapar\" têm de ser um caractere só: {escape!r}, {escapar}")
     nas_marcas = {c for d in padrao.get("destaques", {}).values() for m in (d["abre"], d["fecha"]) for c in m}
     faltam = sorted((nas_marcas | {escape}) - set(escapar))
     if faltam:

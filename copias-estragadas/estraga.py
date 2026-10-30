@@ -27,7 +27,6 @@ Uso:
 """
 
 import argparse
-import json
 import shutil
 import subprocess
 import sys
@@ -94,17 +93,12 @@ def main(argv=None):
     p.add_argument("--antes", action="append", default=[], help="argumento do teste antes da pasta de trabalho")
     a = p.parse_args(argv)
     try:
-        estragos = le_conferido(a.lista, MOLDE)["estragos"]
-        obrigatorios = json.loads(MOLDE.read_text(encoding="utf-8"))["$defs"]["estrago"]["required"]
-        faltam = [f"{k}/{c}" for k, e in enumerate(estragos) for c in obrigatorios if c not in e]
-        if faltam:
-            raise ErroDeDados(f"{a.lista}: campo(s) que faltam: {faltam}")
-        estragos = escolhidos(estragos, a.so)
+        estragos = escolhidos(le_conferido(a.lista, MOLDE)["estragos"], a.so)
         repetidos = nomes_repetidos(a.irma)
         if repetidos:
             raise ErroDeDados(f"--irma: mais de uma pasta com o nome {', '.join(repetidos)}")
-    except (ErroDeDados, KeyError) as e:
-        print(f"ERRO: falta a informação {e}" if isinstance(e, KeyError) else f"ERRO: {e}")
+    except ErroDeDados as e:
+        print(f"ERRO: {e}")
         return 1
     if a.trabalho.exists() and any(a.trabalho.iterdir()):
         print(f"ERRO: a pasta de trabalho precisa estar vazia: {a.trabalho}")

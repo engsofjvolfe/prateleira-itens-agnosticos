@@ -9,6 +9,9 @@ prateleira segue o [Versionamento Semântico](https://semver.org/lang/pt-BR/spec
 
 ### Adicionado
 
+- `extrator`: o molde dos moldes (`esquemas/molde.schema.json`), que diz as palavras do
+  JSON Schema que o leitor de molde do módulo comum entende e a forma do valor de cada uma;
+  e o teste do módulo comum, com a lista de estragos dele.
 - `ganchos/leitura-do-terminal`: a função `depois_do_comando`, que acha nas palavras de um
   comando simples um comando de uma ou mais palavras, como `git grep`, também com outras
   palavras no meio, e a `comandos_achados`, que dá cada vez que um comando, ou um de dentro
@@ -19,8 +22,21 @@ prateleira segue o [Versionamento Semântico](https://semver.org/lang/pt-BR/spec
 
 ### Modificado
 
+- `confere-citacoes`, `confere-forma`, `copias-estragadas`, `custo-de-agentes` e
+  `ganchos/protocolo`: o que o molde de cada um confere, como o campo que falta, o texto ou
+  a lista vazios, os limites e a versão do protocolo, sai da conferência à mão, e o erro
+  diz o caminho do valor.
+- `extrator`: o leitor de molde do módulo comum confere o molde inteiro — o tipo, o valor
+  fixo e a lista de valores, o tamanho, a forma do texto, os limites, os itens, os campos
+  obrigatórios, o `allOf` e o `if`, com `$ref` para a raiz e para `$defs` — e diz o caminho
+  de cada valor fora dele; antes, só acusava o campo que o molde não conhece. O próprio
+  molde é conferido antes, contra o molde dos moldes.
 - `ganchos/regras-de-codigo`: a anotação de cada sessão tem o nome tirado do id dela, como
   a do `destino-da-limpeza`, e o id com nome de caminho deixa de ser erro.
+- `moldes`: o molde da forma e o das regras pegam o campo que falta, o valor de outro tipo
+  e o texto ou a lista vazios, com o caminho do valor; a forma e as regras conferem à mão
+  só o que o molde não vê, e a entrada errada deixa de ser pega pelo `KeyError` e pelo
+  `TypeError` do Python.
 
 ## [0.1.0] - 2026-10-29
 

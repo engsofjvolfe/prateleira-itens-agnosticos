@@ -9,16 +9,15 @@ onde está; "Correção" diz como resolver.
 
 ## DRY
 
-1. **Três jeitos de ler a forma dos dados.** `extrator/extrator_comum.py` (`le_conferido`,
-   com `campos_desconhecidos`) só acusa o campo que o molde não conhece; não confere tipo,
-   valor fixo, tamanho nem campo obrigatório. `ganchos/regras-de-codigo/regras_de_codigo.py`
-   (`conferir_forma`) confere tudo isso, com código próprio. `ganchos/chamadas-permitidas/dados.py`
-   confere a configuração e a lista das regras valor por valor, sem molde e sem
-   `versao_schema`. Por causa da falta de tipos no comum, `moldes/entrada.py` (`ERROS`) pega
-   `KeyError`, `ValueError` e `TypeError` à mão, e as peças novas conferem cada campo com
-   `campo` e `expressao`. Correção: um leitor de molde só, completo, no módulo comum (o
-   de `regras_de_codigo.py` serve de base), usado por todas as peças, os ganchos também,
-   pela pasta irmã, como o `busca-por-palavra` já faz.
+1. **Outros jeitos de ler a forma dos dados.** O leitor de molde do
+   `extrator/extrator_comum.py` (`le_conferido`) confere o molde inteiro, mas
+   `ganchos/regras-de-codigo/regras_de_codigo.py` (`conferir_forma`) confere a forma com
+   código próprio, e `ganchos/chamadas-permitidas/dados.py` confere a configuração e a
+   lista das regras valor por valor, sem molde e sem `versao_schema`; e as peças que leram
+   pelo molde quando ele só acusava o campo desconhecido ainda conferem à mão, com `campo`,
+   `expressao` ou código próprio, o que o molde delas já confere. Correção: todas lendo pelo
+   leitor do módulo comum, os ganchos também, pela pasta irmã, como o `busca-por-palavra`
+   já faz, e o que o molde confere fora do código.
 2. **Funções de texto repetidas.** Passar a forma Unicode para NFC e juntar os espaços
    aparece em `moldes/analises.py` (`nfc`) e em `confere-citacoes/confere_citacoes.py`
    (`letras`, `comparavel`). Correção: um módulo de texto comum, documentado, usado pelas
@@ -40,9 +39,8 @@ Sem problema conhecido: as listagens são ordenadas e o sorteio dos testes tem s
 
 ## Preparo para o novo
 
-3. `moldes/entrada.py:21`: o erro de uma entrada errada vem do `KeyError`, `ValueError` ou
-   `TypeError` do Python, sem dizer o campo. Correção: ler cada campo com `campo` (do
-   `extrator_comum.py`), que diz o caminho do campo que falta ou é de outro tipo.
+Sem problema conhecido: o leitor de molde diz o caminho do campo que falta ou é de outro
+tipo, e o molde que usa o que ele não entende é erro.
 
 ## Testes
 

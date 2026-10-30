@@ -8,8 +8,8 @@ delas; trecho que aparece em duas paginas; equivalentes; espacos e quebras de li
 diferentes; pedacos partidos na supressao, com pontas; pagina de rotulo que nao e numero;
 trecho que so esta num bloco ignorado ou antes da primeira pagina; maiusculas; paginas que
 nao se leem; fonte que nao existe ou com bloco que nao fecha; referencia sem trecho e
-trecho sem referencia; configuracao e argumentos que nao servem (codigo 2); duas rodadas
-dao o mesmo. Uso:
+trecho sem referencia; configuracao e argumentos que nao servem (codigo 2, a configuracao
+tambem num texto sem citacao); duas rodadas dao o mesmo. Uso:
     python3 -I teste_confere_citacoes.py <pasta do confere_citacoes.py> <pasta de trabalho nova>
 """
 import json
@@ -173,9 +173,10 @@ errados, ESPERADOS = monta([
     ([cita(FONTE, A, P1)[1]], 0),
     (cita(FONTE, A, f"{' '.join(P1_PALAVRAS[:3])} {SUPRESSAO} {frase(4)}"), 1),
 ])
-CERTO, ERRADO = TRABALHO / f"{palavra()}.md", TRABALHO / f"{palavra()}.md"
+CERTO, ERRADO, SEM_CITACAO = (TRABALHO / f"{palavra()}.md" for _ in range(3))
 CERTO.write_text("\n".join(certos) + "\n", encoding="utf-8")
 ERRADO.write_text("\n".join(errados) + "\n", encoding="utf-8")
+SEM_CITACAO.write_text("\n".join([f"# {frase(3)}", "", frase(10)]) + "\n", encoding="utf-8")
 CONF = grava_configuracao(CONFIGURACAO)
 
 codigo, erros, linhas = roda(CONF, FONTES, CERTO)
@@ -216,8 +217,10 @@ ESTRAGADAS = {
     "supressão vazia": com("supressao", ""),
 }
 for nome, caminho in ESTRAGADAS.items():
-    codigo, erros, linhas = roda(caminho, FONTES, CERTO)
-    confere(codigo == 2 and not erros, f"configuração com {nome} sai com 2, sem conferir: {codigo}, {linhas}")
+    for texto in (CERTO, SEM_CITACAO):  # o erro sai antes de conferir, mesmo sem citação que use a configuração
+        codigo, erros, linhas = roda(caminho, FONTES, texto)
+        confere(codigo == 2 and not erros, f"configuração com {nome} sai com 2, sem conferir {texto.name}: {codigo}, "
+                                           f"{linhas}")
 codigo, erros, _ = roda(CONF, TRABALHO / palavra(), CERTO)
 confere(codigo == 2 and not erros, f"pasta das fontes que não existe sai com 2: {codigo}")
 codigo, erros, _ = roda(CONF, FONTES, TRABALHO / f"{palavra()}.md")

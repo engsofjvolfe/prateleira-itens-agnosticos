@@ -56,14 +56,14 @@
   {"nome": "configuracao-sem-molde", "arquivo": "confere_forma.py",
    "de": "    dados = le_conferido(caminho, MOLDE)",
    "para": "    dados = __import__(\"json\").loads(Path(caminho).read_text(encoding=CODIFICACAO))"},
-  {"nome": "item-com-dois-campos-passa", "arquivo": "confere_forma.py",
-   "de": "len([c for c in ITENS_DA_ABERTURA if c in item]) != 1", "para": "len([c for c in ITENS_DA_ABERTURA if c in item]) < 1"},
+  {"nome": "item-com-dois-campos-passa", "arquivo": "esquemas/confere-forma.schema.json",
+   "de": "      \"maxProperties\": 1,\n", "para": ""},
+  {"nome": "texto-vazio-passa", "arquivo": "esquemas/confere-forma.schema.json",
+   "de": "\"texto\": { \"type\": \"string\", \"minLength\": 1 },", "para": "\"texto\": { \"type\": \"string\" },"},
   {"nome": "secao-sem-grupo-passa", "arquivo": "confere_forma.py",
    "de": "        raise ErroDeDados(\"a expressão secao não tem o grupo titulo\")", "para": "        pass"},
   {"nome": "minimo-maior-passa", "arquivo": "confere_forma.py",
    "de": "    if conf[\"minimo\"] > conf[\"maximo\"]:", "para": "    if False:"},
-  {"nome": "texto-vazio-passa", "arquivo": "confere_forma.py",
-   "de": "if not all(isinstance(x, str) and x for x in conf[lista]):", "para": "if not all(isinstance(x, str) for x in conf[lista]):"},
   {"nome": "texto-ilegivel-passa", "arquivo": "confere_forma.py",
    "de": "        raise ErroDeDados(f\"o texto {arquivo} não se lê em {CODIFICACAO} ({e})\")", "para": "        return [], [], 0"}
  ]

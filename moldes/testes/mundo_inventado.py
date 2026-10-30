@@ -485,14 +485,17 @@ def classes_esperadas(mundo, frases):
 
 def variantes(mundo, pasta):
     """(nome, onde o erro e pego, forma, regras, pasta das analises, o que a mensagem tem de
-    dizer: um texto, varios ou nada) de cada erro. Onde: "molde" (o campo que o molde nao
-    conhece), "chave" (a informacao que falta), "forma" (a conferencia da forma), "regras"
-    (a das regras contra a forma), "analises" (a leitura dos arquivos) ou "trabalho" (um
-    valor de outro tipo, que nenhuma conferencia olha e o trabalho do script nao aceita).
-    As analises erradas sao gravadas na pasta dada, uma pasta para cada erro."""
+    dizer: um texto, varios ou nada) de cada erro. Onde: "molde" (o molde do arquivo: o
+    campo que ele nao conhece, o que falta, o valor de outro tipo ou fora da forma; a
+    mensagem diz o caminho do valor), "forma" (a conferencia da forma, no que o molde nao
+    ve), "regras" (a das regras contra a forma) ou "analises" (a leitura dos arquivos). As
+    analises erradas sao gravadas na pasta dada, uma pasta para cada erro."""
     forma, regras = mundo["forma"], mundo["regras"]
     estranho = "x" + ascii_()
     nomes = {c.get("papel", "extra"): c["nome"] for c in forma["campos"]}
+    # o caminho, dentro da forma, do campo de cada papel; o lugar do primeiro documento de conteudo nas regras
+    no_campo = {c["papel"]: f"/campos/{k}" for k, c in enumerate(forma["campos"]) if "papel" in c}
+    de_conteudo = next(k for k, d in enumerate(regras["documentos"]) if not d.get("todos"))
     saida = []
 
     def na_forma(nome, onde, muda, culpado):
@@ -510,14 +513,18 @@ def variantes(mundo, pasta):
 
     na_forma("campo-a-mais-na-forma", "molde", lambda f: f.update({estranho: 1}), estranho)
     na_forma("campo-a-mais-num-campo", "molde", lambda f: campo(f, "destino").update({estranho: 1}), estranho)
-    na_forma("falta-uma-chave", "chave", lambda f: f.pop("vazio"), "vazio")
-    na_forma("sem-campos", "forma", lambda f: f.update(campos=[]), None)
-    na_forma("forma-de-campo-desconhecida", "forma", lambda f: campo(f, "destino").update(forma=estranho), estranho)
-    na_forma("lista-sem-separadores", "forma", lambda f: campo(f, "grupo").pop("separadores"), nomes["grupo"])
-    na_forma("pedacos-sem-separadores", "forma", lambda f: campo(f, "destino").pop("separadores"), nomes["destino"])
-    na_forma("presenca-com-valor-vazio", "forma", lambda f: campo(f, "caminho").update(valores=[""]),
-             nomes["caminho"])
-    na_forma("papel-desconhecido", "forma", lambda f: campo(f, "destino").update(papel=estranho), estranho)
+    na_forma("falta-uma-chave", "molde", lambda f: f.pop("vazio"), "/vazio")
+    na_forma("sem-campos", "molde", lambda f: f.update(campos=[]), "/campos")
+    na_forma("forma-de-campo-desconhecida", "molde", lambda f: campo(f, "destino").update(forma=estranho),
+             (f"{no_campo['destino']}/forma", estranho))
+    na_forma("lista-sem-separadores", "molde", lambda f: campo(f, "grupo").pop("separadores"),
+             f"{no_campo['grupo']}/separadores")
+    na_forma("pedacos-sem-separadores", "molde", lambda f: campo(f, "destino").pop("separadores"),
+             f"{no_campo['destino']}/separadores")
+    na_forma("presenca-com-valor-vazio", "molde", lambda f: campo(f, "caminho").update(valores=[""]),
+             f"{no_campo['caminho']}/valores/0")
+    na_forma("papel-desconhecido", "molde", lambda f: campo(f, "destino").update(papel=estranho),
+             (f"{no_campo['destino']}/papel", estranho))
     na_forma("papel-repetido", "forma",
              lambda f: f["campos"].append({"nome": estranho, "forma": "texto", "papel": "destino"}), estranho)
     na_forma("papel-faltando", "forma", lambda f: campo(f, "caminho").pop("papel"), "caminho")
@@ -529,15 +536,15 @@ def variantes(mundo, pasta):
     nas_regras("campo-a-mais-na-regra-de-fora", "molde", lambda r: r["fora"][0].update({estranho: 1}), estranho)
     nas_regras("campo-a-mais-numa-marca", "molde", lambda r: r["marcas"][0].update({estranho: 1}), estranho)
     nas_regras("campo-a-mais-num-grupo", "molde", lambda r: r["grupos"][0].update({estranho: 1}), estranho)
-    nas_regras("faltam-as-marcas", "chave", lambda r: r.pop("marcas"), "marcas")
+    nas_regras("faltam-as-marcas", "molde", lambda r: r.pop("marcas"), "/marcas")
     nas_regras("marca-num-papel-que-a-forma-nao-da", "regras", lambda r: r["marcas"][0].update(papeis=[estranho]),
                estranho)
-    nas_regras("marca-sem-texto", "regras", lambda r: r["marcas"][0].update(texto=""), regras["marcas"][0]["id"])
-    nas_regras("marca-sem-papel", "regras", lambda r: r["marcas"][0].update(papeis=[]), regras["marcas"][0]["id"])
+    nas_regras("marca-sem-texto", "molde", lambda r: r["marcas"][0].update(texto=""), "/marcas/0/texto")
+    nas_regras("marca-sem-papel", "molde", lambda r: r["marcas"][0].update(papeis=[]), "/marcas/0/papeis")
     nas_regras("caminho-que-o-campo-nao-tem", "regras",
-               lambda r: next(d for d in r["documentos"] if not d.get("todos")).update(caminhos=[estranho]), estranho)
-    nas_regras("grupos-que-nao-sao-lista", "trabalho",
-               lambda r: next(d for d in r["documentos"] if not d.get("todos")).update(grupos=1), None)
+               lambda r: r["documentos"][de_conteudo].update(caminhos=[estranho]), estranho)
+    nas_regras("grupos-que-nao-sao-lista", "molde", lambda r: r["documentos"][de_conteudo].update(grupos=1),
+               f"/documentos/{de_conteudo}/grupos")
 
     def aula(nome, linhas, arquivo=None):
         analises = pasta / nome / "analises"

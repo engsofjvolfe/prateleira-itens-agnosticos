@@ -50,9 +50,11 @@
    "de": "        raise ErroDeDados(f\"o texto {arquivo} não se lê em {CODIFICACAO} ({e})\")", "para": "        return [], 0, 0"},
   {"nome": "pasta-que-falta-passa", "arquivo": "confere_citacoes.py",
    "de": "    faltam = ([str(a.fontes)] if not a.fontes.is_dir() else []) + ", "para": "    faltam = [] + "},
-  {"nome": "equivalente-curto-passa", "arquivo": "confere_citacoes.py",
-   "de": "isinstance(g, str) and len(g) > 1 for g in grupos", "para": "isinstance(g, str) for g in grupos"},
-  {"nome": "supressao-vazia-passa", "arquivo": "confere_citacoes.py",
-   "de": "    for nome in (\"separador\", \"intervalo\", \"supressao\"):", "para": "    for nome in (\"separador\", \"intervalo\"):"}
+  {"nome": "modelo-com-outro-campo-passa", "arquivo": "confere_citacoes.py",
+   "de": "    preenche(conf[\"arquivo\"], fonte=\"\")  #", "para": "    pass  #"},
+  {"nome": "equivalente-curto-passa", "arquivo": "esquemas/confere-citacoes.schema.json",
+   "de": "\"items\": { \"type\": \"string\", \"minLength\": 2 }", "para": "\"items\": { \"type\": \"string\" }"},
+  {"nome": "supressao-vazia-passa", "arquivo": "esquemas/confere-citacoes.schema.json",
+   "de": "\"supressao\": { \"type\": \"string\", \"minLength\": 1 },", "para": "\"supressao\": { \"type\": \"string\" },"}
  ]
 }

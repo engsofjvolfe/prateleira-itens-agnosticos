@@ -206,27 +206,9 @@
    "para": "if False:"
   },
   {
-   "nome": "forma-desconhecida-passa",
-   "arquivo": "analises.py",
-   "de": "if como is None:",
-   "para": "if False:"
-  },
-  {
-   "nome": "lista-sem-textos-passa",
-   "arquivo": "analises.py",
-   "de": "if como[\"pede\"] and not textos(c.get(como[\"pede\"])):",
-   "para": "if False:"
-  },
-  {
-   "nome": "papel-desconhecido-passa",
-   "arquivo": "analises.py",
-   "de": "if papel is not None and papel not in donos:",
-   "para": "if False:"
-  },
-  {
    "nome": "papel-em-texto-passa",
    "arquivo": "analises.py",
-   "de": "if papel in PAPEIS_EM_LISTA and not como[\"em_lista\"]:",
+   "de": "if papel in PAPEIS_EM_LISTA and not FORMAS[c[\"forma\"]][\"em_lista\"]:",
    "para": "if False:"
   },
   {
@@ -300,18 +282,6 @@
    "arquivo": "lugares.py",
    "de": "return [g for g in valor(trecho, \"grupo\") if g not in conhecidos]",
    "para": "return []"
-  },
-  {
-   "nome": "marca-sem-texto-passa",
-   "arquivo": "lugares.py",
-   "de": "if not m[\"texto\"]:",
-   "para": "if False:"
-  },
-  {
-   "nome": "marca-sem-papel-passa",
-   "arquivo": "lugares.py",
-   "de": "if not m[\"papeis\"]:",
-   "para": "if False:"
   },
   {
    "nome": "papel-da-marca-sem-conferir",

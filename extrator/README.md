@@ -29,7 +29,8 @@ páginas, quantas sem texto, quantas lidas pelo OCR, quantas trocas e quantas co
 ## A configuração
 
 Os moldes estão em `esquemas/`: `extrator.schema.json` para a configuração e
-`extracao.schema.json` para a lista de documentos.
+`extracao.schema.json` para a lista de documentos. Lá está também o molde dos moldes,
+`molde.schema.json`, do [módulo comum](#o-módulo-comum).
 
 `padrao` diz a forma da transcrição:
 
@@ -114,15 +115,33 @@ página inteira pelo OCR quando ela é pedida.
 
 O `extrator_comum.py` guarda o que o extrator, os leitores dele e outras peças da prateleira
 fazem do mesmo jeito. Não se roda: as peças o importam da pasta irmã `extrator/` ou da
-própria pasta (numa cópia fora da prateleira, ao lado do script). O que as outras peças usam:
+própria pasta (numa cópia fora da prateleira, ao lado do script, com a pasta `esquemas/`
+dele). O que as outras peças usam:
 
 | Função | O que faz |
 | --- | --- |
-| `le_conferido(arquivo, molde)` | os dados de um arquivo JSON, com `ErroDeDados` quando ele tem campo que o molde (JSON Schema) não conhece |
+| `le_conferido(arquivo, molde)` | os dados de um arquivo JSON, conferidos contra o molde (JSON Schema), com `ErroDeDados` que diz o arquivo, o molde e o caminho de cada valor fora dele |
+| `fora_do_molde(dados, molde)` | o caminho e o motivo de cada valor dos dados fora do molde, todos, não só o primeiro |
 | `campo(dados, "a/b", tipo)` | o valor no caminho, do tipo pedido (um tipo ou uma tupla), com `ErroDeDados` que diz o caminho quando ele falta ou é de outro tipo; um booleano só vale quando o tipo pedido é `bool` |
 | `expressao(dados, "a/b")` | a expressão regular do campo, compilada, com `ErroDeDados` que diz o caminho quando não compila |
 | `paginas_da_transcricao(texto, modelo)` | as páginas de uma transcrição pelo modelo do título de página (`{rotulo}` e `{arquivo}`), cada uma com as linhas numeradas |
 | `preenche(modelo, campo=valor)` | o modelo com cada `{campo}` trocado; campo sem valor é `ErroDeDados` |
+
+O leitor de molde entende o que o molde dos moldes, `esquemas/molde.schema.json`, diz, e
+confere cada molde contra ele antes de usá-lo: o molde com uma palavra que o leitor não
+entende, de outro dialeto que não o 2020-12, ou com um valor que não é da forma que a
+palavra pede é `ErroDeDados`, que diz o lugar no molde. Ele confere `type`, `const` e
+`enum`, `minLength` e `maxLength` (em letras), `pattern`, `minimum` e `maximum`,
+`minItems`, `maxItems`, `uniqueItems` e `items`, `required`, `properties`,
+`additionalProperties`, `minProperties` e `maxProperties`, `allOf`, `if`, `then` e `else`;
+o `$ref` vai à raiz (`#`) ou a um molde de `$defs` (`#/$defs/nome`). As anotações
+(`$schema`, `$id`, `$comment`, `title`, `description`, `default` e `examples`) não
+conferem nada. Duas diferenças do JSON Schema: o `pattern` é a expressão regular do
+Python, buscada no texto, e o inteiro é o número escrito sem ponto, como o Python o lê
+(`1.0` não é inteiro). O tipo que o leitor não conhece, a referência para o que o molde não
+tem ou que volta a ela mesma e a forma que não compila também são `ErroDeDados`. Uma
+palavra nova é uma linha no molde dos moldes e o código que a confere, com o caso dela no
+teste.
 
 ## Testes
 

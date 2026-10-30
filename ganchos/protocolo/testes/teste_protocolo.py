@@ -269,14 +269,16 @@ ERRADOS = [
     ("uma leitura repetida", com("leituras", CERTO["leituras"] * 2), CERTO["leituras"][0]["nome"]),
     ("uma ferramenta que resume repetida", com("resumos/1", CERTO["resumos"][0]), CERTO["resumos"][0]),
     ("um modelo sem o lugar do texto", com("respostas/trava", {nome(): nome(), nome(): [1, nome()]}), "trava"),
-    ("um modelo com outro campo", com("respostas/contexto", {nome(): f"{LUGAR} {{{OUTRO_CAMPO}}}"}), OUTRO_CAMPO),
+    ("um modelo com outro campo", com("respostas/contexto", {nome(): f"{LUGAR} {{{OUTRO_CAMPO}}}"}),
+     ("respostas/contexto", OUTRO_CAMPO)),
     ("um modelo que não é objeto", com("respostas/nega", [LUGAR]), "respostas/nega"),
     ("as linhas sem limite abaixo de 1", com("leituras/0/linhas_sem_limite", 0), "linhas_sem_limite"),
     ("a primeira linha abaixo de 0", com("leituras/0/primeira_linha", -1), "primeira_linha"),
 ]
 for k, (descricao, dados, culpado) in enumerate(ERRADOS):
     mensagem = erro_de(protocolo.ler, grava(f"errado-{k}.json", dados))
-    confere(mensagem is not None and culpado in mensagem,
+    culpados = culpado if isinstance(culpado, tuple) else (culpado,)  # um texto, ou varios
+    confere(mensagem is not None and all(c in mensagem for c in culpados),
             f"{descricao} é erro, e a mensagem diz {culpado!r}: {mensagem}")
 
 for f in FALHAS:

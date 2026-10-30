@@ -30,7 +30,7 @@ PASTA = Path(__file__).resolve().parent
 # as pecas irmas, na prateleira, ou a mesma pasta, numa copia fora da prateleira
 for pasta in (PASTA.parent / "extrator", PASTA.parent / "historico-de-arquivo", PASTA):
     sys.path.insert(0, str(pasta))
-from extrator_comum import ErroDeDados, campo, le_conferido  # noqa: E402
+from extrator_comum import ErroDeDados, le_conferido  # noqa: E402
 from transcricoes import eventos  # noqa: E402
 
 MOLDE = PASTA / "esquemas" / "custo-de-agentes.schema.json"
@@ -40,19 +40,14 @@ SEPARADOR = "\t"
 
 
 def le_configuracao(caminho):
-    """A configuracao, conferida contra o molde, com cada campo conferido."""
+    """A configuracao, conferida contra o molde; a codificacao que nao existe, que o molde nao
+    ve, e erro aqui."""
     dados = le_conferido(caminho, MOLDE)
-    conf = {nome: campo(dados, caminho_, str) for nome, caminho_ in (
-        ("padrao", "transcricoes/padrao"), ("codificacao", "transcricoes/codificacao"), ("tipo", "eventos/tipo"),
-        ("pergunta", "eventos/pergunta"), ("mensagem", "eventos/mensagem"), ("conteudo", "eventos/conteudo"),
-        ("uso", "eventos/uso"), ("saida", "uso/saida"))}
-    conf["entrada"] = campo(dados, "uso/entrada", list)
-    conf["letras"] = campo(dados, "comeco/letras", int)
-    conf["rotulos"] = [campo(dados, f"colunas/{c}", str) for c in COLUNAS]
-    if not conf["entrada"] or not all(isinstance(c, str) and c for c in conf["entrada"]):
-        raise ErroDeDados("uso/entrada tem de ser uma lista de nomes de campo que não estão vazios")
-    if conf["letras"] < 0:
-        raise ErroDeDados("comeco/letras não pode ser negativo")
+    eventos_, uso = dados["eventos"], dados["uso"]
+    conf = {"padrao": dados["transcricoes"]["padrao"], "codificacao": dados["transcricoes"]["codificacao"],
+            "tipo": eventos_["tipo"], "pergunta": eventos_["pergunta"], "mensagem": eventos_["mensagem"],
+            "conteudo": eventos_["conteudo"], "uso": eventos_["uso"], "entrada": uso["entrada"], "saida": uso["saida"],
+            "letras": dados["comeco"]["letras"], "rotulos": [dados["colunas"][c] for c in COLUNAS]}
     try:
         codecs.lookup(conf["codificacao"])
     except LookupError:

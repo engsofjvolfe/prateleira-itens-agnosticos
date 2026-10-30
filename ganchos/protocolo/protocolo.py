@@ -37,47 +37,13 @@ from pathlib import Path
 PASTA = Path(__file__).resolve().parent
 for pasta in (PASTA.parent.parent / "extrator", PASTA.parent / "extrator"):  # a ultima posta e a primeira lida
     sys.path.insert(0, str(pasta))
-from extrator_comum import ErroDeDados, campo, le_conferido, preenche  # noqa: E402
+from extrator_comum import ErroDeDados, le_conferido, preenche  # noqa: E402
 
 MOLDE = PASTA / "esquemas" / "protocolo.schema.json"
-VERSAO = json.loads(MOLDE.read_text(encoding="utf-8"))["properties"]["versao_schema"]["const"]  # a do molde
 EVENTOS = ("antes", "fim")  # os eventos que os ganchos tratam, pelo nome no molde
 PARTES = ("sessao", "ferramenta", "entrada", "pasta", "fim_repetido")  # as partes do evento, alem do nome dele
 RESPOSTAS = ("nega", "contexto", "trava")  # as respostas, pelo nome no molde
 TEXTO = "texto"  # o campo do modelo de resposta que recebe o texto do gancho, escrito {texto}
-CAMPOS_DA_TROCA = ("antes", "depois", "todas")
-CAMPOS_DA_LEITURA = ("campo_caminho", "campo_comeco", "campo_quantas")
-MINIMOS_DA_LEITURA = {"linhas_sem_limite": 1, "primeira_linha": 0}  # cada numero de uma leitura e o menor dele
-
-
-def texto(valor):
-    """O valor, quando ele e um texto que nao esta vazio."""
-    if not isinstance(valor, str) or not valor:
-        raise ErroDeDados(f"tem de ser um texto que não está vazio: {valor!r}")
-    return valor
-
-
-def no_caminho(caminho, ler, valor):
-    """ler(valor), com o caminho do valor no erro."""
-    try:
-        return ler(valor)
-    except ErroDeDados as e:
-        raise ErroDeDados(f"{caminho}: {e}") from None
-
-
-def nome(dados, caminho):
-    """O texto do campo no caminho ("a/b"), que nao pode estar vazio."""
-    return no_caminho(caminho, texto, campo(dados, caminho, str))
-
-
-def lista(dados, caminho, ler):
-    """[ler(item)] de cada item da lista do campo no caminho."""
-    return [no_caminho(f"{caminho}/{k}", ler, v) for k, v in enumerate(campo(dados, caminho, list))]
-
-
-def objeto(dados, caminho, ler):
-    """{chave: ler(valor)} do objeto do campo no caminho."""
-    return {c: no_caminho(f"{caminho}/{c}", ler, v) for c, v in campo(dados, caminho, dict).items()}
 
 
 def sem_repetir(itens, onde):
@@ -101,62 +67,41 @@ def textos_de(valor):
 
 
 def modelo(dados, qual):
-    """O modelo de uma resposta: um objeto em que so {texto} e campo, e que o tem pelo menos
-    uma vez."""
-    valor = campo(dados, f"respostas/{qual}", dict)
-    tem_o_texto = False
+    """O modelo de uma resposta, que o molde ja conferiu ser um objeto: erro quando um texto
+    de dentro dele tem outro campo que nao {texto}, ou quando nenhum tem o {texto}."""
+    valor, tem_o_texto = dados["respostas"][qual], False
     for escrito in textos_de(valor):
-        trocado = no_caminho(f"respostas/{qual}", lambda t: preenche(t, **{TEXTO: ""}), escrito)
+        try:
+            trocado = preenche(escrito, **{TEXTO: ""})
+        except ErroDeDados as e:
+            raise ErroDeDados(f"respostas/{qual}: {e}") from None
         tem_o_texto = tem_o_texto or trocado != escrito
     if not tem_o_texto:
         raise ErroDeDados(f"respostas/{qual}: não tem o lugar do texto, {{{TEXTO}}}")
     return valor
 
 
-def leitura(item):
-    """(nome, {campos e numeros}) de uma ferramenta de leitura."""
-    dados = {c: nome(item, c) for c in CAMPOS_DA_LEITURA}
-    for numero, minimo in MINIMOS_DA_LEITURA.items():
-        dados[numero] = campo(item, numero, int)
-        if dados[numero] < minimo:
-            raise ErroDeDados(f"{numero} tem de ser {minimo} ou mais: {dados[numero]}")
-    return nome(item, "nome"), dados
-
-
 def ler(caminho):
-    """O protocolo do arquivo, lido pelo molde e conferido campo por campo: os eventos pelo
-    nome no programa, as chaves, os modelos das respostas e as ferramentas. Erro
-    (ErroDeDados) quando a versao nao e a do molde, quando um campo falta, e de outro tipo
-    ou esta vazio, quando os dois eventos tem o mesmo nome, quando duas partes tem a mesma
-    chave, quando nao ha campo de caminho de escrita, quando uma ferramenta se repete numa
-    lista e quando um modelo nao tem o lugar do texto ou tem outro campo."""
+    """O protocolo do arquivo, lido pelo molde, que confere a versao, cada campo e o tipo e o
+    tamanho dele: os eventos pelo nome no programa, as chaves, os modelos das respostas e as
+    ferramentas. Erro (ErroDeDados) tambem no que o molde nao ve: os dois eventos com o mesmo
+    nome, duas partes com a mesma chave, a ferramenta de busca ou de leitura repetida e o
+    modelo sem o lugar do texto ou com outro campo."""
     dados = le_conferido(Path(caminho), MOLDE)
-    if campo(dados, "versao_schema", int) != VERSAO:
-        raise ErroDeDados(f"versao_schema: o molde é o da versão {VERSAO}")
-    nomes_dos_eventos = {e: nome(dados, f"eventos/{e}") for e in EVENTOS}
-    sem_repetir(list(nomes_dos_eventos.values()), "os nomes dos eventos")
-    chaves = {p: nome(dados, f"chaves/{p}") for p in ("evento",) + PARTES}
-    sem_repetir(list(chaves.values()), "as chaves do evento")
-    buscas = lista(dados, "buscas", lambda item: (nome(item, "nome"), nome(item, "campo_padrao")))
-    leituras = lista(dados, "leituras", leitura)
-    sem_repetir([n for n, _ in buscas], "as ferramentas de busca")
-    sem_repetir([n for n, _ in leituras], "as ferramentas de leitura")
-    campos_caminho = lista(dados, "escritas/campos_caminho", texto)
-    if not campos_caminho:
-        raise ErroDeDados("escritas/campos_caminho: não tem nenhum campo")
+    eventos, chaves, buscas, leituras = dados["eventos"], dados["chaves"], dados["buscas"], dados["leituras"]
+    sem_repetir([eventos[e] for e in EVENTOS], "os nomes dos eventos")
+    sem_repetir([chaves[p] for p in ("evento",) + PARTES], "as chaves do evento")
+    sem_repetir([b["nome"] for b in buscas], "as ferramentas de busca")
+    sem_repetir([lida["nome"] for lida in leituras], "as ferramentas de leitura")
     return {
-        "eventos": {n: e for e, n in nomes_dos_eventos.items()},
+        "eventos": {n: e for e, n in eventos.items()},
         "chaves": chaves,
         "respostas": {r: modelo(dados, r) for r in RESPOSTAS},
-        "terminal": {c: nome(dados, f"terminal/{c}") for c in ("ferramenta", "campo_comando")},
-        "buscas": dict(buscas),
-        "escritas": {
-            "campos_caminho": campos_caminho,
-            "trocas": objeto(dados, "escritas/trocas", lambda t: {c: nome(t, c) for c in CAMPOS_DA_TROCA}),
-            "inteiros": objeto(dados, "escritas/inteiros", texto),
-        },
-        "leituras": dict(leituras),
-        "resumos": sem_repetir(lista(dados, "resumos", texto), "as ferramentas que resumem"),
+        "terminal": dados["terminal"],
+        "buscas": {b["nome"]: b["campo_padrao"] for b in buscas},
+        "escritas": dados["escritas"],
+        "leituras": {lida["nome"]: {c: v for c, v in lida.items() if c != "nome"} for lida in leituras},
+        "resumos": dados["resumos"],
     }
 
 

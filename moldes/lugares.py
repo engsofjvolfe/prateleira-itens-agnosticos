@@ -100,16 +100,12 @@ def lugar(trecho, regras):
 
 
 def erros_das_regras(regras, forma):
-    """Os problemas das regras contra a forma, cada um numa frase: marca sem texto, sem papel
-    ou procurada num papel que a forma nao da; documento com caminho que o campo do caminho
-    nao tem, quando o campo diz os valores dele."""
+    """Os problemas das regras, ja conferidas pelo molde delas, contra a forma, cada um numa
+    frase: marca procurada num papel que a forma nao da; documento com caminho que o campo
+    do caminho nao tem, quando o campo diz os valores dele."""
     campos = {c["papel"]: c for c in forma["campos"] if "papel" in c}
     erros = []
     for m in regras["marcas"]:
-        if not m["texto"]:
-            erros.append(f"marca {m['id']!r}: sem texto")
-        if not m["papeis"]:
-            erros.append(f"marca {m['id']!r}: sem papel onde se procura")
         erros += [f"marca {m['id']!r}: papel {p!r}, que a forma não dá" for p in m["papeis"] if p not in campos]
     campo = campos.get("caminho", {})
     if "valores" in campo:

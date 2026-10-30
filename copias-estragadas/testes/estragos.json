@@ -46,14 +46,14 @@
   {
    "nome": "sem-molde",
    "arquivo": "estraga.py",
-   "de": "estragos = le_conferido(a.lista, MOLDE)[\"estragos\"]",
-   "para": "estragos = json.loads(a.lista.read_text(encoding=\"utf-8\"))[\"estragos\"]"
+   "de": "le_conferido(a.lista, MOLDE)[\"estragos\"]",
+   "para": "__import__(\"json\").loads(a.lista.read_text(encoding=\"utf-8\"))[\"estragos\"]"
   },
   {
-   "nome": "sem-faltam",
-   "arquivo": "estraga.py",
-   "de": "        if faltam:\n",
-   "para": "        if False:\n"
+   "nome": "campo-que-falta-aceito",
+   "arquivo": "esquemas/estragos.schema.json",
+   "de": "\"required\": [\"nome\", \"arquivo\", \"de\", \"para\"],",
+   "para": "\"required\": [\"nome\", \"arquivo\", \"de\"],"
   },
   {
    "nome": "so-ignorado",

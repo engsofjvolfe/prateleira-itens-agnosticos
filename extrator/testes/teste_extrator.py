@@ -17,10 +17,9 @@ Os testes conferem regras que valem para qualquer texto, nunca uma frase pronta:
   - os titulos seguem o modelo, e o numero impresso, lido de volta, e o da numeracao;
   - as trocas e as correcoes dao o que a regra delas diz e sao contadas no resumo;
   - todo erro para tudo, sem gravar nada, e a mensagem diz o dado que o causou;
-  - duas rodadas dao a mesma saida;
-  - no extrator_comum, campo da o valor no caminho com o tipo pedido e da erro, dizendo o
-    caminho, quando ele falta ou e de outro tipo; expressao compila o campo ou da erro.
-Precisa do Poppler e do Tesseract com o idioma "eng". Uso:
+  - duas rodadas dao a mesma saida.
+O que o extrator_comum da para as pecas lerem os proprios dados tem o teste dele, o
+teste_extrator_comum.py. Precisa do Poppler e do Tesseract com o idioma "eng". Uso:
     python3 -I teste_extrator.py <pasta do extrator> <pasta de trabalho nova>
 """
 import html
@@ -707,7 +706,7 @@ erro(caso("etiqueta-dupla"), [DOC_HTML], "'b'", "etiqueta com dois destaques na 
 ruins = {
     "marca-sem-escape": (dict(PADRAO_A, escapar=[c for c in PADRAO_A["escapar"] if c != "<"]), "'<'"),
     "escape-sem-escape": (dict(PADRAO_A, escapar=[c for c in PADRAO_A["escapar"] if c != "~"]), "'~'"),
-    "item-longo": (dict(PADRAO_A, escapar=PADRAO_A["escapar"] + ["ab"]), "'ab'"),
+    "item-longo": (dict(PADRAO_A, escapar=PADRAO_A["escapar"] + ["ab"]), "\"ab\""),
     "escape-na-marca": (dict(PADRAO_A, escapar=PADRAO_A["escapar"] + ["|"],
                              destaques=dict(PADRAO_A["destaques"], cortado={"abre": "~|", "fecha": "|~"})), "'~'"),
     "marca-de-dois": (dict(PADRAO_A, destaques=dict(PADRAO_A["destaques"], cortado=PADRAO_A["destaques"]["forte"])),
@@ -788,45 +787,6 @@ cod, out = roda(g, [DOC_PDF, DOC_HTML], extra=["--substituir", "--so", "fontes/p
 confere(cod == 0 and "pagina.md" in out and "manual.md" not in out, "--so escolhe o documento")
 cod, out = roda(g, [DOC_PDF], extra=["--so", "fontes/nao-esta.pdf"])
 confere(cod == 1 and "nao-esta.pdf" in out, "--so com documento fora da lista é erro")
-
-
-# ---------- campo e expressao, que as pecas usam para ler os proprios dados ----------
-def da_erro(funcao, *args):
-    """A mensagem do ErroDeDados que a chamada levanta; None quando nao levanta."""
-    try:
-        funcao(*args)
-    except extrator_comum.ErroDeDados as e:
-        return str(e)
-    return None
-
-
-CAMPO_NOMES = []
-while len(CAMPO_NOMES) < 7:
-    nome_ = palavra(string.ascii_lowercase) + palavra(string.ascii_lowercase)
-    if nome_ not in CAMPO_NOMES:
-        CAMPO_NOMES.append(nome_)
-C_FORA, C_DENTRO, C_TEXTO, C_NUMERO, C_SIM, C_LISTA, C_RUIM = CAMPO_NOMES
-C_VALOR, C_GRUPO = frase(), palavra(string.ascii_lowercase)
-C_DADOS = {C_FORA: {C_DENTRO: {C_TEXTO: C_VALOR, C_NUMERO: SORTEIO.randint(-9, 9), C_SIM: True, C_LISTA: [C_VALOR]}},
-           C_TEXTO: f"(?P<{C_GRUPO}>{re.escape(C_VALOR)})", C_RUIM: f"(?P<{C_GRUPO}"}
-C_BASE = f"{C_FORA}/{C_DENTRO}"
-confere(extrator_comum.campo(C_DADOS, f"{C_BASE}/{C_TEXTO}", str) == C_VALOR, "campo dá o valor no caminho")
-confere(extrator_comum.campo(C_DADOS, f"{C_BASE}/{C_LISTA}", (list, str)) == [C_VALOR],
-        "campo aceita uma tupla de tipos")
-confere(type(extrator_comum.campo(C_DADOS, f"{C_BASE}/{C_NUMERO}", int)) is int, "campo dá o número")
-confere(extrator_comum.campo(C_DADOS, f"{C_BASE}/{C_SIM}", bool) is True, "o booleano vale quando o tipo pedido é bool")
-for caminho_, tipo_, descricao_ in ((f"{C_BASE}/{C_RUIM}", str, "campo que falta"),
-                                    (f"{C_BASE}/{C_TEXTO}/{C_RUIM}", str, "caminho que passa por um texto"),
-                                    (f"{C_BASE}/{C_NUMERO}", str, "campo de outro tipo"),
-                                    (f"{C_BASE}/{C_SIM}", int, "booleano no lugar de número")):
-    msg_ = da_erro(extrator_comum.campo, C_DADOS, caminho_, tipo_)
-    confere(msg_ is not None and caminho_ in msg_, f"{descricao_} é erro, e a mensagem diz o caminho: {msg_}")
-confere(extrator_comum.expressao(C_DADOS, C_TEXTO).search(f"{frase()} {C_VALOR}").group(C_GRUPO) == C_VALOR,
-        "expressao compila o texto do campo")
-for caminho_, descricao_ in ((C_RUIM, "expressão que não compila"),
-                             (f"{C_BASE}/{C_NUMERO}", "expressão que não é texto")):
-    msg_ = da_erro(extrator_comum.expressao, C_DADOS, caminho_)
-    confere(msg_ is not None and caminho_ in msg_, f"{descricao_} é erro, e a mensagem diz o caminho: {msg_}")
 
 for f in FALHAS:
     print("FALHA:", f)
