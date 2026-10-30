@@ -1,5 +1,6 @@
 """Testes do que o extrator_comum.py da para as pecas lerem os proprios dados: o leitor de
-molde (fora_do_molde, confere_molde e le_conferido), campo e expressao. Nao precisa de PDF.
+molde (fora_do_molde, confere_molde, conferido e le_conferido), le_texto, campo e expressao.
+Nao precisa de PDF.
 
 Os nomes dos campos e os valores sao sorteados, com semente fixa (o sorteio e o mesmo em toda
 rodada; outra semente vem com --semente), e cada molde e inventado aqui. Os testes conferem
@@ -24,7 +25,10 @@ regras, nunca uma frase pronta:
     nao compila sao erro, que diz o que;
   - le_conferido da os dados do arquivo que segue o molde e, senao, erro com o arquivo, o
     molde e o caminho de cada valor fora; o arquivo que falta ou que nao e JSON e erro; o
-    molde fora do molde dos moldes e erro, com o arquivo dele e o lugar;
+    molde fora do molde dos moldes e erro, com o arquivo dele e o lugar; conferido faz o
+    mesmo com dados ja lidos, e o erro diz o nome dado a eles;
+  - le_texto da o texto do arquivo em UTF-8, como ele e, e o arquivo que falta ou que nao se
+    le em UTF-8 e erro, que diz o arquivo;
   - campo da o valor no caminho com o tipo pedido e da erro, dizendo o caminho, quando ele
     falta ou e de outro tipo; expressao compila o campo ou da erro, dizendo o caminho;
   - duas conferencias dao o mesmo.
@@ -225,6 +229,23 @@ MAL_FEITO = grava(f"{nome()}.schema.json", {"properties": {A: {"minLength": TEXT
 mensagem = erro_de(extrator_comum.le_conferido, grava(f"{nome()}.json", CERTOS), MAL_FEITO)
 confere(mensagem is not None and all(p in mensagem for p in (MAL_FEITO.name, f"/properties/{A}/minLength")),
         f"le_conferido: o molde fora do molde dos moldes é erro, com o arquivo dele e o lugar: {mensagem}")
+DOS_DADOS = nome()
+confere(extrator_comum.conferido(CERTOS, MOLDE, DOS_DADOS) == CERTOS, "conferido dá os dados que seguem o molde")
+mensagem = erro_de(extrator_comum.conferido, {A: TEXTO, C: N}, MOLDE, DOS_DADOS)
+confere(mensagem is not None and all(p in mensagem for p in (DOS_DADOS, MOLDE.name, f"/{A}", f"/{C}")),
+        f"conferido: erro que diz o nome dos dados, o molde e o caminho de cada valor fora: {mensagem}")
+
+# ---- le_texto ----
+
+ESCRITO = f"{TEXTO}\n{OUTRO} çãõü\n\n"
+LIDO, SEM_UTF8 = TRABALHO / f"{nome()}.txt", TRABALHO / f"{nome()}.txt"
+LIDO.write_bytes(ESCRITO.encode("utf-8"))
+SEM_UTF8.write_bytes(f"{TEXTO} ç".encode("latin-1"))
+confere(extrator_comum.le_texto(LIDO) == ESCRITO, "le_texto dá o texto do arquivo em UTF-8, como ele é")
+for arquivo, descricao in ((TRABALHO / f"{nome()}.txt", "que falta"), (SEM_UTF8, "que não se lê em UTF-8")):
+    mensagem = erro_de(extrator_comum.le_texto, arquivo)
+    confere(mensagem is not None and arquivo.name in mensagem, f"le_texto: o arquivo {descricao} é erro, que o diz: "
+                                                               f"{mensagem}")
 
 # ---- campo e expressao ----
 

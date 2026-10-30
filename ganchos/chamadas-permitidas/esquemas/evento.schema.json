@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "evento.schema.json",
+  "type": "object",
+  "properties": {
+    "sessao": { "$ref": "#/$defs/texto" },
+    "ferramenta": { "$ref": "#/$defs/texto" },
+    "pasta": { "$ref": "#/$defs/texto" },
+    "entrada": { "type": "object" }
+  },
+  "$defs": {
+    "texto": { "type": "string", "minLength": 1 }
+  }
+}

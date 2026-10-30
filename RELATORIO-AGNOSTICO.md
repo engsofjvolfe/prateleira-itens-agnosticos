@@ -9,14 +9,6 @@ onde está; "Correção" diz como resolver.
 
 ## DRY
 
-1. **Outro jeito de ler a forma dos dados.** O leitor de molde do
-   `extrator/extrator_comum.py` (`le_conferido`) confere o molde inteiro, mas
-   `ganchos/chamadas-permitidas/dados.py` confere a configuração e a lista das regras valor
-   por valor, sem molde e sem `versao_schema`; e o `extrator/extrator.py` e o
-   `itens-numerados/itens.py` ainda tratam o `KeyError` e o `TypeError` de um dado que falta
-   ou é de outro tipo, que o molde não deixa mais chegar. Correção: o `chamadas-permitidas`
-   lendo pelo leitor do módulo comum, pela pasta irmã, como o `busca-por-palavra` já faz,
-   com um molde para cada arquivo de dados, e sem o tratamento que sobrou.
 2. **Funções de texto repetidas.** Passar a forma Unicode para NFC e juntar os espaços
    aparece em `moldes/analises.py` (`nfc`) e em `confere-citacoes/confere_citacoes.py`
    (`letras`, `comparavel`). Correção: um módulo de texto comum, documentado, usado pelas

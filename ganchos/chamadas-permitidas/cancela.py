@@ -11,7 +11,9 @@ fonte dela esta no arquivo da fonte e, se ela pede, quando o texto que ela monta
 partes nomeadas da forma esta no arquivo que ela diz. O resto e barrado, com o motivo e o
 codigo de --barra-com, como o evento.py faz: nenhuma regra que bata, e as que perderam a
 fonte. O protocolo, a configuracao (--config), a lista ou o evento fora da forma tambem
-barram. Os caminhos que nao sao absolutos partem da pasta principal. So biblioteca padrao.
+barram. A lista e lida pelo molde dela, em esquemas/, com o extrator_comum.py, do extrator,
+que o evento.py poe no caminho de importacao. Os caminhos que nao sao absolutos partem da
+pasta principal. So biblioteca padrao.
 """
 import argparse
 import re
@@ -19,75 +21,45 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))  # os modulos da peca, que o python -I nao poe no caminho
-import dados  # noqa: E402
 import evento  # noqa: E402
+from extrator_comum import ErroDeDados, compila, le_conferido, le_texto  # noqa: E402 -- no caminho do evento.py
 
-CHAVES = ("partes", "regras")  # as da lista
-CHAVES_DA_REGRA = ("nome", "ferramenta", "forma", "fonte")
 DOCUMENTADA = "documentada"  # a chave que a regra pode ter a mais
-CHAVES_DA_FONTE = ("arquivo", "trecho")
 CHAVES_DA_DOCUMENTADA = ("arquivo", "texto")
 PARTE = re.compile(r"<<([a-z_]+)>>")  # como uma forma usa uma parte com nome
 
 
-def textos(valor, onde, chaves):
-    """O objeto com exatamente essas chaves, cada uma um texto."""
-    dados.objeto(valor, onde, chaves)
-    for chave in chaves:
-        dados.texto(valor[chave], f"{onde}: {chave}")
-    return valor
-
-
-def expressao(texto, onde):
-    """O texto, quando ele e uma expressao regular."""
-    try:
-        re.compile(texto)
-    except re.error as erro:
-        raise dados.ErroDeDados(f"{onde}: não é uma expressão regular ({erro})")
-    return texto
-
-
 def aberta(forma, partes, onde):
-    """A forma com cada <<nome>> trocado pela parte de mesmo nome, entre parenteses que nao
-    guardam o que acham; o nome que nao e de uma parte e erro."""
+    """A forma, compilada, com cada <<nome>> trocado pela parte de mesmo nome, entre
+    parenteses que nao guardam o que acham; o nome que nao e de uma parte e erro."""
     def troca(achado):
         if achado.group(1) not in partes:
-            raise dados.ErroDeDados(f"{onde}: a parte {achado.group(1)!r} não está nas partes da lista")
+            raise ErroDeDados(f"{onde}: a parte {achado.group(1)!r} não está nas partes da lista")
         return f"(?:{partes[achado.group(1)]})"
-    return expressao(PARTE.sub(troca, forma), onde)
+    return compila(PARTE.sub(troca, forma), onde)
 
 
 def le_partes(valor, onde):
-    """As partes com nome, cada uma uma expressao regular, com o nome na forma que as formas usam."""
-    dados.objeto(valor, onde)
+    """As partes com nome, cada uma uma expressao regular, com o nome na forma que as formas
+    usam."""
     for nome, parte in valor.items():
         if not PARTE.fullmatch(f"<<{nome}>>"):
-            raise dados.ErroDeDados(f"{onde}: nome de parte fora da forma: {nome!r}")
-        expressao(dados.texto(parte, f"{onde}.{nome}"), f"{onde}.{nome}")
+            raise ErroDeDados(f"{onde}: nome de parte fora da forma: {nome!r}")
+        compila(parte, f"{onde}/{nome}")
     return valor
 
 
-def regra(valor, onde, partes):
-    """A regra, conferida, com a forma aberta pelas partes."""
-    a_mais = (DOCUMENTADA,) if isinstance(valor, dict) and DOCUMENTADA in valor else ()
-    dados.objeto(valor, onde, CHAVES_DA_REGRA + a_mais)
-    for chave in ("nome", "ferramenta", "forma"):
-        dados.texto(valor[chave], f"{onde}: {chave}")
-    textos(valor["fonte"], f"{onde}: fonte", CHAVES_DA_FONTE)
-    if a_mais:
-        textos(valor[DOCUMENTADA], f"{onde}: {DOCUMENTADA}", CHAVES_DA_DOCUMENTADA)
-    return {**valor, "forma": aberta(valor["forma"], partes, f"{onde}: forma")}
-
-
 def le_regras(caminho):
-    """As regras da lista, cada uma conferida e com a forma aberta, sem dois nomes iguais."""
-    valor = dados.objeto(dados.le_json(caminho), str(caminho), CHAVES)
+    """As regras da lista, lida pelo molde dela, cada uma com a forma aberta pelas partes e
+    compilada, sem dois nomes iguais."""
+    valor = le_conferido(caminho, evento.MOLDES / "regras.schema.json")
     partes = le_partes(valor["partes"], f"{caminho}: partes")
-    regras = dados.lista(valor["regras"], f"{caminho}: regras", lambda item, onde: regra(item, onde, partes))
+    regras = [dict(regra, forma=aberta(regra["forma"], partes, f"{caminho}: regras/{k}/forma"))
+              for k, regra in enumerate(valor["regras"])]
     nomes = [r["nome"] for r in regras]
     repetidos = sorted({nome for nome in nomes if nomes.count(nome) > 1})
     if repetidos:
-        raise dados.ErroDeDados(f"{caminho}: nome de regra repetido: {repetidos}")
+        raise ErroDeDados(f"{caminho}: nome de regra repetido: {repetidos}")
     return regras
 
 
@@ -95,8 +67,8 @@ def tem(raiz, arquivo, texto):
     """Se o arquivo tem o texto; o arquivo que nao se le nao tem."""
     caminho = Path(arquivo).expanduser()
     try:
-        return texto in dados.le_texto(caminho if caminho.is_absolute() else raiz / caminho)
-    except dados.ErroDeDados:
+        return texto in le_texto(caminho if caminho.is_absolute() else raiz / caminho)
+    except ErroDeDados:
         return False
 
 
@@ -109,7 +81,7 @@ def documentada(raiz, valor, achada):
     try:
         arquivo, texto = (valor[DOCUMENTADA][chave].format(**partes) for chave in CHAVES_DA_DOCUMENTADA)
     except (KeyError, IndexError, ValueError) as erro:
-        raise dados.ErroDeDados(f"regra {valor['nome']}: {DOCUMENTADA} pede uma parte que a forma não nomeia ({erro})")
+        raise ErroDeDados(f"regra {valor['nome']}: {DOCUMENTADA} pede uma parte que a forma não nomeia ({erro})")
     return tem(raiz, arquivo, texto)
 
 
@@ -133,7 +105,7 @@ def motivo(config, regras, raiz, partes):
         if not tem(raiz, candidata["fonte"]["arquivo"], candidata["fonte"]["trecho"]):
             sem_fonte.append(candidata["nome"])
             continue
-        achada = re.fullmatch(candidata["forma"], valor)
+        achada = candidata["forma"].fullmatch(valor)
         if achada and documentada(raiz, candidata, achada):
             return None
     texto = f"nenhuma regra da lista permite esta chamada; as regras de {ferramenta!r} são {da_ferramenta}"

@@ -10,10 +10,10 @@ Dois ganchos para as chamadas de ferramenta que uma IA faz num projeto:
   das ferramentas que a configuração deixa de fora. A chamada que ele não consegue gravar não
   roda.
 
-Usa só a biblioteca padrão do Python, num sistema que tranca arquivos como o Linux, e o
-[protocolo](../protocolo/README.md), da pasta irmã, que lê o evento pelo protocolo do
-programa que roda os ganchos; o protocolo usa o `extrator_comum.py`, do
-[extrator](../../extrator/README.md).
+Usa só a biblioteca padrão do Python, num sistema que tranca arquivos como o Linux, o
+`extrator_comum.py`, do [extrator](../../extrator/README.md), que lê os arquivos pelos
+moldes deles, e o [protocolo](../protocolo/README.md), da pasta irmã, que lê o evento pelo
+protocolo do programa que roda os ganchos.
 
 ## Os arquivos
 
@@ -23,7 +23,7 @@ programa que roda os ganchos; o protocolo usa o `extrator_comum.py`, do
 | `registra.py` | o gancho que põe a linha de cada chamada no fim do registro |
 | `evento.py` | a configuração e o evento, os mesmos para os dois ganchos, e o jeito de barrar |
 | `registro.py` | a forma do registro e a gravação de uma linha nele |
-| `dados.py` | a leitura dos arquivos da peça, com a forma de cada valor conferida |
+| `esquemas/` | os moldes da configuração, da lista das regras e das partes do evento que os ganchos usam |
 
 ## Como rodar
 
@@ -50,11 +50,12 @@ fecha o último buraco.
 
 ## A configuração
 
-Fica fora da peça, porque nomeia as ferramentas do programa. Um objeto JSON com exatamente
-estas chaves:
+Fica fora da peça, porque nomeia as ferramentas do programa. O molde está em
+`esquemas/chamadas-permitidas.schema.json`:
 
 | Chave | O que é |
 | --- | --- |
+| `versao_schema` | a versão do molde |
 | `fora_do_registro` | a lista das ferramentas cujas chamadas não se gravam |
 | `livres` | a lista das ferramentas que a cancela deixa passar sem regra |
 | `campos` | para cada outra ferramenta, o campo da entrada, um texto, que a forma de uma regra tem de bater inteira |
@@ -69,8 +70,9 @@ ferramenta de escrever, com que ela se conserta.
 
 ## A lista das regras
 
-É do projeto, porque diz o que a documentação dele dá. Um objeto JSON com exatamente as
-chaves `partes` e `regras`.
+É do projeto, porque diz o que a documentação dele dá. O molde está em
+`esquemas/regras.schema.json`: o `versao_schema`, a versão do molde, as `partes` e as
+`regras`.
 
 As `partes` são pedaços de forma com nome, para que um pedaço repetido, como o que diz o que
 é um argumento seguro, fique num lugar só: cada nome, de letras minúsculas e `_`, dá uma

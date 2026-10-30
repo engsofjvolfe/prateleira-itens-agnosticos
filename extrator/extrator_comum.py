@@ -1,12 +1,12 @@
 """
 O que o extrator, os leitores dele e as outras pecas da prateleira fazem do mesmo jeito,
-num lugar so: ler um arquivo de dados JSON e conferi-lo contra o molde dele (JSON Schema),
-que antes e conferido contra o molde dos moldes (o que o leitor de molde entende), pegar um
-campo dos dados com o tipo pedido, compilar a expressao regular de um campo, ler a
-configuracao do extrator contra o molde dela, conferir o padrao, preencher um modelo do
-padrao, reconhecer o titulo de pagina que o modelo faz, dividir uma transcricao em paginas,
-juntar os pedacos de uma linha com destaques, tirar de uma linha as marcas de destaque e os
-escapes e expandir faixas de paginas.
+num lugar so: ler um texto em UTF-8, ler um arquivo de dados JSON e conferir os dados contra
+o molde deles (JSON Schema), que antes e conferido contra o molde dos moldes (o que o leitor
+de molde entende), pegar um campo dos dados com o tipo pedido, compilar a expressao regular
+de um campo, ler a configuracao do extrator contra o molde dela, conferir o padrao,
+preencher um modelo do padrao, reconhecer o titulo de pagina que o modelo faz, dividir uma
+transcricao em paginas, juntar os pedacos de uma linha com destaques, tirar de uma linha as
+marcas de destaque e os escapes e expandir faixas de paginas.
 """
 
 import json
@@ -26,11 +26,23 @@ class ErroDeDados(Exception):
     """O que impede o trabalho; a mensagem diz o que e onde."""
 
 
-def le_json(caminho):
+def le_texto(caminho):
+    """O texto de um arquivo em UTF-8; erro (ErroDeDados) que diz o arquivo quando ele nao
+    existe ou nao se le."""
     try:
-        return json.loads(Path(caminho).read_text(encoding="utf-8"))
-    except (OSError, UnicodeDecodeError, json.JSONDecodeError) as e:
-        raise ErroDeDados(f"{caminho}: não se lê como JSON em UTF-8 ({e})")
+        return Path(caminho).read_text(encoding="utf-8")
+    except (OSError, UnicodeDecodeError) as e:
+        raise ErroDeDados(f"{caminho}: não se lê como texto em UTF-8 ({e})")
+
+
+def le_json(caminho):
+    """Os dados de um arquivo JSON em UTF-8; erro (ErroDeDados) que diz o arquivo quando ele
+    nao se le."""
+    texto = le_texto(caminho)
+    try:
+        return json.loads(texto)
+    except json.JSONDecodeError as e:
+        raise ErroDeDados(f"{caminho}: não se lê como JSON ({e})")
 
 
 def mostra(valor):
@@ -196,19 +208,25 @@ def fora_do_molde(dados, molde, raiz=None, onde="", seguidas=frozenset()):
     return erros
 
 
-def le_conferido(caminho, molde):
-    """Os dados de um arquivo JSON, conferidos contra o molde (o arquivo do JSON Schema) pelo
-    fora_do_molde: erro (ErroDeDados) que diz cada valor fora dele, com o caminho dentro do
-    arquivo -- um nome escrito errado, um campo que falta ou um valor de outro tipo nao
+def conferido(dados, molde, nome):
+    """Os dados, conferidos contra o molde (o arquivo do JSON Schema) pelo fora_do_molde:
+    erro (ErroDeDados) que diz o nome dos dados e cada valor fora do molde, com o caminho
+    dentro deles -- um nome escrito errado, um campo que falta ou um valor de outro tipo nao
     passam em silencio. O erro do proprio molde diz o arquivo dele."""
-    dados, regras = le_json(caminho), le_json(molde)
+    regras = le_json(molde)
     try:
         erros = fora_do_molde(dados, regras)
     except ErroDeDados as e:
         raise ErroDeDados(f"{molde}: {e}")
     if erros:
-        raise ErroDeDados(f"{caminho}: fora do molde {Path(molde).name}: {junta(erros)}")
+        raise ErroDeDados(f"{nome}: fora do molde {Path(molde).name}: {junta(erros)}")
     return dados
+
+
+def le_conferido(caminho, molde):
+    """Os dados de um arquivo JSON, conferidos contra o molde (conferido), com o arquivo no
+    erro."""
+    return conferido(le_json(caminho), molde, caminho)
 
 
 def campo(dados, caminho, tipo):

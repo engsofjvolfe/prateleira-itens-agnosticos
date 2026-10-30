@@ -22,6 +22,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent / "protocol
 import protocolo_inventado  # noqa: E402
 
 SORTE = random.Random(13)
+VERSAO = 1  # a versao dos moldes da configuracao e da lista, pelo README
 BARRA_COM = SORTE.randint(3, 120)  # o codigo que barra, longe dos de erro do Python (1) e dos argumentos (2)
 LINHA = ("sessao", "ferramenta", "entrada")  # as chaves de uma linha do registro, pelo README
 FORA = ["so-olha", "so-escreve"]
@@ -56,7 +57,7 @@ def roda(peca, script, argumentos, entrada="", protocolo=None):
 
 
 def config_valida():
-    return {"fora_do_registro": list(FORA), "livres": list(LIVRES), "campos": dict(CAMPOS)}
+    return {"versao_schema": VERSAO, "fora_do_registro": list(FORA), "livres": list(LIVRES), "campos": dict(CAMPOS)}
 
 
 def evento(ferramenta, entrada, sessao=SESSOES[0], nome=None, pasta="/", sem=None):
@@ -127,6 +128,7 @@ def testa_bloqueios_do_registro(peca, trabalho):
     bloqueia("pasta que não é texto", evento(DENTRO[0], entrada, pasta=3))
     bloqueia("ferramenta que não é texto", evento(7, entrada))
     bloqueia("configuração com chave a mais", evento(DENTRO[0], entrada), {**boa, "outra": 1})
+    bloqueia("configuração de outra versão", evento(DENTRO[0], entrada), {**boa, "versao_schema": VERSAO + 1})
     for chave in boa:
         bloqueia(f"configuração sem {chave}", evento(DENTRO[0], entrada), {k: v for k, v in boa.items() if k != chave})
     # uma lista escrita como texto deixaria de fora toda ferramenta cujo nome esta dentro dele
@@ -176,7 +178,7 @@ def testa_cancela(peca, trabalho):
     absoluta.write_text("vale também: mostra TUDO\n", encoding="utf-8")
     ferramenta, campo = next(iter(CAMPOS.items()))
     sem_campo = next(f for f in DENTRO if f not in CAMPOS)
-    regras = {"partes": {"palavra": "[a-z]+"}, "regras": [
+    regras = {"versao_schema": VERSAO, "partes": {"palavra": "[a-z]+"}, "regras": [
         {"nome": "procura", "ferramenta": ferramenta, "forma": r"procura -x <<palavra>> <<palavra>>\.txt",
          "fonte": {"arquivo": "regras-inventadas.md", "trecho": "procura -x ALGO"}},
         {"nome": "rodar", "ferramenta": ferramenta, "forma": r"rodar (?P<nome>[a-z_]+\.py)",
@@ -221,21 +223,22 @@ def testa_cancela(peca, trabalho):
 
     primeira, partes = regras["regras"][0], regras["partes"]
     tortas = {"lista com chave a mais": {**regras, "x": 1},
-              "lista sem as partes": {"regras": regras["regras"]},
-              "regra sem fonte": {"partes": partes, "regras": [{k: v for k, v in primeira.items() if k != "fonte"}]},
-              "regra com chave a mais": {"partes": partes, "regras": [{**primeira, "x": 1}]},
-              "forma que não é expressão": {"partes": partes, "regras": [{**primeira, "forma": "procura ("}]},
-              "forma com uma parte que não existe": {"partes": partes,
+              "lista de outra versão": {**regras, "versao_schema": VERSAO + 1},
+              "lista sem as partes": {"versao_schema": VERSAO, "regras": regras["regras"]},
+              "regra sem fonte": {**regras, "regras": [{k: v for k, v in primeira.items() if k != "fonte"}]},
+              "regra com chave a mais": {**regras, "regras": [{**primeira, "x": 1}]},
+              "forma que não é expressão": {**regras, "regras": [{**primeira, "forma": "procura ("}]},
+              "forma com uma parte que não existe": {**regras,
                                                      "regras": [{**primeira, "forma": "procura -x <<nada>>"}]},
-              "parte que não é expressão": {"partes": {"palavra": "("}, "regras": [primeira]},
-              "parte com nome fora da forma": {"partes": {**partes, "Outra": "x"}, "regras": [primeira]},
-              "partes numa lista": {"partes": ["[a-z]+"], "regras": [primeira]},
-              "nome repetido": {"partes": partes, "regras": [primeira, primeira]},
-              "fonte sem trecho": {"partes": partes,
+              "parte que não é expressão": {**regras, "partes": {"palavra": "("}, "regras": [primeira]},
+              "parte com nome fora da forma": {**regras, "partes": {**partes, "Outra": "x"}, "regras": [primeira]},
+              "partes numa lista": {**regras, "partes": ["[a-z]+"], "regras": [primeira]},
+              "nome repetido": {**regras, "regras": [primeira, primeira]},
+              "fonte sem trecho": {**regras,
                                    "regras": [{**primeira, "fonte": {"arquivo": "regras-inventadas.md"}}]},
-              "documentada sem texto": {"partes": partes,
+              "documentada sem texto": {**regras,
                                         "regras": [{**primeira, "documentada": {"arquivo": "leiame.md"}}]},
-              "regras num texto": {"partes": partes, "regras": "procura"}}
+              "regras num texto": {**regras, "regras": "procura"}}
     for k, (descricao, torta) in enumerate(tortas.items()):
         caminho = escreve_json(trabalho / f"torta-{k}.json", torta)
         barra(f"lista com {descricao}", tenta(ferramenta, {campo: certa}, lista_=caminho))
@@ -244,7 +247,7 @@ def testa_cancela(peca, trabalho):
     quebrada.write_text("{", encoding="utf-8")
     barra("lista que não é JSON", tenta(ferramenta, {campo: certa}, lista_=quebrada))
     barra("configuração que não é JSON", tenta(ferramenta, {campo: certa}, config_=quebrada))
-    sem_parte = {"partes": partes,
+    sem_parte = {**regras,
                  "regras": [{**regras["regras"][1], "documentada": {"arquivo": "leiame.md", "texto": "## `{outra}`"}}]}
     barra("documentada que pede uma parte que a forma não nomeia",
           tenta(ferramenta, {campo: "rodar rodar.py"}, lista_=escreve_json(trabalho / "sem-parte.json", sem_parte)))

@@ -12,6 +12,8 @@ prateleira segue o [Versionamento Semântico](https://semver.org/lang/pt-BR/spec
 - `extrator`: o molde dos moldes (`esquemas/molde.schema.json`), que diz as palavras do
   JSON Schema que o leitor de molde do módulo comum entende e a forma do valor de cada uma;
   e o teste do módulo comum, com a lista de estragos dele.
+- `extrator`: no módulo comum, a função `le_texto`, que lê um texto em UTF-8 com o erro que
+  diz o arquivo, e a `conferido`, que confere contra um molde dados já lidos.
 - `ganchos/leitura-do-terminal`: a função `depois_do_comando`, que acha nas palavras de um
   comando simples um comando de uma ou mais palavras, como `git grep`, também com outras
   palavras no meio, e a `comandos_achados`, que dá cada vez que um comando, ou um de dentro
@@ -31,6 +33,10 @@ prateleira segue o [Versionamento Semântico](https://semver.org/lang/pt-BR/spec
   obrigatórios, o `allOf` e o `if`, com `$ref` para a raiz e para `$defs` — e diz o caminho
   de cada valor fora dele; antes, só acusava o campo que o molde não conhece. O próprio
   molde é conferido antes, contra o molde dos moldes.
+- `ganchos/chamadas-permitidas`: a configuração e a lista das regras são lidas pelos moldes
+  delas, em `esquemas/`, com o leitor do módulo comum, e as partes do evento também; o erro
+  diz o caminho de cada valor fora do molde. Os dois arquivos passam a ter
+  `"versao_schema": 1`.
 - `ganchos/regras-de-codigo`: a anotação de cada sessão tem o nome tirado do id dela, como
   a do `destino-da-limpeza`, e o id com nome de caminho deixa de ser erro.
 - `ganchos/regras-de-codigo`: a configuração é lida pelo leitor de molde do módulo comum,
@@ -40,6 +46,11 @@ prateleira segue o [Versionamento Semântico](https://semver.org/lang/pt-BR/spec
   e o texto ou a lista vazios, com o caminho do valor; a forma e as regras conferem à mão
   só o que o molde não vê, e a entrada errada deixa de ser pega pelo `KeyError` e pelo
   `TypeError` do Python.
+
+### Removido
+
+- `ganchos/chamadas-permitidas`: o `dados.py`, que conferia os arquivos da peça valor por
+  valor.
 
 ## [0.1.0] - 2026-10-29
 

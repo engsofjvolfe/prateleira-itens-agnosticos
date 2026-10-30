@@ -24,7 +24,5 @@ entra no [CHANGELOG.md](CHANGELOG.md), na seção `Não publicado`. O
 
    Ligada como gancho do git, antes do commit, para valer em todo commit, qualquer que seja
    o programa que o faz; com molde, teste e estragos, como toda peça.
-3. Um leitor de molde só: as peças que ainda conferem a forma dos dados por conta própria
-   lendo pelo do módulo comum (item 1 do relatório).
-4. Um módulo de texto comum (item 2 do relatório).
-5. Quando houver um repositório remoto, pôr no fim do changelog o link de cada versão.
+3. Um módulo de texto comum (item 2 do relatório).
+4. Quando houver um repositório remoto, pôr no fim do changelog o link de cada versão.

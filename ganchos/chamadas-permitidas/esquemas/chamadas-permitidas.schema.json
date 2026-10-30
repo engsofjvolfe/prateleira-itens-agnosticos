@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "chamadas-permitidas.schema.json",
+  "type": "object",
+  "required": ["versao_schema", "fora_do_registro", "livres", "campos"],
+  "additionalProperties": false,
+  "properties": {
+    "versao_schema": { "const": 1 },
+    "fora_do_registro": { "$ref": "#/$defs/nomes" },
+    "livres": { "$ref": "#/$defs/nomes" },
+    "campos": { "type": "object", "additionalProperties": { "$ref": "#/$defs/nome" } }
+  },
+  "$defs": {
+    "nome": { "type": "string", "minLength": 1 },
+    "nomes": { "type": "array", "items": { "$ref": "#/$defs/nome" } }
+  }
+}
