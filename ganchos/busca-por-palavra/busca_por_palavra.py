@@ -39,8 +39,8 @@ for pasta in (PASTA.parent.parent / "extrator", PASTA.parent / "extrator", PASTA
               PASTA.parent / "protocolo"):
     sys.path.insert(0, str(pasta))  # a ultima posta e a primeira lida
 from extrator_comum import ErroDeDados, le_conferido  # noqa: E402
-from leitura_do_terminal import (ATRIBUICAO, OPCAO, OPCAO_LONGA, ComandoIlegivel, letras_iniciais, lidos,  # noqa: E402
-                                 opcao_bate, posicoes_de_comando)
+from leitura_do_terminal import (ATRIBUICAO, OPCAO, OPCAO_LONGA, ComandoIlegivel, comandos_achados,  # noqa: E402
+                                 letras_iniciais, opcao_bate)
 import protocolo  # noqa: E402
 
 MOLDE = PASTA / "esquemas" / "busca-por-palavra.schema.json"
@@ -75,19 +75,6 @@ def buscas_exatas(argumentos, partes):
             raise FileNotFoundError(arquivo)
         exatas.append(Exata(arquivo, re.compile(forma), Path(partes["pasta"])))
     return exatas
-
-
-def depois_do_comando(palavras_da_busca, palavras):
-    """As palavras depois do comando de busca, quando as palavras comecam por ele: a primeira
-    pelo nome, sem o caminho, e as outras na ordem, com outras no meio; None quando nao comecam."""
-    if not palavras or Path(palavras[0]).name != palavras_da_busca[0]:
-        return None
-    resto = palavras[1:]
-    for esperada in palavras_da_busca[1:]:
-        if esperada not in resto:
-            return None
-        resto = resto[resto.index(esperada) + 1:]
-    return resto
 
 
 def valor_da_opcao(opcao, palavra, seguinte):
@@ -144,23 +131,13 @@ def passa(config, exatas, padroes, arquivos, de_arquivo):
     return any(eh_exata(exata, padroes, arquivos) for exata in exatas)
 
 
-def busca_barrada(config, exatas, palavras):
-    """A parte de um comando simples que roda uma busca barrada, da palavra dela em diante; None quando nao ha."""
-    for posicao in posicoes_de_comando(palavras, config["prefixos"]):
-        for busca in config["buscas"]:
-            seguintes = depois_do_comando(busca["palavras"], palavras[posicao:])
-            if seguintes is not None and not passa(config, exatas, *padroes_da_busca(busca, seguintes)):
-                return " ".join(palavras[posicao:])
-    return None
-
-
 def parte_barrada(config, exatas, comando):
-    """A primeira busca barrada do comando ou de um comando de dentro dele; None quando nao ha."""
-    for _, simples in lidos(comando):
-        for palavras in simples:
-            achada = busca_barrada(config, exatas, palavras)
-            if achada:
-                return achada
+    """A primeira busca barrada do comando ou de um comando de dentro dele, da palavra dela em diante; None quando nao
+    ha."""
+    buscas = config["buscas"]
+    for indice, seguintes, parte in comandos_achados(comando, [b["palavras"] for b in buscas], config["prefixos"]):
+        if not passa(config, exatas, *padroes_da_busca(buscas[indice], seguintes)):
+            return parte
     return None
 
 

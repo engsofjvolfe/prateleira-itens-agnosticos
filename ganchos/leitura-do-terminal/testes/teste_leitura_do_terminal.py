@@ -5,6 +5,13 @@ ou opcao e de um programa de verdade. Conferem o que a leitura da, nunca uma fra
     alvos de redirecionamento fora das palavras;
   - as palavras que rodam como comando: a primeira, menos a atribuicao, e todas as que vem
     depois de um prefixo, tambem dado com o caminho; o argumento, nao;
+  - as palavras depois de um comando de uma ou mais palavras: a primeira pelo nome, tambem
+    com o caminho, e as outras na ordem, com outras palavras no meio; nada quando as
+    palavras nao comecam por ele, tambem com as palavras dele fora de ordem;
+  - os comandos procurados que um comando roda: cada um, com o indice, as palavras depois
+    dele e a parte do comando simples, depois de um operador, de um prefixo e dentro de $( )
+    e de crases, na ordem do comando; dois procurados no mesmo lugar; nada quando o
+    procurado e so um argumento; e o comando ilegivel e erro;
   - os comandos de dentro de $( ) e de crases, tambem entre aspas e um dentro do outro, na
     ordem: o de fora e, depois, cada um de dentro;
   - o comando com aspa, crase ou substituicao sem fechar e ilegivel, e o resto nao;
@@ -57,6 +64,30 @@ COMANDOS = {  # comando -> as palavras que rodam como comando, nele e nos de den
     "eco # ti; te": ["eco"],
 }
 
+DEPOIS = [  # (comando, palavras, as palavras depois do comando, ou None quando elas nao comecam por ele)
+    (["ti"], ["ti", "a", "b"], ["a", "b"]),
+    (["ti"], ["/caminho/ti", "a"], ["a"]),
+    (["ti"], ["tio", "a"], None),
+    (["ti"], ["eco", "ti"], None),
+    (["ti"], [], None),
+    (["te", "ti"], ["te", "ti", "a"], ["a"]),
+    (["te", "ti"], ["te", "-C", "d", "ti", "a"], ["a"]),
+    (["te", "ti"], ["te", "ta"], None),
+    (["te", "ti"], ["ti", "te"], None),
+    (["te", "ti", "to"], ["te", "x", "ti", "y", "to", "z"], ["z"]),
+    (["te", "ti", "to"], ["te", "to", "ti"], None),
+]
+
+ACHADOS = [  # (comando, procurados, o que se acha: (indice, seguintes, parte), na ordem)
+    ("eco a; ti b c", [["ti"]], [(0, ["b", "c"], "ti b c")]),
+    ("ti a | to b", [["to"], ["ti"]], [(1, ["a"], "ti a"), (0, ["b"], "to b")]),
+    ("embrulho 5 ti a", [["ti"]], [(0, ["a"], "ti a")]),
+    ("eco ti a", [["ti"]], []),
+    ("eco \"$(te -C d ti a)\"", [["ti"], ["te", "ti"]], [(1, ["a"], "te -C d ti a")]),
+    ("te ti a", [["te"], ["te", "ti"]], [(0, ["ti", "a"], "te ti a"), (1, ["a"], "te ti a")]),
+    ("eco `ti a` \"$(to b)\"", [["ti"], ["to"]], [(0, ["a"], "ti a"), (1, ["b"], "to b")]),
+]
+
 ILEGIVEIS = ["eco 'a", "eco \"a", "eco `a", "eco \"$(a\"", "eco \"$(a 'b)\""]
 LEGIVEIS = ["eco 'a' \"b\" `c` \"$(d)\"", "eco \"a 'b' c\"", "eco 'a \"b\" c'"]
 
@@ -85,9 +116,13 @@ def comandos(comando):
     return [p[i] for p in simples(comando) for i in leitura.posicoes_de_comando(p, PREFIXOS)]
 
 
-def ilegivel(comando):
+def achados(comando, procurados):
+    return list(leitura.comandos_achados(comando, procurados, PREFIXOS))
+
+
+def ilegivel(comando, ler=lambda c: list(leitura.lidos(c))):
     try:
-        list(leitura.lidos(comando))
+        ler(comando)
     except leitura.ComandoIlegivel:
         return True
     return False
@@ -96,6 +131,7 @@ def ilegivel(comando):
 def tudo():
     """O que a leitura da para todos os casos, para comparar duas leituras."""
     return ([simples(c) for c in PALAVRAS], [comandos(c) for c in COMANDOS],
+            [leitura.depois_do_comando(c, p) for c, p, _ in DEPOIS], [achados(c, p) for c, p, _ in ACHADOS],
             [ilegivel(c) for c in ILEGIVEIS + LEGIVEIS])
 
 
@@ -103,8 +139,15 @@ for comando, esperado in PALAVRAS.items():
     confere(simples(comando) == esperado, f"as palavras de {comando!r}: {simples(comando)!r}")
 for comando, esperado in COMANDOS.items():
     confere(comandos(comando) == esperado, f"os comandos de {comando!r}: {comandos(comando)!r}")
+for comando, palavras, esperado in DEPOIS:
+    achado = leitura.depois_do_comando(comando, palavras)
+    confere(achado == esperado, f"depois de {comando!r} em {palavras!r}: {achado!r}")
+for comando, procurados, esperado in ACHADOS:
+    confere(achados(comando, procurados) == esperado,
+            f"os procurados {procurados!r} em {comando!r}: {achados(comando, procurados)!r}")
 for comando in ILEGIVEIS:
     confere(ilegivel(comando), f"{comando!r} é ilegível")
+    confere(ilegivel(comando, lambda c: achados(c, [["eco"]])), f"{comando!r} é ilegível ao achar os procurados")
 for comando in LEGIVEIS:
     confere(not ilegivel(comando), f"{comando!r} se lê")
 for opcao, palavra, bate in OPCOES:

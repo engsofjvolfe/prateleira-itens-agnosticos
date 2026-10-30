@@ -15,7 +15,8 @@ O teste confere o que o gancho faz, nunca uma frase pronta:
   `=` ou na palavra seguinte, ou repetida; a busca com os padrões tirados de um arquivo e a
   busca sem padrão; a busca depois de um operador, de um prefixo e de uma atribuição, com o
   caminho e dentro de `$( )` ou de crases; a busca de duas palavras, também com outras no
-  meio; e o comando que não se lê;
+  meio; a busca com o padrão livre dado na opção que só outra busca tem; e o comando que
+  não se lê;
 - deixa passar a busca só com o padrão livre, dado dessas formas, e o comando que não é uma
   busca, mesmo com o nome dela como argumento, entre aspas ou num comentário;
 - com `--exatas`, deixa passar a busca exata — cada padrão inteiro na forma, dado dessas

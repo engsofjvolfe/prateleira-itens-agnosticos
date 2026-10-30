@@ -7,6 +7,13 @@ prateleira segue o [Versionamento Semântico](https://semver.org/lang/pt-BR/spec
 
 ## [Não publicado]
 
+### Adicionado
+
+- `ganchos/leitura-do-terminal`: a função `depois_do_comando`, que acha nas palavras de um
+  comando simples um comando de uma ou mais palavras, como `git grep`, também com outras
+  palavras no meio, e a `comandos_achados`, que dá cada vez que um comando, ou um de dentro
+  dele, roda um dos comandos procurados; o `busca-por-palavra` passa a usá-las.
+
 ## [0.1.0] - 2026-10-29
 
 ### Adicionado

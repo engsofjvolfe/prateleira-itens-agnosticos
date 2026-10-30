@@ -11,7 +11,8 @@ que o gancho faz, nunca uma frase pronta:
     dado sem opcao. Bloqueia tambem a busca com os padroes tirados de um arquivo e a busca
     sem padrao; a busca depois de um operador, de um prefixo e de uma atribuicao, com o
     caminho e dentro de $( ) ou de crases; a busca de duas palavras, tambem com outras no
-    meio; e o comando que nao se le;
+    meio; a busca com o padrao livre dado na opcao que so outra busca tem; e o comando que
+    nao se le;
   - deixa passar a busca so com o padrao livre, dado dessas formas, e o comando que nao e
     uma busca, mesmo com o nome dela como argumento, entre aspas ou num comentario;
   - com --exatas, deixa passar a busca exata: cada padrao inteiro na forma, dado dessas
@@ -80,7 +81,8 @@ BARRADOS = [
     "acha -a lista x", "acha --arquivo=lista x", f"acha -a {L} x", "acha", "acha -p", "acha -n",
     "eco x | acha palavra", "eco x; acha palavra", "embrulho acha palavra", "/caminho/acha palavra",
     "eco \"$(acha palavra)\"", "eco `acha palavra`", "VAR=1 acha palavra",
-    "versao acha palavra", "versao -C d acha palavra", "cata palavra", "eco 'sem fim",
+    "versao acha palavra", "versao -C d acha palavra", f"versao acha --padrao={L} x", "cata palavra",
+    "eco 'sem fim",
 ]
 LIVRES = [
     f"acha {L} x", f"acha -n {L} x y", f"acha -p {L} x", f"acha --padrao={L} x", f"acha --padrao {L} x",

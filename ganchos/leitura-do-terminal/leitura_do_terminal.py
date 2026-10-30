@@ -2,11 +2,13 @@
 
 Divide o comando em palavras e operadores, respeitando aspas, escapes e comentarios;
 separa os comandos simples, sem os alvos de redirecionamento; acha as palavras que o shell
-roda como comando (a primeira e as que vem depois de um prefixo, como xargs); confere se
-uma opcao de linha de comando aparece numa palavra (a curta tambem junto de outras, a longa
-tambem com =valor); e da o comando e cada comando de dentro dele, de $( ) e de crases,
-tambem entre aspas, um depois do outro. Comando com aspas, crase ou substituicao sem
-fechar e ComandoIlegivel.
+roda como comando (a primeira e as que vem depois de um prefixo, como xargs); acha, nas
+palavras de um comando simples, um comando de uma ou mais palavras, como git grep, tambem
+com outras palavras no meio, e cada vez que um comando, ou um de dentro dele, roda um dos
+comandos procurados; confere se uma opcao de linha de comando aparece numa palavra (a curta
+tambem junto de outras, a longa tambem com =valor); e da o comando e cada comando de dentro
+dele, de $( ) e de crases, tambem entre aspas, um depois do outro. Comando com aspas, crase
+ou substituicao sem fechar e ComandoIlegivel.
 
 Nao se roda: e importado. So biblioteca padrao.
 """
@@ -197,6 +199,34 @@ def posicoes_de_comando(palavras, prefixos):
         primeira = False
         depois_de_prefixo = depois_de_prefixo or Path(palavra).name in prefixos
     return posicoes
+
+
+def depois_do_comando(comando, palavras):
+    """As palavras depois do comando, de uma ou mais palavras, quando as palavras comecam
+    por ele: a primeira pelo nome, sem o caminho, e as outras na ordem, com outras palavras
+    no meio; None quando nao comecam."""
+    if not palavras or Path(palavras[0]).name != comando[0]:
+        return None
+    resto = palavras[1:]
+    for esperada in comando[1:]:
+        if esperada not in resto:
+            return None
+        resto = resto[resto.index(esperada) + 1:]
+    return resto
+
+
+def comandos_achados(comando, procurados, prefixos):
+    """(indice, seguintes, parte) de cada vez que o comando, ou um comando de dentro dele, roda
+    um dos procurados (cada um a lista das palavras dele, uma ou mais), na ordem do comando: o
+    indice do procurado na lista, as palavras depois dele e a parte do comando simples da
+    palavra dele em diante. ComandoIlegivel quando um comando nao se le."""
+    for _, simples in lidos(comando):
+        for palavras in simples:
+            for posicao in posicoes_de_comando(palavras, prefixos):
+                for indice, procurado in enumerate(procurados):
+                    seguintes = depois_do_comando(procurado, palavras[posicao:])
+                    if seguintes is not None:
+                        yield indice, seguintes, " ".join(palavras[posicao:])
 
 
 def letras_iniciais(texto):
