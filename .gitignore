@@ -1,0 +1,6 @@
+# o cache do Python
+__pycache__/
+# a anotação de cada sessão do gancho das regras de código, apagada ao fim de cada tarefa
+ganchos/regras-de-codigo/estado/
+# a anotação de cada sessão do gancho do destino da limpeza, apagada ao fim de cada resposta
+ganchos/destino-da-limpeza/estado/

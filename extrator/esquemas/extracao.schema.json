@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "extracao.schema.json",
+  "type": "object",
+  "required": ["versao_schema", "documentos"],
+  "additionalProperties": false,
+  "properties": {
+    "versao_schema": { "const": 1 },
+    "documentos": { "type": "array", "items": { "$ref": "#/$defs/documento" } }
+  },
+  "$defs": {
+    "caminho": { "type": "string", "minLength": 1 },
+    "documento": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["arquivo", "saida"],
+      "properties": {
+        "arquivo": { "$ref": "#/$defs/caminho" },
+        "saida": { "$ref": "#/$defs/caminho" },
+        "leitor": { "type": "string", "pattern": "^[a-z0-9_]+$" },
+        "opcoes": { "type": "object" },
+        "numeracao": { "type": "array", "items": { "$ref": "#/$defs/faixa_numerada" } },
+        "correcoes": { "type": "array", "items": { "$ref": "#/$defs/correcao" } },
+        "trocas": { "type": "object", "additionalProperties": { "type": "string" } }
+      }
+    },
+    "correcao": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["pagina", "de", "para"],
+      "properties": {
+        "pagina": { "type": "integer" },
+        "de": { "type": "string", "minLength": 1 },
+        "para": { "type": "string" },
+        "vezes": { "type": "integer" }
+      }
+    },
+    "faixa_numerada": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["de", "ate", "estilo", "primeiro"],
+      "properties": {
+        "de": { "type": "integer" },
+        "ate": { "type": "integer" },
+        "estilo": { "type": "string", "minLength": 1 },
+        "primeiro": { "type": "integer" }
+      }
+    }
+  }
+}

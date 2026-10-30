@@ -1,0 +1,30 @@
+{
+  "versao_schema": 1,
+  "estado": "estado",
+  "sem_conferencia": [".md", ".txt", ".tsv", ".csv"],
+  "terminal": {
+    "destinos_livres": ["/dev/null", "/dev/stdout", "/dev/stderr"],
+    "prefixos": [
+      "{", "!", "if", "then", "else", "elif", "while", "until", "do",
+      "env", "time", "nohup", "nice", "timeout", "stdbuf", "xargs", "exec", "command", "builtin", "sudo", "doas",
+      "-exec", "-execdir", "-ok", "-okdir"
+    ],
+    "sempre_escrevem": ["tee"],
+    "escrevem_com_opcao": {
+      "sed": ["-i", "--in-place"],
+      "perl": ["-i", "-e", "-E"],
+      "ruby": ["-i", "-e"],
+      "awk": ["-i"],
+      "gawk": ["-i"],
+      "python": ["-c"],
+      "python3": ["-c"],
+      "node": ["-e", "-p", "--eval", "--print"],
+      "php": ["-r"],
+      "bash": ["-c"],
+      "sh": ["-c"],
+      "dash": ["-c"],
+      "zsh": ["-c"]
+    },
+    "leem_codigo_sem_arquivo": ["python", "python3", "node", "perl", "ruby", "php", "bash", "sh", "dash", "zsh"]
+  }
+}

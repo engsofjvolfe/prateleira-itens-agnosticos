@@ -1,0 +1,671 @@
+{
+ "versao_schema": 1,
+ "estragos": [
+  {
+   "nome": "hash-curto",
+   "arquivo": "analises.py",
+   "de": "DIGITOS_DO_HASH = 4",
+   "para": "DIGITOS_DO_HASH = 3"
+  },
+  {
+   "nome": "separador-do-id-trocado",
+   "arquivo": "analises.py",
+   "de": "SEPARADOR_DO_ID = \"/\"",
+   "para": "SEPARADOR_DO_ID = \"-\""
+  },
+  {
+   "nome": "codigo-sem-aula-passa",
+   "arquivo": "analises.py",
+   "de": "    if not aula or any(c.isspace() for c in aula)",
+   "para": "    if any(c.isspace() for c in aula)"
+  },
+  {
+   "nome": "codigo-com-parte-a-mais-passa",
+   "arquivo": "analises.py",
+   "de": " or len(resto) >= len(Codigo._fields):",
+   "para": ":"
+  },
+  {
+   "nome": "aula-com-espaco-passa",
+   "arquivo": "analises.py",
+   "de": " or any(c.isspace() for c in aula)",
+   "para": ""
+  },
+  {
+   "nome": "numero-do-id-com-zero-passa",
+   "arquivo": "analises.py",
+   "de": "NUMERO_DO_ID = re.compile(r\"[1-9][0-9]*\")",
+   "para": "NUMERO_DO_ID = re.compile(r\"[0-9]+\")"
+  },
+  {
+   "nome": "numero-do-id-sem-conferir",
+   "arquivo": "analises.py",
+   "de": "not all(NUMERO_DO_ID.fullmatch(n) for n in numeros) or ",
+   "para": ""
+  },
+  {
+   "nome": "hash-do-id-de-qualquer-tamanho",
+   "arquivo": "analises.py",
+   "de": "HASH_DO_ID = re.compile(f\"[0-9a-f]{{{DIGITOS_DO_HASH}}}\")",
+   "para": "HASH_DO_ID = re.compile(\"[0-9a-f]+\")"
+  },
+  {
+   "nome": "hash-do-id-em-maiusculas-passa",
+   "arquivo": "analises.py",
+   "de": "f\"[0-9a-f]{{",
+   "para": "f\"[0-9a-fA-F]{{"
+  },
+  {
+   "nome": "hash-do-id-sem-conferir",
+   "arquivo": "analises.py",
+   "de": " or not all(HASH_DO_ID.fullmatch(r) for r in resumo)",
+   "para": ""
+  },
+  {
+   "nome": "slide-e-posicao-trocados",
+   "arquivo": "analises.py",
+   "de": "    slide, posicao = (list(map(int, numeros)) + [None, None])[:2]",
+   "para": "    posicao, slide = (list(map(int, numeros)) + [None, None])[:2]"
+  },
+  {
+   "nome": "codigo-sem-o-hash",
+   "arquivo": "analises.py",
+   "de": "resumo[0] if resumo else None",
+   "para": "None"
+  },
+  {
+   "nome": "hash-sem-nfc",
+   "arquivo": "analises.py",
+   "de": "hashlib.sha1(nfc(texto).encode(\"utf-8\"))",
+   "para": "hashlib.sha1(texto.encode(\"utf-8\"))"
+  },
+  {
+   "nome": "posicao-nao-zera",
+   "arquivo": "analises.py",
+   "de": "slide, posicao = int(numero), 0",
+   "para": "slide = int(numero)"
+  },
+  {
+   "nome": "titulo-nao-fecha",
+   "arquivo": "analises.py",
+   "de": "slide = None",
+   "para": "pass"
+  },
+  {
+   "nome": "nota-vira-erro",
+   "arquivo": "analises.py",
+   "de": "if corpo.startswith(forma[\"nota_sem_campos\"]):",
+   "para": "if False:"
+  },
+  {
+   "nome": "ordem-sem-natural",
+   "arquivo": "analises.py",
+   "de": "aulas = sorted(arquivos, key=chave_natural)",
+   "para": "aulas = sorted(arquivos)"
+  },
+  {
+   "nome": "parenteses-contam",
+   "arquivo": "analises.py",
+   "de": "re.split(padrao, sem_parenteses(bruto))",
+   "para": "re.split(padrao, bruto)"
+  },
+  {
+   "nome": "vazio-conta",
+   "arquivo": "analises.py",
+   "de": "if parte and parte != vazio and parte not in itens:",
+   "para": "if parte and parte not in itens:"
+  },
+  {
+   "nome": "lista-repete",
+   "arquivo": "analises.py",
+   "de": "if parte and parte != vazio and parte not in itens:",
+   "para": "if parte and parte != vazio:"
+  },
+  {
+   "nome": "separador-curto-primeiro",
+   "arquivo": "analises.py",
+   "de": "sorted(separadores, key=len, reverse=True)",
+   "para": "sorted(separadores, key=len)"
+  },
+  {
+   "nome": "pedacos-cortam-nos-parenteses",
+   "arquivo": "analises.py",
+   "de": "if nivel == 0 else None",
+   "para": "if True else None"
+  },
+  {
+   "nome": "parentese-que-fecha-sem-abrir-passa",
+   "arquivo": "analises.py",
+   "de": "if nivel < 0:",
+   "para": "if False:"
+  },
+  {
+   "nome": "parentese-que-nao-fecha-passa",
+   "arquivo": "analises.py",
+   "de": "    if nivel:\n        raise",
+   "para": "    if False:\n        raise"
+  },
+  {
+   "nome": "pedacos-sem-o-ultimo",
+   "arquivo": "analises.py",
+   "de": "sem_vazio(pedacos + [bruto[inicio:]], vazio)",
+   "para": "sem_vazio(pedacos, vazio)"
+  },
+  {
+   "nome": "pedacos-lidos-como-lista",
+   "arquivo": "analises.py",
+   "de": "\"le\": em_pedacos}",
+   "para": "\"le\": em_lista}"
+  },
+  {
+   "nome": "erro-do-campo-sem-a-linha",
+   "arquivo": "analises.py",
+   "de": "raise ErroDeForma(f\"{onde}: {e}\") from None",
+   "para": "raise"
+  },
+  {
+   "nome": "parenteses-trocados",
+   "arquivo": "analises.py",
+   "de": "ABRE, FECHA = \"(\", \")\"",
+   "para": "ABRE, FECHA = \"[\", \"]\""
+  },
+  {
+   "nome": "presenca-exata",
+   "arquivo": "analises.py",
+   "de": "return [v for v in campo[\"valores\"] if v in bruto]",
+   "para": "return [v for v in campo[\"valores\"] if v == bruto.strip()]"
+  },
+  {
+   "nome": "campo-faltando-passa",
+   "arquivo": "analises.py",
+   "de": "raise ErroDeForma(f\"{onde}: sem o campo {nome!r}\")",
+   "para": "pass"
+  },
+  {
+   "nome": "slide-sem-numero-passa",
+   "arquivo": "analises.py",
+   "de": "if not numero.isdecimal():",
+   "para": "if False:"
+  },
+  {
+   "nome": "pasta-com-nome-de-aula",
+   "arquivo": "analises.py",
+   "de": " if c.is_file())",
+   "para": ")"
+  },
+  {
+   "nome": "aula-repetida-passa",
+   "arquivo": "analises.py",
+   "de": "if aula in arquivos:",
+   "para": "if False:"
+  },
+  {
+   "nome": "ids-repetidos-passam",
+   "arquivo": "analises.py",
+   "de": "if repetidos:",
+   "para": "if False:"
+  },
+  {
+   "nome": "forma-desconhecida-passa",
+   "arquivo": "analises.py",
+   "de": "if como is None:",
+   "para": "if False:"
+  },
+  {
+   "nome": "lista-sem-textos-passa",
+   "arquivo": "analises.py",
+   "de": "if como[\"pede\"] and not textos(c.get(como[\"pede\"])):",
+   "para": "if False:"
+  },
+  {
+   "nome": "papel-desconhecido-passa",
+   "arquivo": "analises.py",
+   "de": "if papel is not None and papel not in donos:",
+   "para": "if False:"
+  },
+  {
+   "nome": "papel-em-texto-passa",
+   "arquivo": "analises.py",
+   "de": "if papel in PAPEIS_EM_LISTA and not como[\"em_lista\"]:",
+   "para": "if False:"
+  },
+  {
+   "nome": "papel-faltando-passa",
+   "arquivo": "analises.py",
+   "de": "if not donos_do_papel:",
+   "para": "if False:"
+  },
+  {
+   "nome": "papel-repetido-passa",
+   "arquivo": "analises.py",
+   "de": "elif len(donos_do_papel) > 1:",
+   "para": "elif False:"
+  },
+  {
+   "nome": "campo-repetido-passa",
+   "arquivo": "analises.py",
+   "de": "sorted({n for n in nomes if nomes.count(n) > 1})",
+   "para": "[]"
+  },
+  {
+   "nome": "forma-sem-conferir",
+   "arquivo": "analises.py",
+   "de": "    if erros:\n        raise ErroDeForma(\"a forma das análises: \"",
+   "para": "    if False:\n        raise ErroDeForma(\"a forma das análises: \""
+  },
+  {
+   "nome": "marca-em-todo-papel",
+   "arquivo": "lugares.py",
+   "de": "for p in m[\"papeis\"])",
+   "para": "for p in trecho[\"papeis\"])"
+  },
+  {
+   "nome": "fora-misto-passa",
+   "arquivo": "lugares.py",
+   "de": "if tipos <= de_fora else",
+   "para": "if True else"
+  },
+  {
+   "nome": "marca-nao-salva-sem-grupo",
+   "arquivo": "lugares.py",
+   "de": "if not valor(trecho, \"grupo\") and not marcas(trecho, regras):",
+   "para": "if not valor(trecho, \"grupo\"):"
+  },
+  {
+   "nome": "caminho-ignorado",
+   "arquivo": "lugares.py",
+   "de": " or caminhos & set(d.get(\"caminhos\", []))",
+   "para": ""
+  },
+  {
+   "nome": "todos-ignorado",
+   "arquivo": "lugares.py",
+   "de": "if d.get(\"todos\") or grupos",
+   "para": "if grupos"
+  },
+  {
+   "nome": "assunto-ignorado",
+   "arquivo": "lugares.py",
+   "de": "if pelo_assunto(trecho, regras):",
+   "para": "if False:"
+  },
+  {
+   "nome": "marca-ultima",
+   "arquivo": "lugares.py",
+   "de": "(\"marca\", suas[0])",
+   "para": "(\"marca\", suas[-1])"
+  },
+  {
+   "nome": "grupo-desconhecido-passa",
+   "arquivo": "lugares.py",
+   "de": "return [g for g in valor(trecho, \"grupo\") if g not in conhecidos]",
+   "para": "return []"
+  },
+  {
+   "nome": "marca-sem-texto-passa",
+   "arquivo": "lugares.py",
+   "de": "if not m[\"texto\"]:",
+   "para": "if False:"
+  },
+  {
+   "nome": "marca-sem-papel-passa",
+   "arquivo": "lugares.py",
+   "de": "if not m[\"papeis\"]:",
+   "para": "if False:"
+  },
+  {
+   "nome": "papel-da-marca-sem-conferir",
+   "arquivo": "lugares.py",
+   "de": "for p in m[\"papeis\"] if p not in campos]",
+   "para": "for p in m[\"papeis\"] if False]"
+  },
+  {
+   "nome": "caminho-sem-conferir",
+   "arquivo": "lugares.py",
+   "de": "if c not in campo[\"valores\"]]",
+   "para": "if False]"
+  },
+  {
+   "nome": "regras-sem-conferir",
+   "arquivo": "lugares.py",
+   "de": "if erros:",
+   "para": "if False:"
+  },
+  {
+   "nome": "barra-sem-escape",
+   "arquivo": "relatorio.py",
+   "de": "return str(valor).replace(\"|\", \"\\\\|\")",
+   "para": "return str(valor)"
+  },
+  {
+   "nome": "alinhamento-trocado",
+   "arquivo": "relatorio.py",
+   "de": "[\"---:\" if i in numericas else \"---\"",
+   "para": "[\"---\" if i in numericas else \"---:\""
+  },
+  {
+   "nome": "classes-sem-total",
+   "arquivo": "relatorio.py",
+   "de": "linhas + [(\"total\", sum(classes.values()))]",
+   "para": "linhas"
+  },
+  {
+   "nome": "classe-desconhecida-passa",
+   "arquivo": "relatorio.py",
+   "de": "if desconhecidas:",
+   "para": "if False:"
+  },
+  {
+   "nome": "marca-sem-trecho-some",
+   "arquivo": "relatorio.py",
+   "de": "possiveis += [((\"marca\", m[\"id\"]), True)",
+   "para": "possiveis += [((\"marca\", m[\"id\"]), False)"
+  },
+  {
+   "nome": "classe-do-limite-some",
+   "arquivo": "relatorio.py",
+   "de": "SO_COM_TRECHO = (\"assunto\", \"unidade\", \"limite\", \"depois\")",
+   "para": "SO_COM_TRECHO = (\"assunto\", \"unidade\", \"limite\")"
+  },
+  {
+   "nome": "classes-sem-trecho-saem",
+   "arquivo": "relatorio.py",
+   "de": "[((k,), False) for k in SO_COM_TRECHO]",
+   "para": "[((k,), True) for k in SO_COM_TRECHO]"
+  },
+  {
+   "nome": "rotulo-repetido",
+   "arquivo": "relatorio.py",
+   "de": "\"depois\": \"depois da última aula, sem lugar\",",
+   "para": "\"depois\": \"até a última aula, sem lugar depois do limite\","
+  },
+  {
+   "nome": "empate-fora-de-ordem",
+   "arquivo": "relatorio.py",
+   "de": "key=lambda kv: (-kv[1], ordem_natural(str(kv[0])), str(kv[0]))",
+   "para": "key=lambda kv: -kv[1]"
+  },
+  {
+   "nome": "chave-em-ordem-de-texto",
+   "arquivo": "relatorio.py",
+   "de": "key=lambda kv: (ordem_natural(str(kv[0])), str(kv[0])))",
+   "para": "key=lambda kv: kv[0])"
+  },
+  {
+   "nome": "molde-sem-a-fonte",
+   "arquivo": "esquemas/forma-analise.schema.json",
+   "de": "\"fonte\": {",
+   "para": "\"fontes\": {"
+  },
+  {
+   "nome": "cabecalho-sem-conferir",
+   "arquivo": "tabela.py",
+   "de": "if not linhas or [c.strip() for c in linhas[0].split(SEPARADOR)] != colunas:",
+   "para": "if not linhas:"
+  },
+  {
+   "nome": "cabecalho-com-espacos",
+   "arquivo": "tabela.py",
+   "de": "[c.strip() for c in linhas[0].split(SEPARADOR)]",
+   "para": "linhas[0].split(SEPARADOR)"
+  },
+  {
+   "nome": "linha-em-branco-conta",
+   "arquivo": "tabela.py",
+   "de": "if not \"\".join(valores):",
+   "para": "if not linha:"
+  },
+  {
+   "nome": "valores-com-espacos",
+   "arquivo": "tabela.py",
+   "de": "[v.strip() for v in linha.split(SEPARADOR)]",
+   "para": "linha.split(SEPARADOR)"
+  },
+  {
+   "nome": "colunas-sem-conferir",
+   "arquivo": "tabela.py",
+   "de": "if len(valores) > len(colunas):",
+   "para": "if False:"
+  },
+  {
+   "nome": "linha-curta-vira-erro",
+   "arquivo": "tabela.py",
+   "de": "if len(valores) > len(colunas):",
+   "para": "if len(valores) != len(colunas):"
+  },
+  {
+   "nome": "colunas-que-faltam-somem",
+   "arquivo": "tabela.py",
+   "de": "valores + [\"\"] * (len(colunas) - len(valores))",
+   "para": "valores"
+  },
+  {
+   "nome": "linha-com-outro-numero",
+   "arquivo": "tabela.py",
+   "de": "enumerate(linhas[1:], 2)",
+   "para": "enumerate(linhas[1:], 1)"
+  },
+  {
+   "nome": "cabecalho-repetido-passa",
+   "arquivo": "tabela.py",
+   "de": "if not colunas or len(set(colunas)) != len(colunas):",
+   "para": "if False:"
+  },
+  {
+   "nome": "tabela-dos-destinos-sem-nfc",
+   "arquivo": "destinos.py",
+   "de": "pedaco, unidade = nfc(linha[\"destino\"]), nfc(linha[\"unidade\"])",
+   "para": "pedaco, unidade = linha[\"destino\"], linha[\"unidade\"]"
+  },
+  {
+   "nome": "pedacos-sem-nfc",
+   "arquivo": "destinos.py",
+   "de": "for pedaco in map(nfc, pedacos(t)):",
+   "para": "for pedaco in pedacos(t):"
+  },
+  {
+   "nome": "linha-repetida-passa",
+   "arquivo": "destinos.py",
+   "de": "elif repetida:",
+   "para": "elif False:"
+  },
+  {
+   "nome": "contradicao-passa",
+   "arquivo": "destinos.py",
+   "de": "elif contradiz:",
+   "para": "elif False:"
+  },
+  {
+   "nome": "sem-destino-passa",
+   "arquivo": "destinos.py",
+   "de": "if not pedaco:",
+   "para": "if False:"
+  },
+  {
+   "nome": "unidade-vazia-esquecida",
+   "arquivo": "destinos.py",
+   "de": "                sem_unidade.add(pedaco)",
+   "para": "                pass"
+  },
+  {
+   "nome": "erros-dos-destinos-passam",
+   "arquivo": "destinos.py",
+   "de": "    if erros:\n        raise ErroDeDestinos",
+   "para": "    if False:\n        raise ErroDeDestinos"
+  },
+  {
+   "nome": "ids-do-trecho-repetem",
+   "arquivo": "destinos.py",
+   "de": "ids[t[\"id\"]] = unicos(achados)",
+   "para": "ids[t[\"id\"]] = achados"
+  },
+  {
+   "nome": "pedaco-sem-linha-sem-trecho",
+   "arquivo": "destinos.py",
+   "de": "faltam[pedaco].append(t[\"id\"])",
+   "para": "pass"
+  },
+  {
+   "nome": "destino-em-texto-passa",
+   "arquivo": "destinos.py",
+   "de": "if not isinstance(valor, list):",
+   "para": "if False:"
+  },
+  {
+   "nome": "desconhecido-esquecido",
+   "arquivo": "destinos.py",
+   "de": "for i in ids if i not in conhecidos]",
+   "para": "for i in ids if False]"
+  },
+  {
+   "nome": "conhecido-acusado",
+   "arquivo": "destinos.py",
+   "de": "for i in ids if i not in conhecidos]",
+   "para": "for i in ids]"
+  },
+  {
+   "nome": "indireto-conta-para-tratar",
+   "arquivo": "limite.py",
+   "de": "if lugar.direto:",
+   "para": "if True:"
+  },
+  {
+   "nome": "parte-repetida-conta",
+   "arquivo": "limite.py",
+   "de": "if lugar.parte not in suas:",
+   "para": "if True:"
+  },
+  {
+   "nome": "trata-com-mais-partes",
+   "arquivo": "limite.py",
+   "de": ">= partes_para_tratar]",
+   "para": "> partes_para_tratar]"
+  },
+  {
+   "nome": "decisao-ignorada",
+   "arquivo": "limite.py",
+   "de": "if entrada in decisoes:\n            return",
+   "para": "if False:\n            return"
+  },
+  {
+   "nome": "unidade-com-itens-pela-conta",
+   "arquivo": "limite.py",
+   "de": "for e in com_lugar if e not in com_itens}",
+   "para": "for e in com_lugar}"
+  },
+  {
+   "nome": "mencionam-com-quem-trata",
+   "arquivo": "limite.py",
+   "de": "if a not in tratam[e]]",
+   "para": "]"
+  },
+  {
+   "nome": "tratada-por-aula-depois",
+   "arquivo": "limite.py",
+   "de": "if ate_a_ultima & set(tratam[e])]",
+   "para": "if tratam[e]]"
+  },
+  {
+   "nome": "item-no-material",
+   "arquivo": "limite.py",
+   "de": "[e for e in tratadas if e not in unidade_de]",
+   "para": "tratadas"
+  },
+  {
+   "nome": "ate-a-ultima-pela-entrada",
+   "arquivo": "limite.py",
+   "de": "return unidade_de.get(lugar.entrada, lugar.entrada) in tratada",
+   "para": "return lugar.entrada in tratada"
+  },
+  {
+   "nome": "depois-da-ultima-pela-unidade",
+   "arquivo": "limite.py",
+   "de": "        return lugar.entrada in tratada",
+   "para": "        return unidade_de.get(lugar.entrada, lugar.entrada) in tratada"
+  },
+  {
+   "nome": "sem-lugar-trocado",
+   "arquivo": "limite.py",
+   "de": "(sem_lugar_ate if ate else sem_lugar_depois)",
+   "para": "(sem_lugar_depois if ate else sem_lugar_ate)"
+  },
+  {
+   "nome": "perguntas-de-todo-trecho",
+   "arquivo": "limite.py",
+   "de": "elif not ate:",
+   "para": "else:"
+  },
+  {
+   "nome": "perguntas-com-aula-depois",
+   "arquivo": "limite.py",
+   "de": "for a in tratam[lugar.entrada]} & ate_a_ultima)",
+   "para": "for a in tratam[lugar.entrada]})"
+  },
+  {
+   "nome": "partes-para-tratar-passam",
+   "arquivo": "limite.py",
+   "de": "if type(partes_para_tratar) is not int or partes_para_tratar < 1:",
+   "para": "if False:"
+  },
+  {
+   "nome": "aula-repetida-passa-no-limite",
+   "arquivo": "limite.py",
+   "de": "if repetidas:",
+   "para": "if False:"
+  },
+  {
+   "nome": "ultima-fora-das-aulas-passa",
+   "arquivo": "limite.py",
+   "de": "if ultima not in aulas:\n        erros.append",
+   "para": "if False:\n        erros.append"
+  },
+  {
+   "nome": "trecho-em-duas-aulas-passa",
+   "arquivo": "limite.py",
+   "de": "if len(suas) > 1:",
+   "para": "if False:"
+  },
+  {
+   "nome": "aula-do-trecho-fora-passa",
+   "arquivo": "limite.py",
+   "de": "for a in suas if a not in aulas]",
+   "para": "for a in suas if False]"
+  },
+  {
+   "nome": "item-e-unidade-passa",
+   "arquivo": "limite.py",
+   "de": "for item in unidade_de if item in com_itens]",
+   "para": "for item in unidade_de if False]"
+  },
+  {
+   "nome": "decisao-para-unidade-com-itens-passa",
+   "arquivo": "limite.py",
+   "de": "if entrada in com_itens:\n            erros.append",
+   "para": "if False:\n            erros.append"
+  },
+  {
+   "nome": "decisao-sem-lugar-passa",
+   "arquivo": "limite.py",
+   "de": "if entrada not in com_lugar:\n            erros.append",
+   "para": "if False:\n            erros.append"
+  },
+  {
+   "nome": "decisao-com-aula-depois-passa",
+   "arquivo": "limite.py",
+   "de": "elif a in depois:",
+   "para": "elif False:"
+  },
+  {
+   "nome": "decisao-com-aula-sem-trecho-passa",
+   "arquivo": "limite.py",
+   "de": "elif a not in com_lugar[entrada]:",
+   "para": "elif False:"
+  },
+  {
+   "nome": "erros-do-limite-passam",
+   "arquivo": "limite.py",
+   "de": "    if erros:\n        raise ErroDeLimite",
+   "para": "    if False:\n        raise ErroDeLimite"
+  }
+ ]
+}

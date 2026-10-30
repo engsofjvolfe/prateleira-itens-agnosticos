@@ -1,0 +1,365 @@
+{
+ "versao_schema": 1,
+ "estragos": [
+  {
+   "nome": "leitura-sem-nfc",
+   "arquivo": "marcas.py",
+   "de": "partes.append(nfc(texto))",
+   "para": "partes.append(texto)"
+  },
+  {
+   "nome": "linha-de-antes",
+   "arquivo": "marcas.py",
+   "de": "numeros[bisect.bisect_right(inicios, abre) - 1]",
+   "para": "numeros[bisect.bisect_left(inicios, abre) - 1]"
+  },
+  {
+   "nome": "linha-pela-posicao",
+   "arquivo": "marcas.py",
+   "de": "linha = numeros[bisect.bisect_right(inicios, abre) - 1]",
+   "para": "linha = bisect.bisect_right(inicios, abre)"
+  },
+  {
+   "nome": "comentario-vazio-nao-fecha",
+   "arquivo": "marcas.py",
+   "de": "corrido.find(FECHA, abre + INICIO_DO_FIM)",
+   "para": "corrido.find(FECHA, abre + len(ABRE))"
+  },
+  {
+   "nome": "comentario-sem-nivel-vira-marca",
+   "arquivo": "marcas.py",
+   "de": "if palavras and palavras[0] in conhecidos:",
+   "para": "if palavras:"
+  },
+  {
+   "nome": "tres-palavras-com-codigo",
+   "arquivo": "marcas.py",
+   "de": "palavras[1] if len(palavras) == 2 else None",
+   "para": "palavras[1] if len(palavras) >= 2 else None"
+  },
+  {
+   "nome": "palavras-so-por-espaco",
+   "arquivo": "marcas.py",
+   "de": "corrido[abre + len(ABRE):fecha].split()",
+   "para": "corrido[abre + len(ABRE):fecha].split(\" \")"
+  },
+  {
+   "nome": "sem-fim-nao-sai",
+   "arquivo": "marcas.py",
+   "de": "marcas.append(Marca(arquivo, linha, None, None))\n            return marcas",
+   "para": "return marcas"
+  },
+  {
+   "nome": "le-depois-do-sem-fim",
+   "arquivo": "marcas.py",
+   "de": "marcas.append(Marca(arquivo, linha, None, None))\n            return marcas",
+   "para": "marcas.append(Marca(arquivo, linha, None, None))\n            i = abre + len(ABRE)\n            continue"
+  },
+  {
+   "nome": "abrir-nao-fecha-os-de-dentro",
+   "arquivo": "marcas.py",
+   "de": "abertos[k:] = [marca.codigo] + [None] * (len(abertos) - k - 1)",
+   "para": "abertos[k] = marca.codigo"
+  },
+  {
+   "nome": "arquivo-novo-nao-zera",
+   "arquivo": "marcas.py",
+   "de": "if abertos is None or marca.arquivo != arquivo:",
+   "para": "if abertos is None:"
+  },
+  {
+   "nome": "marca-sem-codigo-abre",
+   "arquivo": "marcas.py",
+   "de": "if marca.codigo is not None and marca.nivel in niveis.abrem:",
+   "para": "if marca.nivel in niveis.abrem:"
+  },
+  {
+   "nome": "sem-fim-sem-aviso",
+   "arquivo": "marcas.py",
+   "de": "if marca.nivel is None:",
+   "para": "if False:"
+  },
+  {
+   "nome": "fora-da-forma-sem-aviso",
+   "arquivo": "marcas.py",
+   "de": "elif codigo is None:",
+   "para": "elif False:"
+  },
+  {
+   "nome": "forma-sem-conferir-em-unidade-desconhecida",
+   "arquivo": "marcas.py",
+   "de": "elif codigo is None:",
+   "para": "elif codigo is None and idx is not None:"
+  },
+  {
+   "nome": "fora-de-unidade-sem-aviso",
+   "arquivo": "marcas.py",
+   "de": "elif unidade is None:",
+   "para": "elif False:"
+  },
+  {
+   "nome": "unidade-desconhecida-passa",
+   "arquivo": "marcas.py",
+   "de": "caminho not in (idx.ordem if idx is not None else ())",
+   "para": "caminho not in (idx.ordem if idx is not None else (caminho,))"
+  },
+  {
+   "nome": "dentro-da-unidade-desconhecida-confere",
+   "arquivo": "marcas.py",
+   "de": "elif idx is None and marca.nivel != niveis.abrem[0]:\n            continue",
+   "para": "elif False:\n            continue"
+  },
+  {
+   "nome": "unidade-em-dois-lugares-passa",
+   "arquivo": "marcas.py",
+   "de": "if unidade in primeira:",
+   "para": "if False:"
+  },
+  {
+   "nome": "regiao-desconhecida-passa",
+   "arquivo": "marcas.py",
+   "de": "elif marca.nivel in niveis.abrem and caminho not in (idx.ordem if idx is not None else ()):",
+   "para": "elif marca.nivel in niveis.abrem and idx is None:"
+  },
+  {
+   "nome": "regiao-repetida-passa",
+   "arquivo": "marcas.py",
+   "de": "if caminho in abertas[unidade]:",
+   "para": "if False:"
+  },
+  {
+   "nome": "ordem-sem-conferir",
+   "arquivo": "marcas.py",
+   "de": "if idx.ordem[caminho] < idx.ordem[anterior[unidade]]:",
+   "para": "if False:"
+  },
+  {
+   "nome": "regiao-anterior-nao-anda",
+   "arquivo": "marcas.py",
+   "de": "abertas[unidade][caminho], anterior[unidade] = marca, caminho",
+   "para": "abertas[unidade][caminho] = marca"
+  },
+  {
+   "nome": "nao-existe-passa",
+   "arquivo": "marcas.py",
+   "de": "elif codigo not in existem:",
+   "para": "elif False:"
+  },
+  {
+   "nome": "outra-unidade-passa",
+   "arquivo": "marcas.py",
+   "de": "elif codigo not in idx.codigos:",
+   "para": "elif False:"
+  },
+  {
+   "nome": "regiao-que-nao-recebe-passa",
+   "arquivo": "marcas.py",
+   "de": "elif caminho not in idx.listadas or not idx.listadas[caminho].recebe:",
+   "para": "elif False:"
+  },
+  {
+   "nome": "regiao-de-passagem-recebe",
+   "arquivo": "marcas.py",
+   "de": "elif caminho not in idx.listadas or not idx.listadas[caminho].recebe:",
+   "para": "elif caminho in idx.listadas and not idx.listadas[caminho].recebe:"
+  },
+  {
+   "nome": "livre-nao-vale",
+   "arquivo": "marcas.py",
+   "de": "elif caminho in idx.lugares.get(codigo, ()) or codigo in idx.livres:",
+   "para": "elif caminho in idx.lugares.get(codigo, ()):"
+  },
+  {
+   "nome": "codigo-vale-em-qualquer-regiao",
+   "arquivo": "marcas.py",
+   "de": "elif caminho in idx.lugares.get(codigo, ()) or codigo in idx.livres:",
+   "para": "elif True:"
+  },
+  {
+   "nome": "falta-sem-aviso",
+   "arquivo": "marcas.py",
+   "de": "if (caminho, codigo) not in vistos[unidade]:",
+   "para": "if False:"
+  },
+  {
+   "nome": "falta-sempre-na-unidade",
+   "arquivo": "marcas.py",
+   "de": "onde = abertas[unidade].get(caminho, marca_da_unidade)",
+   "para": "onde = marca_da_unidade"
+  },
+  {
+   "nome": "falta-de-livre-sem-aviso",
+   "arquivo": "marcas.py",
+   "de": "if codigo not in achados:",
+   "para": "if False:"
+  },
+  {
+   "nome": "avisos-sem-ordem",
+   "arquivo": "marcas.py",
+   "de": "return sorted(avisos, key=lambda a: (arquivos[a.arquivo], a.linha))",
+   "para": "return avisos"
+  },
+  {
+   "nome": "avisos-pelo-nome-do-arquivo",
+   "arquivo": "marcas.py",
+   "de": "key=lambda a: (arquivos[a.arquivo], a.linha)",
+   "para": "key=lambda a: (a.arquivo, a.linha)"
+  },
+  {
+   "nome": "niveis-sem-nfc",
+   "arquivo": "marcas.py",
+   "de": "todos = [nfc(n) for n in todos]",
+   "para": "todos = list(todos)"
+  },
+  {
+   "nome": "nivel-repetido-passa",
+   "arquivo": "marcas.py",
+   "de": "    if repetidos:\n        raise ErroDeMarcas(f\"nível repetido",
+   "para": "    if False:\n        raise ErroDeMarcas(f\"nível repetido"
+  },
+  {
+   "nome": "nivel-que-nao-se-escreve-passa",
+   "arquivo": "marcas.py",
+   "de": "    if ruins:\n        raise ErroDeMarcas(f\"nível {NAO_SE_ESCREVE}",
+   "para": "    if False:\n        raise ErroDeMarcas(f\"nível {NAO_SE_ESCREVE}"
+  },
+  {
+   "nome": "sem-nivel-que-abre-passa",
+   "arquivo": "marcas.py",
+   "de": "if not isinstance(abrem, (list, tuple)) or not abrem:",
+   "para": "if False:"
+  },
+  {
+   "nome": "codigo-com-o-fim-passa",
+   "arquivo": "marcas.py",
+   "de": " and FECHA not in valor",
+   "para": ""
+  },
+  {
+   "nome": "caminho-sem-conferir",
+   "arquivo": "marcas.py",
+   "de": "if len(bruto) != len(niveis.abrem) or not all(c is None or e_codigo(c) for c in bruto):",
+   "para": "if False:"
+  },
+  {
+   "nome": "caminho-de-outra-unidade-passa",
+   "arquivo": "marcas.py",
+   "de": "if caminho[0] != unidade:",
+   "para": "if False:"
+  },
+  {
+   "nome": "regiao-repetida-no-esperado-passa",
+   "arquivo": "marcas.py",
+   "de": "if caminho in listadas:",
+   "para": "if False:"
+  },
+  {
+   "nome": "recebe-sem-conferir",
+   "arquivo": "marcas.py",
+   "de": "if not isinstance(regiao.recebe, bool):",
+   "para": "if False:"
+  },
+  {
+   "nome": "codigos-num-texto-so-passam",
+   "arquivo": "marcas.py",
+   "de": "if not isinstance(codigos, (list, tuple)):",
+   "para": "if False:"
+  },
+  {
+   "nome": "codigo-que-nao-se-escreve-passa",
+   "arquivo": "marcas.py",
+   "de": "    if ruins:\n        raise erro(f\"{onde}: código {NAO_SE_ESCREVE}",
+   "para": "    if False:\n        raise erro(f\"{onde}: código {NAO_SE_ESCREVE}"
+  },
+  {
+   "nome": "codigo-repetido-passa",
+   "arquivo": "marcas.py",
+   "de": "    if repetidos:\n        raise erro(f\"{onde}: código repetido",
+   "para": "    if False:\n        raise erro(f\"{onde}: código repetido"
+  },
+  {
+   "nome": "codigo-em-regiao-que-nao-recebe-passa",
+   "arquivo": "marcas.py",
+   "de": "if codigos and not regiao.recebe:",
+   "para": "if False:"
+  },
+  {
+   "nome": "codigo-que-nao-existe-passa",
+   "arquivo": "marcas.py",
+   "de": "    if fora:\n        raise erro(",
+   "para": "    if False:\n        raise erro("
+  },
+  {
+   "nome": "livres-sem-regiao-que-recebe-passam",
+   "arquivo": "marcas.py",
+   "de": "if livres and not any(r.recebe for r in listadas.values()):",
+   "para": "if False:"
+  },
+  {
+   "nome": "ordem-que-pede-fechado-passa",
+   "arquivo": "marcas.py",
+   "de": "            if caminho[k] is None:\n                raise ErroDeMarcas",
+   "para": "            if False:\n                raise ErroDeMarcas"
+  },
+  {
+   "nome": "ordem-que-abre-outra-vez-passa",
+   "arquivo": "marcas.py",
+   "de": "            if tuple(abertos) in ordem:\n                raise ErroDeMarcas",
+   "para": "            if False:\n                raise ErroDeMarcas"
+  },
+  {
+   "nome": "existem-num-texto-so-passa",
+   "arquivo": "marcas.py",
+   "de": "if isinstance(existem, str):",
+   "para": "if False:"
+  },
+  {
+   "nome": "existem-que-nao-se-escreve-passa",
+   "arquivo": "marcas.py",
+   "de": "    if ruins:\n        raise ErroDeMarcas(f\"unidade ou código",
+   "para": "    if False:\n        raise ErroDeMarcas(f\"unidade ou código"
+  },
+  {
+   "nome": "unidade-repetida-passa",
+   "arquivo": "marcas.py",
+   "de": "if len(indices) != len(esperados):",
+   "para": "if False:"
+  },
+  {
+   "nome": "aviso-sem-o-codigo",
+   "arquivo": "marcas.py",
+   "de": "f\"o código {codigo} não existe\"",
+   "para": "\"o código não existe\""
+  },
+  {
+   "nome": "repetida-sem-o-lugar-de-antes",
+   "arquivo": "marcas.py",
+   "de": "f\"região repetida: {mostra(caminho, niveis)}, aberta \"\n                      f\"antes em {antes.arquivo}:{antes.linha}\")",
+   "para": "f\"região repetida: {mostra(caminho, niveis)}\")"
+  },
+  {
+   "nome": "dois-lugares-sem-o-lugar-de-antes",
+   "arquivo": "marcas.py",
+   "de": "f\"unidade em dois lugares: {unidade}, aberta \"\n                      f\"antes em {antes.arquivo}:{antes.linha}\")",
+   "para": "f\"unidade em dois lugares: {unidade}\")"
+  },
+  {
+   "nome": "fora-de-unidade-sem-o-codigo",
+   "arquivo": "marcas.py",
+   "de": "avisa(\"fora-de-unidade\", marca, None, codigo,",
+   "para": "avisa(\"fora-de-unidade\", marca, None, None,"
+  },
+  {
+   "nome": "fora-da-forma-sem-a-unidade",
+   "arquivo": "marcas.py",
+   "de": "avisa(\"fora-da-forma\", marca, unidade, None,",
+   "para": "avisa(\"fora-da-forma\", marca, None, None,"
+  },
+  {
+   "nome": "falta-com-tipo-de-erro",
+   "arquivo": "marcas.py",
+   "de": "\"falta\": FALTA,",
+   "para": "\"falta\": ERRO,"
+  }
+ ]
+}

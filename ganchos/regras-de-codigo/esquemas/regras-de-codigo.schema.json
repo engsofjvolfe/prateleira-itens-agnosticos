@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "regras-de-codigo.schema.json",
+  "type": "object",
+  "required": ["versao_schema", "estado", "sem_conferencia", "terminal"],
+  "additionalProperties": false,
+  "properties": {
+    "versao_schema": { "const": 1 },
+    "estado": { "$ref": "#/$defs/nome" },
+    "sem_conferencia": { "$ref": "#/$defs/nomes" },
+    "terminal": {
+      "type": "object",
+      "required": ["destinos_livres", "prefixos", "sempre_escrevem", "escrevem_com_opcao", "leem_codigo_sem_arquivo"],
+      "additionalProperties": false,
+      "properties": {
+        "destinos_livres": { "$ref": "#/$defs/nomes" },
+        "prefixos": { "$ref": "#/$defs/nomes" },
+        "sempre_escrevem": { "$ref": "#/$defs/nomes" },
+        "escrevem_com_opcao": { "type": "object", "additionalProperties": { "$ref": "#/$defs/nomes" } },
+        "leem_codigo_sem_arquivo": { "$ref": "#/$defs/nomes" }
+      }
+    }
+  },
+  "$defs": {
+    "nome": { "type": "string", "minLength": 1 },
+    "nomes": { "type": "array", "items": { "$ref": "#/$defs/nome" } }
+  }
+}

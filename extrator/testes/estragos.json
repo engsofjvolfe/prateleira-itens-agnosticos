@@ -1,0 +1,311 @@
+{
+ "versao_schema": 1,
+ "estragos": [
+  {
+   "nome": "campo-que-falta-aceito",
+   "arquivo": "extrator_comum.py",
+   "de": "            raise ErroDeDados(f\"falta o campo {caminho}\")",
+   "para": "            return None"
+  },
+  {
+   "nome": "campo-de-outro-tipo-aceito",
+   "arquivo": "extrator_comum.py",
+   "de": "    if not isinstance(valor, tipos) or (isinstance(valor, bool) and bool not in tipos):",
+   "para": "    if False:"
+  },
+  {
+   "nome": "campo-booleano-como-numero",
+   "arquivo": "extrator_comum.py",
+   "de": " or (isinstance(valor, bool) and bool not in tipos)",
+   "para": ""
+  },
+  {
+   "nome": "campo-so-o-primeiro-nivel",
+   "arquivo": "extrator_comum.py",
+   "de": "    for parte in caminho.split(\"/\"):",
+   "para": "    for parte in caminho.split(\"/\")[:1]:"
+  },
+  {
+   "nome": "expressao-ruim-quebra",
+   "arquivo": "extrator_comum.py",
+   "de": "        raise ErroDeDados(f\"o campo {caminho} não compila como expressão regular: {e}\")",
+   "para": "        raise"
+  },
+  {
+   "nome": "pdf-tira-hifen",
+   "arquivo": "leitor_pdf.py",
+   "de": "\" \".join(p for p, _ in linha) if",
+   "para": "\" \".join(p for p, _ in linha).rstrip(\"-\") if"
+  },
+  {
+   "nome": "pdf-sem-ocr",
+   "arquivo": "leitor_pdf.py",
+   "de": "ocr = n in pelo_ocr",
+   "para": "ocr = False"
+  },
+  {
+   "nome": "pdf-parte-mais-curta",
+   "arquivo": "leitor_pdf.py",
+   "de": "key=lambda c: (c[0] - c[1], c[0]))",
+   "para": "key=lambda c: (c[1] - c[0], c[0]))"
+  },
+  {
+   "nome": "pdf-so-centro",
+   "arquivo": "leitor_pdf.py",
+   "de": "min(x1, caixa[2]) - max(x0, caixa[0]) > PRECISAO or inteira",
+   "para": "x0 <= (caixa[0] + caixa[2]) / 2 <= x1"
+  },
+  {
+   "nome": "pedacos-espaco-na-ponta",
+   "arquivo": "extrator_comum.py",
+   "de": "espaco = bool(out)",
+   "para": "espaco = True"
+  },
+  {
+   "nome": "pedacos-muda-texto",
+   "arquivo": "extrator_comum.py",
+   "de": "return [(s, sorted(d)) for s, d in out]",
+   "para": "return [(s.replace('-', ''), sorted(d)) for s, d in out]"
+  },
+  {
+   "nome": "escape-nao-escapa-escape",
+   "arquivo": "extrator.py",
+   "de": "padrao[\"escape\"] + c if c in padrao[\"escapar\"] else c",
+   "para": "padrao[\"escape\"] + c if c in padrao[\"escapar\"] and c != padrao[\"escape\"] else c"
+  },
+  {
+   "nome": "sem-escape-no-comeco",
+   "arquivo": "extrator.py",
+   "de": "return padrao[\"escape\"] + linha if linha.startswith",
+   "para": "return linha if linha.startswith"
+  },
+  {
+   "nome": "espaco-sem-destaque-comum",
+   "arquivo": "extrator.py",
+   "de": "d = a & p if c.isspace() else d",
+   "para": "d = d"
+  },
+  {
+   "nome": "trocas-duas-passadas",
+   "arquivo": "extrator.py",
+   "de": "return rx.sub(troca, conteudo)",
+   "para": "return rx.sub(troca, rx.sub(troca, conteudo))"
+  },
+  {
+   "nome": "trocas-sem-celula",
+   "arquivo": "extrator.py",
+   "de": "out.append((tipo, [[no_conteudo(c) for c in linha] for linha in conteudo]))",
+   "para": "out.append((tipo, conteudo))"
+  },
+  {
+   "nome": "troca-nos-dois-aceita",
+   "arquivo": "extrator.py",
+   "de": "repetidas = sorted(set(gerais) & set(proprias))\n    if repetidas:",
+   "para": "repetidas = sorted(set(gerais) & set(proprias))\n    if False:"
+  },
+  {
+   "nome": "troca-sem-uso-aceita",
+   "arquivo": "extrator.py",
+   "de": "if sem_uso and all(",
+   "para": "if False and all("
+  },
+  {
+   "nome": "sem-conferir-padrao",
+   "arquivo": "extrator.py",
+   "de": "    confere_padrao(config[\"padrao\"])\n",
+   "para": ""
+  },
+  {
+   "nome": "sem-texto-ambiguo-aceito",
+   "arquivo": "extrator.py",
+   "de": "if escrito == [padrao[\"sem_texto\"]]:",
+   "para": "if False:"
+  },
+  {
+   "nome": "titulo-ambiguo-aceito",
+   "arquivo": "extrator.py",
+   "de": "        if parecidas:",
+   "para": "        if False:"
+  },
+  {
+   "nome": "numeracao-um-a-mais",
+   "arquivo": "extrator.py",
+   "de": "faixa[\"primeiro\"] + n - faixa[\"de\"])",
+   "para": "faixa[\"primeiro\"] + n - faixa[\"de\"] + 1)"
+  },
+  {
+   "nome": "romano-sem-iv",
+   "arquivo": "extrator.py",
+   "de": "(4, \"iv\"), ",
+   "para": ""
+  },
+  {
+   "nome": "correcao-sem-contar",
+   "arquivo": "extrator.py",
+   "de": "if vezes != esperado:",
+   "para": "if False:"
+  },
+  {
+   "nome": "cabecalho-perdido",
+   "arquivo": "extrator.py",
+   "de": "return linhas[:i]",
+   "para": "return []"
+  },
+  {
+   "nome": "tabela-um-separador",
+   "arquivo": "extrator.py",
+   "de": "forma([t[\"separador\"]] * largura)",
+   "para": "forma([t[\"separador\"]])"
+  },
+  {
+   "nome": "tabela-sem-completar",
+   "arquivo": "extrator.py",
+   "de": "[\"\"] * (largura - len(l))",
+   "para": "[]"
+  },
+  {
+   "nome": "marcacao-sem-destaques",
+   "arquivo": "leitor_marcacao.py",
+   "de": "return frozenset(self.op[\"destaques\"][t] for t in self.pilha if t in self.op[\"destaques\"])",
+   "para": "return frozenset()"
+  },
+  {
+   "nome": "marcacao-destaque-maiuscula",
+   "arquivo": "leitor_marcacao.py",
+   "de": "setdefault(etiqueta.lower(), destaque)",
+   "para": "setdefault(etiqueta, destaque)"
+  },
+  {
+   "nome": "marcacao-etiqueta-dupla-aceita",
+   "arquivo": "leitor_marcacao.py",
+   "de": "!= destaque:",
+   "para": "!= destaque and False:"
+  },
+  {
+   "nome": "marcacao-sem-ignorar",
+   "arquivo": "leitor_marcacao.py",
+   "de": "return dentro and not any(t in self.op[\"ignorar\"] for t in self.pilha)",
+   "para": "return dentro"
+  },
+  {
+   "nome": "marcacao-sem-juntar-espacos",
+   "arquivo": "leitor_marcacao.py",
+   "de": "return \" \".join(\"\".join(s for s, _ in partes).split())",
+   "para": "return \"\".join(s for s, _ in partes).strip()"
+  },
+  {
+   "nome": "marcacao-celula-sem-espaco",
+   "arquivo": "leitor_marcacao.py",
+   "de": "elif tag in self.op[\"blocos\"]:\n            if self.celula is not None:\n                self.celula.append((\" \", frozenset()))",
+   "para": "elif tag in self.op[\"blocos\"]:\n            if self.celula is not None:\n                pass"
+  },
+  {
+   "nome": "json-sem-antes",
+   "arquivo": "leitor_json.py",
+   "de": "for caminho in opcoes[\"antes\"]:",
+   "para": "for caminho in opcoes[\"antes\"][:0]:"
+  },
+  {
+   "nome": "simples-sem-comeco",
+   "arquivo": "extrator_comum.py",
+   "de": "comeco = next((c for c in padrao[\"escapar_no_comeco\"] if linha.startswith(escape + c)), None)",
+   "para": "comeco = None"
+  },
+  {
+   "nome": "padrao-escape-na-marca-aceito",
+   "arquivo": "extrator_comum.py",
+   "de": "if escape in nas_marcas:",
+   "para": "if False:"
+  },
+  {
+   "nome": "padrao-marca-de-dois-aceita",
+   "arquivo": "extrator_comum.py",
+   "de": "repetidas = {m: n for m, n in donos.items() if len(n) > 1}\n    if repetidas:",
+   "para": "repetidas = {m: n for m, n in donos.items() if len(n) > 1}\n    if False:"
+  },
+  {
+   "nome": "padrao-celula-sem-escape-aceito",
+   "arquivo": "extrator_comum.py",
+   "de": "if not set(meio) & set(escapar):",
+   "para": "if False:"
+  },
+  {
+   "nome": "padrao-sem-conferir-faltam",
+   "arquivo": "extrator_comum.py",
+   "de": "    if faltam:\n        raise ErroDeDados(f\"caractere(s)",
+   "para": "    if False:\n        raise ErroDeDados(f\"caractere(s)"
+  },
+  {
+   "nome": "pdf-posicao-ignorada",
+   "arquivo": "leitor_pdf.py",
+   "de": "and (not pela_posicao or _cabe(t, caixa, ini, fim, len(palavra)))]",
+   "para": "]"
+  },
+  {
+   "nome": "marcacao-quebra-na-celula-sem-espaco",
+   "arquivo": "leitor_marcacao.py",
+   "de": "if self._captando() and tag in self.op[\"quebras\"]:\n            if self.celula is not None:\n                self.celula.append((\" \", frozenset()))",
+   "para": "if self._captando() and tag in self.op[\"quebras\"]:\n            if self.celula is not None:\n                pass"
+  },
+  {
+   "nome": "pdf-nomes-fixos",
+   "arquivo": "leitor_pdf.py",
+   "de": "frozenset(marcas[x.tag] for x in el.iter() if x.tag in marcas)",
+   "para": "frozenset({'b': 'negrito', 'i': 'italico'}[x.tag] for x in el.iter() if x.tag in marcas)"
+  },
+  {
+   "nome": "pdf-centro-ignorado",
+   "arquivo": "leitor_pdf.py",
+   "de": "for t in cobrem if t[1] <= x <= t[3] for d in t[0]",
+   "para": "for t in cobrem for d in t[0]"
+  },
+  {
+   "nome": "pdf-encostar-conta",
+   "arquivo": "leitor_pdf.py",
+   "de": "min(x1, caixa[2]) - max(x0, caixa[0]) > PRECISAO or inteira",
+   "para": "min(x1, caixa[2]) - max(x0, caixa[0]) > 0 or inteira"
+  },
+  {
+   "nome": "pular-ocr-ignorado",
+   "arquivo": "leitor_pdf.py",
+   "de": "if ocr and contexto.get(\"pular_ocr\"):",
+   "para": "if False:"
+  },
+  {
+   "nome": "campo-desconhecido-aceito",
+   "arquivo": "extrator_comum.py",
+   "de": "elif outros is False:\n                out.append(",
+   "para": "elif False:\n                out.append("
+  },
+  {
+   "nome": "molde-sem-ref",
+   "arquivo": "extrator_comum.py",
+   "de": "while \"$ref\" in molde:",
+   "para": "while False:"
+  },
+  {
+   "nome": "opcao-desconhecida-aceita",
+   "arquivo": "extrator.py",
+   "de": "if sobram or faltam:",
+   "para": "if faltam:"
+  },
+  {
+   "nome": "opcao-que-falta-aceita",
+   "arquivo": "extrator.py",
+   "de": "if sobram or faltam:",
+   "para": "if sobram:"
+  },
+  {
+   "nome": "pdf-cobre-inteira-ignorado",
+   "arquivo": "leitor_pdf.py",
+   "de": "if not pela_posicao and inteiros:",
+   "para": "if False:"
+  },
+  {
+   "nome": "pdf-estreita-fora",
+   "arquivo": "leitor_pdf.py",
+   "de": "min(x1, caixa[2]) - max(x0, caixa[0]) > PRECISAO or inteira",
+   "para": "min(x1, caixa[2]) - max(x0, caixa[0]) > PRECISAO"
+  }
+ ]
+}

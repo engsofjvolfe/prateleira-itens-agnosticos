@@ -1,0 +1,100 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "protocolo.schema.json",
+  "type": "object",
+  "required": ["versao_schema", "eventos", "chaves", "respostas", "terminal", "buscas", "escritas", "leituras",
+               "resumos"],
+  "additionalProperties": false,
+  "properties": {
+    "versao_schema": { "const": 1 },
+    "eventos": {
+      "type": "object",
+      "required": ["antes", "fim"],
+      "additionalProperties": false,
+      "properties": {
+        "antes": { "$ref": "#/$defs/nome" },
+        "fim": { "$ref": "#/$defs/nome" }
+      }
+    },
+    "chaves": {
+      "type": "object",
+      "required": ["evento", "sessao", "ferramenta", "entrada", "pasta", "fim_repetido"],
+      "additionalProperties": false,
+      "properties": {
+        "evento": { "$ref": "#/$defs/nome" },
+        "sessao": { "$ref": "#/$defs/nome" },
+        "ferramenta": { "$ref": "#/$defs/nome" },
+        "entrada": { "$ref": "#/$defs/nome" },
+        "pasta": { "$ref": "#/$defs/nome" },
+        "fim_repetido": { "$ref": "#/$defs/nome" }
+      }
+    },
+    "respostas": {
+      "type": "object",
+      "required": ["nega", "contexto", "trava"],
+      "additionalProperties": false,
+      "properties": {
+        "nega": { "type": "object" },
+        "contexto": { "type": "object" },
+        "trava": { "type": "object" }
+      }
+    },
+    "terminal": {
+      "type": "object",
+      "required": ["ferramenta", "campo_comando"],
+      "additionalProperties": false,
+      "properties": {
+        "ferramenta": { "$ref": "#/$defs/nome" },
+        "campo_comando": { "$ref": "#/$defs/nome" }
+      }
+    },
+    "buscas": { "type": "array", "items": { "$ref": "#/$defs/busca" } },
+    "escritas": {
+      "type": "object",
+      "required": ["campos_caminho", "trocas", "inteiros"],
+      "additionalProperties": false,
+      "properties": {
+        "campos_caminho": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/nome" } },
+        "trocas": { "type": "object", "additionalProperties": { "$ref": "#/$defs/troca" } },
+        "inteiros": { "type": "object", "additionalProperties": { "$ref": "#/$defs/nome" } }
+      }
+    },
+    "leituras": { "type": "array", "items": { "$ref": "#/$defs/leitura" } },
+    "resumos": { "type": "array", "items": { "$ref": "#/$defs/nome" } }
+  },
+  "$defs": {
+    "nome": { "type": "string", "minLength": 1 },
+    "busca": {
+      "type": "object",
+      "required": ["nome", "campo_padrao"],
+      "additionalProperties": false,
+      "properties": {
+        "nome": { "$ref": "#/$defs/nome" },
+        "campo_padrao": { "$ref": "#/$defs/nome" }
+      }
+    },
+    "troca": {
+      "type": "object",
+      "required": ["antes", "depois", "todas"],
+      "additionalProperties": false,
+      "properties": {
+        "antes": { "$ref": "#/$defs/nome" },
+        "depois": { "$ref": "#/$defs/nome" },
+        "todas": { "$ref": "#/$defs/nome" }
+      }
+    },
+    "leitura": {
+      "type": "object",
+      "required": ["nome", "campo_caminho", "campo_comeco", "campo_quantas", "linhas_sem_limite", "primeira_linha"],
+      "additionalProperties": false,
+      "properties": {
+        "nome": { "$ref": "#/$defs/nome" },
+        "campo_caminho": { "$ref": "#/$defs/nome" },
+        "campo_comeco": { "$ref": "#/$defs/nome" },
+        "campo_quantas": { "$ref": "#/$defs/nome" },
+        "linhas_sem_limite": { "type": "integer", "minimum": 1 },
+        "primeira_linha": { "type": "integer", "minimum": 0 }
+      }
+    }
+  }
+}

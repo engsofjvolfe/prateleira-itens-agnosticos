@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "busca-por-palavra.schema.json",
+  "type": "object",
+  "required": ["versao_schema", "padroes_livres", "prefixos", "buscas"],
+  "additionalProperties": false,
+  "properties": {
+    "versao_schema": { "const": 1 },
+    "padroes_livres": { "$ref": "#/$defs/nomes" },
+    "prefixos": { "$ref": "#/$defs/nomes" },
+    "buscas": { "type": "array", "items": { "$ref": "#/$defs/busca" } }
+  },
+  "$defs": {
+    "nome": { "type": "string", "minLength": 1 },
+    "nomes": { "type": "array", "items": { "$ref": "#/$defs/nome" } },
+    "busca": {
+      "type": "object",
+      "required": ["comando", "opcoes_do_padrao", "opcoes_de_arquivo"],
+      "additionalProperties": false,
+      "properties": {
+        "comando": { "$ref": "#/$defs/nome" },
+        "opcoes_do_padrao": { "$ref": "#/$defs/nomes" },
+        "opcoes_de_arquivo": { "$ref": "#/$defs/nomes" }
+      }
+    }
+  }
+}

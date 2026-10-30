@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "itens-numerados-saida.schema.json",
+  "type": "object",
+  "required": ["versao_schema", "documentos"],
+  "additionalProperties": true,
+  "properties": {
+    "versao_schema": { "const": 1 },
+    "documentos": { "type": "array", "items": { "$ref": "#/$defs/documento" } }
+  },
+  "$defs": {
+    "documento": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["transcricao", "itens", "problemas", "grupos"],
+      "properties": {
+        "transcricao": { "type": "string", "minLength": 1 },
+        "itens": { "type": "array", "items": { "$ref": "#/$defs/item" } },
+        "problemas": { "type": "array", "items": { "$ref": "#/$defs/problema" } },
+        "grupos": { "type": "array", "items": { "$ref": "#/$defs/grupo" } }
+      }
+    },
+    "item": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["serie", "numero", "titulo", "pagina_arquivo", "linha"],
+      "properties": {
+        "serie": { "type": "string", "minLength": 1 },
+        "numero": { "type": "string", "minLength": 1 },
+        "titulo": { "type": "string" },
+        "pagina_arquivo": { "type": "integer" },
+        "linha": { "type": "integer" }
+      }
+    },
+    "problema": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["tipo", "numero", "linha", "detalhe"],
+      "properties": {
+        "tipo": { "type": "string", "minLength": 1 },
+        "numero": { "type": "string" },
+        "linha": { "type": "integer" },
+        "detalhe": { "type": "string" }
+      }
+    },
+    "grupo": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["id", "itens", "paginas_arquivo"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "itens": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+        "paginas_arquivo": { "type": "array", "minItems": 2, "maxItems": 2, "items": { "type": "integer" } }
+      }
+    }
+  }
+}

@@ -1,0 +1,119 @@
+{
+ "versao_schema": 1,
+ "estragos": [
+  {
+   "nome": "itens-sem-primeiro-filho",
+   "arquivo": "itens.py",
+   "de": "out = {anterior + (1,)}",
+   "para": "out = set()"
+  },
+  {
+   "nome": "itens-repetido-aceito",
+   "arquivo": "itens.py",
+   "de": "if (chave, p) in vistos:",
+   "para": "if False:"
+  },
+  {
+   "nome": "itens-sumario-sem-item-aceito",
+   "arquivo": "itens.py",
+   "de": "        if item is None:",
+   "para": "        if item is None and False:"
+  },
+  {
+   "nome": "itens-titulo-diferente-aceito",
+   "arquivo": "itens.py",
+   "de": "elif not normal(item[\"titulo\"]).startswith(normal(titulo)):",
+   "para": "elif False:"
+  },
+  {
+   "nome": "itens-titulo-exato",
+   "arquivo": "itens.py",
+   "de": "elif not normal(item[\"titulo\"]).startswith(normal(titulo)):",
+   "para": "elif normal(item[\"titulo\"]) != normal(titulo):"
+  },
+  {
+   "nome": "itens-nota-de-rodape-aceita",
+   "arquivo": "itens.py",
+   "de": "if f.get(\"so_se_no_sumario\"):",
+   "para": "if False:"
+  },
+  {
+   "nome": "itens-sem-titulo-seguinte",
+   "arquivo": "itens.py",
+   "de": "if not titulo and f.get(\"linhas_do_titulo\"):",
+   "para": "if False:"
+  },
+  {
+   "nome": "itens-titulo-seguinte-com-vazia",
+   "arquivo": "itens.py",
+   "de": "if l.strip()][:quantas]",
+   "para": "][:quantas]"
+  },
+  {
+   "nome": "itens-com-marcas",
+   "arquivo": "itens.py",
+   "de": "texto_simples(l, padrao)) for",
+   "para": "l) for"
+  },
+  {
+   "nome": "itens-todas-as-paginas",
+   "arquivo": "itens.py",
+   "de": "if n in dentro for",
+   "para": "for"
+  },
+  {
+   "nome": "itens-sem-juntar-numero-sozinho",
+   "arquivo": "itens.py",
+   "de": "if junta and junta.match(l.strip()):",
+   "para": "if False:"
+  },
+  {
+   "nome": "itens-grupo-de-mais",
+   "arquivo": "itens.py",
+   "de": "cortes = sorted(set(inicios))[::tamanho]",
+   "para": "cortes = sorted(set(inicios))[::tamanho + 1]"
+  },
+  {
+   "nome": "itens-grupo-primeiro-sem-o-de-antes",
+   "arquivo": "itens.py",
+   "de": "cortes = [0] + cortes[1:] if cortes else [0]",
+   "para": "cortes = cortes or [0]"
+  },
+  {
+   "nome": "itens-paginas-do-grupo",
+   "arquivo": "itens.py",
+   "de": "dele[-1][\"pagina_arquivo\"]]",
+   "para": "dele[0][\"pagina_arquivo\"]]"
+  },
+  {
+   "nome": "itens-letra-de-zero",
+   "arquivo": "itens.py",
+   "de": "ord(p.upper()) - ord(\"A\") + 1",
+   "para": "ord(p.upper()) - ord(\"A\")"
+  },
+  {
+   "nome": "itens-sem-conferir-padrao",
+   "arquivo": "itens.py",
+   "de": "        confere_padrao(padrao)\n",
+   "para": ""
+  },
+  {
+   "nome": "itens-linha-a-mais",
+   "arquivo": "itens.py",
+   "de": "\"pagina_arquivo\": pagina, \"linha\": num}",
+   "para": "\"pagina_arquivo\": pagina, \"linha\": num + 1}"
+  },
+  {
+   "nome": "itens-campo-desconhecido-aceito",
+   "arquivo": "itens.py",
+   "de": "config = le_conferido(a.itens, MOLDE)",
+   "para": "config = json.loads(a.itens.read_text(encoding=\"utf-8\"))"
+  },
+  {
+   "nome": "itens-configuracao-do-extrator-sem-molde",
+   "arquivo": "itens.py",
+   "de": "padrao = le_configuracao(a.extrator)[\"padrao\"]",
+   "para": "padrao = json.loads(a.extrator.read_text(encoding=\"utf-8\"))[\"padrao\"]"
+  }
+ ]
+}

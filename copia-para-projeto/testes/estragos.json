@@ -1,0 +1,53 @@
+{
+ "versao_schema": 1,
+ "estragos": [
+  {
+   "nome": "cabecalho-em-todos",
+   "arquivo": "copia.py",
+   "de": "cabeca + texto if mesma else texto",
+   "para": "cabeca + texto"
+  },
+  {
+   "nome": "conferir-grava",
+   "arquivo": "copia.py",
+   "de": "grava_ou_confere(destino, texto, a.conferir,",
+   "para": "grava_ou_confere(destino, texto, False,"
+  },
+  {
+   "nome": "so-a-primeira-copia",
+   "arquivo": "copia.py",
+   "de": "for destino, texto in pares]",
+   "para": "for destino, texto in pares[:1]]"
+  },
+  {
+   "nome": "origem-sem-conferir",
+   "arquivo": "copia.py",
+   "de": "        if not (a.peca / origem).is_file():\n",
+   "para": "        if False:\n"
+  },
+  {
+   "nome": "cabecalho-sem-linha-em-branco",
+   "arquivo": "copia.py",
+   "de": "\"\\n\".join(linhas[:fim]) + \"\\n\\n\"",
+   "para": "\"\\n\".join(linhas[:fim]) + \"\\n\""
+  },
+  {
+   "nome": "destino-ignorado",
+   "arquivo": "copia.py",
+   "de": "pares.append((a.projeto / destino,",
+   "para": "pares.append((a.projeto / Path(origem).name,"
+  },
+  {
+   "nome": "codigo-sempre-zero",
+   "arquivo": "copia.py",
+   "de": "return 1 if any(codigos) else 0",
+   "para": "return 0"
+  },
+  {
+   "nome": "par-sem-conferir",
+   "arquivo": "copia.py",
+   "de": "if not sep or not origem or not destino:",
+   "para": "if False:"
+  }
+ ]
+}

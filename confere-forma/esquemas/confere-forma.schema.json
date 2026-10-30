@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "confere-forma.schema.json",
+  "type": "object",
+  "required": ["versao_schema", "abertura", "secao", "titulos", "divisor", "fecho", "proibidos", "italico", "palavras"],
+  "additionalProperties": false,
+  "properties": {
+    "versao_schema": { "const": 1 },
+    "abertura": { "type": "array", "items": { "$ref": "#/$defs/linha" } },
+    "secao": { "$ref": "#/$defs/expressao" },
+    "titulos": { "type": "array", "items": { "$ref": "#/$defs/texto" } },
+    "divisor": { "$ref": "#/$defs/expressao" },
+    "fecho": {
+      "type": "object",
+      "required": ["abre", "continua"],
+      "additionalProperties": false,
+      "properties": {
+        "abre": { "$ref": "#/$defs/expressao" },
+        "continua": { "$ref": "#/$defs/expressao" }
+      }
+    },
+    "proibidos": { "type": "array", "items": { "$ref": "#/$defs/proibido" } },
+    "italico": {
+      "type": "object",
+      "required": ["nomes", "marcas", "fora_de"],
+      "additionalProperties": false,
+      "properties": {
+        "nomes": { "type": "array", "items": { "$ref": "#/$defs/texto" } },
+        "marcas": { "type": "array", "items": { "$ref": "#/$defs/texto" } },
+        "fora_de": { "$ref": "#/$defs/expressao" }
+      }
+    },
+    "palavras": {
+      "type": "object",
+      "required": ["fora_de", "minimo", "maximo"],
+      "additionalProperties": false,
+      "properties": {
+        "fora_de": { "$ref": "#/$defs/expressao" },
+        "minimo": { "type": "integer", "minimum": 0 },
+        "maximo": { "type": "integer", "minimum": 0 }
+      }
+    }
+  },
+  "$defs": {
+    "texto": { "type": "string", "minLength": 1 },
+    "expressao": { "type": "string", "minLength": 1 },
+    "linha": {
+      "type": "object",
+      "minProperties": 1,
+      "maxProperties": 1,
+      "additionalProperties": false,
+      "properties": {
+        "igual": { "type": "string" },
+        "padrao": { "$ref": "#/$defs/expressao" }
+      }
+    },
+    "proibido": {
+      "type": "object",
+      "required": ["nome", "padrao"],
+      "additionalProperties": false,
+      "properties": {
+        "nome": { "$ref": "#/$defs/texto" },
+        "padrao": { "$ref": "#/$defs/expressao" },
+        "exceto": { "$ref": "#/$defs/expressao" }
+      }
+    }
+  }
+}

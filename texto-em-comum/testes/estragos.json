@@ -1,0 +1,149 @@
+{
+ "versao_schema": 1,
+ "estragos": [
+  {
+   "nome": "sem-juntar-acentos",
+   "arquivo": "texto_em_comum.py",
+   "de": "unicodedata.normalize(\"NFC\", texto.casefold())",
+   "para": "texto.casefold()"
+  },
+  {
+   "nome": "com-maiusculas",
+   "arquivo": "texto_em_comum.py",
+   "de": "unicodedata.normalize(\"NFC\", texto.casefold())",
+   "para": "unicodedata.normalize(\"NFC\", texto)"
+  },
+  {
+   "nome": "uma-sequencia-a-menos",
+   "arquivo": "texto_em_comum.py",
+   "de": "range(len(palavras) - n + 1)",
+   "para": "range(len(palavras) - n)"
+  },
+  {
+   "nome": "casa-com-ele-mesmo",
+   "arquivo": "texto_em_comum.py",
+   "de": "if p != proprio]",
+   "para": "if True]"
+  },
+  {
+   "nome": "comparado-repetido",
+   "arquivo": "texto_em_comum.py",
+   "de": "            if caminho.resolve() not in vistos:\n",
+   "para": "            if True:\n"
+  },
+  {
+   "nome": "entra-na-pasta-pulada",
+   "arquivo": "texto_em_comum.py",
+   "de": "pastas[:] = [p for p in pastas if not pulado(p, pular)]",
+   "para": "pastas[:] = [p for p in pastas]"
+  },
+  {
+   "nome": "lista-sem-pular",
+   "arquivo": "texto_em_comum.py",
+   "de": "        if not pulado(relativo, pular):\n",
+   "para": "        if True:\n"
+  },
+  {
+   "nome": "le-o-relatorio",
+   "arquivo": "texto_em_comum.py",
+   "de": "fora = {a.saida.resolve()}",
+   "para": "fora = set()"
+  },
+  {
+   "nome": "empate-pelo-ultimo",
+   "arquivo": "texto_em_comum.py",
+   "de": "key=lambda p: (-contagem[p], p)",
+   "para": "key=lambda p: (-contagem[p], -p)"
+  },
+  {
+   "nome": "mais-parecido-pelo-menor",
+   "arquivo": "texto_em_comum.py",
+   "de": "key=lambda p: (-contagem[p], p)",
+   "para": "key=lambda p: (contagem[p], p)"
+  },
+  {
+   "nome": "byte-zero-longe-do-comeco",
+   "arquivo": "texto_em_comum.py",
+   "de": "    if b\"\\0\" in dados:\n        return None\n    try:\n",
+   "para": "    try:\n"
+  },
+  {
+   "nome": "fora-do-utf8-vira-texto",
+   "arquivo": "texto_em_comum.py",
+   "de": "return dados.decode(\"utf-8\")",
+   "para": "return dados.decode(\"utf-8\", \"replace\")"
+  },
+  {
+   "nome": "nao-texto-pulado-calado",
+   "arquivo": "texto_em_comum.py",
+   "de": "            linhas.append([relativo, NAO, \"\", \"\", \"\", \"\"])\n",
+   "para": ""
+  },
+  {
+   "nome": "codigo-sempre-zero",
+   "arquivo": "texto_em_comum.py",
+   "de": "return 0 if com_texto_em_comum == 0 and nao_texto == 0 else 1",
+   "para": "return 0"
+  },
+  {
+   "nome": "nao-texto-nao-muda-o-codigo",
+   "arquivo": "texto_em_comum.py",
+   "de": "return 0 if com_texto_em_comum == 0 and nao_texto == 0 else 1",
+   "para": "return 0 if com_texto_em_comum == 0 else 1"
+  },
+  {
+   "nome": "palavras-sem-conferir",
+   "arquivo": "texto_em_comum.py",
+   "de": "    if a.palavras < 1:\n",
+   "para": "    if False:\n"
+  },
+  {
+   "nome": "pasta-sem-conferir",
+   "arquivo": "texto_em_comum.py",
+   "de": "        if not pasta.is_dir():\n",
+   "para": "        if False:\n"
+  },
+  {
+   "nome": "pasta-do-relatorio-sem-conferir",
+   "arquivo": "texto_em_comum.py",
+   "de": "    if not a.saida.parent.is_dir():\n",
+   "para": "    if False:\n"
+  },
+  {
+   "nome": "lista-sem-conferir",
+   "arquivo": "texto_em_comum.py",
+   "de": "if relativo.is_absolute() or \"..\" in relativo.parts or not (pasta / relativo).is_file():",
+   "para": "if False:"
+  },
+  {
+   "nome": "lista-sai-da-pasta",
+   "arquivo": "texto_em_comum.py",
+   "de": " or \"..\" in relativo.parts",
+   "para": ""
+  },
+  {
+   "nome": "lista-com-caminho-absoluto",
+   "arquivo": "texto_em_comum.py",
+   "de": "relativo.is_absolute() or ",
+   "para": ""
+  },
+  {
+   "nome": "lista-repetida",
+   "arquivo": "texto_em_comum.py",
+   "de": "sorted(set(caminhos)",
+   "para": "sorted(caminhos"
+  },
+  {
+   "nome": "sem-ordem",
+   "arquivo": "texto_em_comum.py",
+   "de": "return sorted(set(caminhos), key=lambda p: p.relative_to(pasta).as_posix())",
+   "para": "return list(set(caminhos))"
+  },
+  {
+   "nome": "sem-lista",
+   "arquivo": "texto_em_comum.py",
+   "de": "if a.lista is not None",
+   "para": "if False"
+  }
+ ]
+}
