@@ -3,7 +3,9 @@
 O protocolo dos ganchos de um programa: o que o programa que roda os ganchos manda a eles e
 o que ele espera de volta. Os ganchos desta prateleira o leem de um arquivo de dados do
 projeto, e nada de um programa fica no código deles: nem o nome de um evento, nem a chave de
-uma parte dele, nem a forma de uma resposta, nem o nome de uma ferramenta.
+uma parte dele, nem a forma de uma resposta, nem o nome de uma ferramenta. O módulo dá
+também o arquivo em que um gancho anota o que guarda de uma sessão, ou de cada chave dela,
+como um documento.
 
 Usa só a biblioteca padrão do Python e o `extrator_comum.py`, do
 [extrator](../../extrator/README.md), que lê o arquivo pelo molde dele; ele é achado duas
@@ -48,6 +50,7 @@ ou com outro campo entre chaves; e o número de uma leitura abaixo do menor que 
 | `ler(caminho)` | o protocolo do arquivo, conferido |
 | `le_evento(protocolo, texto)` | as partes do evento que chega em texto JSON: `evento`, que é `antes` ou `fim`, e cada parte que ele traz, pelo nome no molde; erro quando o texto não é um objeto JSON e quando o nome do evento falta ou é de outro evento |
 | `resposta(protocolo, qual, texto)` | uma cópia do modelo da resposta `nega`, `contexto` ou `trava`, com o texto no lugar de `{texto}` |
+| `anotacao(pasta, sessao, *chaves)` | o arquivo, na pasta, em que um gancho anota o que guarda da sessão; com chaves, como o caminho de um documento, o de cada chave, dentro da pasta da sessão, uma pasta dentro da outra na ordem das chaves. Cada nome é a impressão digital (SHA-256) do id da sessão ou da chave, e por isso nunca sai da pasta; a sessão sem id e a chave que não é texto são erro |
 | `ErroDeDados` | o erro de um arquivo ou de um evento fora da forma, do `extrator_comum.py` |
 
 ## Testes

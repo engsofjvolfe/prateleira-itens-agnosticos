@@ -47,9 +47,8 @@ padrão, em JSON. O mesmo comando serve aos três momentos:
   que bloqueou.
 
 A resposta sai pela saída padrão, em JSON, só quando há o que dizer: as regras, o bloqueio
-ou a trava do fim. Configuração ou protocolo fora do molde, evento desconhecido, sessão com
-nome de caminho, ferramenta sem campo de caminho conhecido e texto que falta no comando dão
-erro.
+ou a trava do fim. Configuração ou protocolo fora do molde, evento desconhecido, sessão sem
+id, ferramenta sem campo de caminho conhecido e texto que falta no comando dão erro.
 
 ## A configuração
 
@@ -60,7 +59,7 @@ terminal e os formatos de texto, que valem para qualquer programa.
 | Chave | O que é |
 | --- | --- |
 | `versao_schema` | a versão do molde |
-| `estado` | a pasta da anotação: um arquivo por sessão, com os arquivos escritos, apagado ao fim de cada tarefa |
+| `estado` | a pasta da anotação: um arquivo por sessão, com o nome tirado do id dela, que guarda os arquivos escritos e se apaga ao fim de cada tarefa |
 | `sem_conferencia` | os formatos de arquivo, pela extensão (como `.md`), que não recebem as regras nem a conferência, sem contar maiúsculas |
 | `terminal.destinos_livres` | destinos para onde escrever não conta como escrita, como `/dev/null` |
 | `terminal.prefixos` | palavras depois das quais as outras também contam como comando, como `xargs` ou `-exec` |

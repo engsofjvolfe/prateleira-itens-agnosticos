@@ -13,6 +13,14 @@ prateleira segue o [Versionamento Semântico](https://semver.org/lang/pt-BR/spec
   comando simples um comando de uma ou mais palavras, como `git grep`, também com outras
   palavras no meio, e a `comandos_achados`, que dá cada vez que um comando, ou um de dentro
   dele, roda um dos comandos procurados; o `busca-por-palavra` passa a usá-las.
+- `ganchos/protocolo`: a função `anotacao`, que dá o arquivo em que um gancho anota o que
+  guarda de uma sessão, ou de cada chave dela, como um documento, com o nome tirado do id
+  da sessão e da chave; o `destino-da-limpeza` e o `regras-de-codigo` passam a usá-la.
+
+### Modificado
+
+- `ganchos/regras-de-codigo`: a anotação de cada sessão tem o nome tirado do id dela, como
+  a do `destino-da-limpeza`, e o id com nome de caminho deixa de ser erro.
 
 ## [0.1.0] - 2026-10-29
 

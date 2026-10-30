@@ -21,10 +21,15 @@ O arquivo diz:
     comeca, o de quantas linhas ela le, quantas ela le sem esse campo e o numero que o
     programa da a primeira linha; e as que leem por outro modelo e entregam um resumo.
 
+Da tambem o arquivo em que um gancho anota o que guarda de uma sessao, ou de cada chave dela,
+como um documento, dentro da pasta da sessao: cada nome e a impressao digital do id da
+sessao ou da chave, e por isso nunca sai da pasta das anotacoes.
+
 Nao se roda: os ganchos o importam. Precisa do extrator_comum.py, do extrator, duas pastas
 acima (na prateleira, em ganchos/protocolo/) ou na pasta irma (numa copia de teste). So
 biblioteca padrao.
 """
+import hashlib
 import json
 import sys
 from pathlib import Path
@@ -187,3 +192,17 @@ def preenchido(valor, escrito):
 def resposta(protocolo, qual, escrito):
     """A resposta "nega", "contexto" ou "trava", com o texto do gancho no lugar de {texto}."""
     return preenchido(protocolo["respostas"][qual], escrito)
+
+
+def anotacao(pasta, sessao, *chaves):
+    """O arquivo, na pasta, em que um gancho anota o que guarda da sessao; com chaves, como o
+    caminho de um documento, o de cada chave, dentro da pasta da sessao, uma pasta dentro da
+    outra na ordem das chaves. Cada nome e a impressao digital do id da sessao ou da chave, e
+    por isso nunca sai da pasta; a sessao sem id e a chave que nao e texto sao erro
+    (ErroDeDados)."""
+    if not isinstance(sessao, str) or not sessao:
+        raise ErroDeDados(f"sessão sem id: {sessao!r}")
+    for chave in chaves:
+        if not isinstance(chave, str):
+            raise ErroDeDados(f"chave de anotação que não é texto: {chave!r}")
+    return Path(pasta).joinpath(*(hashlib.sha256(nome.encode("utf-8")).hexdigest() for nome in (sessao, *chaves)))

@@ -22,9 +22,10 @@ O teste confere o que o gancho faz, nunca uma frase pronta:
   se lê é bloqueado, na resposta que nega, com a parte que causou o bloqueio; o resto
   passa, inclusive o que está entre aspas ou fora do lugar de comando; o terminal não anota
   nada;
-- configuração fora do molde, protocolo fora da forma, sessão com nome de caminho, evento
-  desconhecido, ferramenta sem campo de caminho conhecido, entrada que não é JSON e a falta
-  de um dos textos do comando dão erro.
+- cada sessão tem a sua anotação, e o id da sessão nunca vira caminho;
+- configuração fora do molde, protocolo fora da forma, sessão sem id, evento desconhecido,
+  ferramenta sem campo de caminho conhecido, entrada que não é JSON e a falta de um dos
+  textos do comando dão erro.
 
 Diz `0 falha(s)` quando passa; senão, uma linha `FALHA` para cada conferência que não
 passou, e sai com código 1.

@@ -18,7 +18,8 @@ uma frase pronta:
     codigo escrito nele ou que nao se le, mostrando a parte que causou o bloqueio, e deixa
     passar o resto, inclusive o que esta entre aspas ou nao esta no lugar de comando; o
     terminal nao anota nada;
-  - configuracao fora do molde, protocolo fora da forma, sessao que sai da pasta, evento
+  - cada sessao tem a sua anotacao, e o id da sessao nunca vira caminho;
+  - configuracao fora do molde, protocolo fora da forma, sessao sem id, evento
     desconhecido, ferramenta sem campo de caminho conhecido, entrada que nao e JSON e a
     falta de um dos textos do comando (as regras, a ordem de conferir, o bloqueio) dao
     erro.
@@ -28,6 +29,7 @@ O protocolo inventado vem do protocolo_inventado.py, da pasta de testes do proto
 """
 import json
 import random
+import string
 import subprocess
 import sys
 from pathlib import Path
@@ -217,9 +219,13 @@ confere("-q" in (bloqueio(saida(terminal("terminal", "eco ok; editor -q alvo")))
 confere(saida(fim("terminal")) == "", "o terminal nao anota nada")
 
 # entrada
-for sessao in ("../fora", "a/b", "..", "", ".oculta"):
-    confere(da_erro(escrita(sessao, "/a/b")), f"a sessao {sessao!r} da erro")
-confere(not (TRABALHO.parent / "fora").exists(), "nada e gravado fora da pasta de estado")
+confere(da_erro(escrita("", "/a/b")), "a sessao sem id da erro")
+for sessao in ("../fora", "a/b", "..", ".oculta"):
+    confere(contexto(saida(escrita(sessao, "/a/b"))), f"a sessao {sessao!r} tem a sua tarefa")
+NOTAS = TRABALHO / CONFIG["estado"]
+confere(not (TRABALHO / "fora").exists() and all(
+    len(n.name) == 64 and set(n.name) <= set(string.hexdigits.lower()) for n in NOTAS.iterdir()),
+    "o id da sessao nunca vira caminho")
 confere(da_erro(json.dumps({PROTOCOLO["chaves"]["evento"]: "EventoInventado", PROTOCOLO["chaves"]["sessao"]: "e"})),
         "evento desconhecido da erro")
 confere(da_erro("isto nao e json"), "entrada que nao e JSON da erro")

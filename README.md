@@ -51,7 +51,7 @@ prateleira) ou na própria pasta (numa cópia fora da prateleira).
 | `transcricoes.py`: ler as transcrições de sessão, um evento por linha | [historico-de-arquivo](historico-de-arquivo/README.md) | historico-de-arquivo, custo-de-agentes |
 | `grava_ou_confere.py`: gravar um documento gerado ou conferir que está em dia | [grava-ou-confere](grava-ou-confere/README.md) | copia-para-projeto |
 | `leitura_do_terminal.py`: ler um comando de terminal como o shell lê | [ganchos/leitura-do-terminal](ganchos/leitura-do-terminal/README.md) | ganchos/regras-de-codigo, ganchos/busca-por-palavra |
-| `protocolo.py`: ler o protocolo dos ganchos de um programa, ler o evento e montar a resposta | [ganchos/protocolo](ganchos/protocolo/README.md) | ganchos/busca-por-palavra, ganchos/chamadas-permitidas, ganchos/destino-da-limpeza, ganchos/regras-de-codigo |
+| `protocolo.py`: ler o protocolo dos ganchos de um programa, ler o evento, montar a resposta e dar o arquivo da anotação de cada sessão | [ganchos/protocolo](ganchos/protocolo/README.md) | ganchos/busca-por-palavra, ganchos/chamadas-permitidas, ganchos/destino-da-limpeza, ganchos/regras-de-codigo |
 
 E os encadeamentos, em que uma peça grava o arquivo que a próxima lê:
 

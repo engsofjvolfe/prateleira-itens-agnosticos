@@ -27,8 +27,8 @@ origem.
 Usa só a biblioteca padrão do Python, o `extrator_comum.py`, do
 [extrator](../../extrator/README.md), que lê a configuração pelo molde dela, e o
 [protocolo](../protocolo/README.md), da pasta irmã, que lê o protocolo do programa que roda
-o gancho; o extrator é achado duas pastas acima (na prateleira) ou na pasta irmã (numa cópia
-de teste).
+o gancho e dá o arquivo da anotação de cada sessão; o extrator é achado duas pastas acima
+(na prateleira) ou na pasta irmã (numa cópia de teste).
 
 ## Como rodar
 

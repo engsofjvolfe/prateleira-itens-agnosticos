@@ -19,11 +19,11 @@ extrator_comum.py, do extrator, que fica duas pastas acima (na prateleira, em
 ganchos/<peca>/) ou na pasta irma (numa copia de teste); os textos dos bloqueios, dos
 arquivos dados no comando (--aviso-muda, --aviso-sem-origem, --aviso-terminal). O evento,
 as ferramentas, os campos delas e a resposta vem do protocolo do programa que roda o gancho
-(--protocolo), lido pelo protocolo.py, da pasta irma protocolo. So biblioteca padrao.
+(--protocolo), lido pelo protocolo.py, da pasta irma protocolo, que da tambem o arquivo da
+anotacao de cada sessao. So biblioteca padrao.
 """
 import argparse
 import difflib
-import hashlib
 import json
 import sys
 from pathlib import Path
@@ -51,14 +51,6 @@ def ler_configuracao(caminho):
     arquivo = Path(caminho).resolve()
     dados = extrator_comum.le_conferido(arquivo, MOLDE)
     return {"estado": arquivo.parent / dados["estado"]}
-
-
-def anotacao(config, sessao):
-    """O arquivo que anota, para a sessao, que algo saiu de uma origem nesta resposta. O nome
-    e a impressao digital do id da sessao, e por isso nunca sai da pasta das anotacoes."""
-    if not isinstance(sessao, str) or not sessao:
-        raise ValueError(f"sessão sem id: {sessao!r}")
-    return config["estado"] / hashlib.sha256(sessao.encode(CODIFICACAO)).hexdigest()
 
 
 def resolvido(caminho):
@@ -143,7 +135,7 @@ def antes_da_escrita(config, proto, lugares, partes):
     if not (destino or origem):
         return None
     textos = textos_da_escrita(escritas, partes["ferramenta"], entrada, arquivo)
-    nota = anotacao(config, partes["sessao"])
+    nota = protocolo.anotacao(config["estado"], partes["sessao"])  # anota que saiu texto de uma origem
     if destino:
         if textos is None or not so_cresce(*textos):
             return nega(proto, config["avisos"]["muda"], [arquivo])
@@ -162,7 +154,7 @@ def antes_do_terminal(config, proto, lugares, partes):
 
 
 def no_fim(config, proto, lugares, partes):
-    anotacao(config, partes["sessao"]).unlink(missing_ok=True)
+    protocolo.anotacao(config["estado"], partes["sessao"]).unlink(missing_ok=True)
     return None
 
 

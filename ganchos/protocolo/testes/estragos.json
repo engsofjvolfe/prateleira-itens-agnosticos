@@ -59,6 +59,22 @@
    "para": "        return {preenchido(k, escrito): preenchido(v, escrito) for k, v in valor.items()}"},
   {"nome": "resposta-de-outro-nome", "arquivo": "protocolo.py",
    "de": "    return preenchido(protocolo[\"respostas\"][qual], escrito)",
-   "para": "    return preenchido(protocolo[\"respostas\"][\"nega\"], escrito)"}
+   "para": "    return preenchido(protocolo[\"respostas\"][\"nega\"], escrito)"},
+  {"nome": "sessoes-juntas", "arquivo": "protocolo.py",
+   "de": "hashlib.sha256(nome.encode(\"utf-8\")).hexdigest() for nome", "para": "\"todas\" for nome"},
+  {"nome": "id-da-sessao-vira-caminho", "arquivo": "protocolo.py",
+   "de": "hashlib.sha256(nome.encode(\"utf-8\")).hexdigest() for nome", "para": "nome for nome"},
+  {"nome": "sessao-vazia-aceita", "arquivo": "protocolo.py",
+   "de": "    if not isinstance(sessao, str) or not sessao:", "para": "    if not isinstance(sessao, str):"},
+  {"nome": "anotacao-fora-da-pasta", "arquivo": "protocolo.py",
+   "de": "    return Path(pasta).joinpath(", "para": "    return Path().joinpath("},
+  {"nome": "chaves-ignoradas", "arquivo": "protocolo.py",
+   "de": "for nome in (sessao, *chaves)", "para": "for nome in (sessao,)"},
+  {"nome": "chaves-fora-da-pasta-da-sessao", "arquivo": "protocolo.py",
+   "de": "for nome in (sessao, *chaves)", "para": "for nome in (\"\".join((sessao, *chaves)),)"},
+  {"nome": "chaves-sem-ordem", "arquivo": "protocolo.py",
+   "de": "for nome in (sessao, *chaves)", "para": "for nome in (sessao, *sorted(chaves))"},
+  {"nome": "chave-que-nao-e-texto-aceita", "arquivo": "protocolo.py",
+   "de": "        if not isinstance(chave, str):\n", "para": "        if False:\n"}
  ]
 }

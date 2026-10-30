@@ -7,8 +7,8 @@ dele — vem do protocolo, num arquivo do projeto.
 
 **[protocolo/](protocolo/README.md)** — lê o protocolo dos ganchos de um programa, de um
 arquivo do projeto: os eventos, as chaves do evento, a forma de cada resposta e as
-ferramentas, com os campos de cada uma; lê o evento e monta a resposta; não se roda (com
-testes).
+ferramentas, com os campos de cada uma; lê o evento, monta a resposta e dá o arquivo da
+anotação de cada sessão; não se roda (com testes).
 
 **[regras-de-codigo/](regras-de-codigo/README.md)** — gancho que entrega as regras de código
 antes da primeira escrita de código ou de dados de cada tarefa, bloqueia o comando de

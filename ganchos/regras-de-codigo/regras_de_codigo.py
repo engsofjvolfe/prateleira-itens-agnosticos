@@ -18,7 +18,8 @@ As listas e a pasta da anotação vêm da configuração (--config), conferida c
 o molde dela; os textos, dos arquivos dados no comando: as regras (--regras), a
 ordem de conferir (--fim) e o aviso do bloqueio (--bloqueio). O evento, as
 ferramentas e as respostas vêm do protocolo do programa (--protocolo), lido pelo
-protocolo.py, da pasta irmã protocolo. O comando de terminal é lido pelo
+protocolo.py, da pasta irmã protocolo, que dá também o arquivo da anotação de cada
+sessão, com o nome tirado do id dela. O comando de terminal é lido pelo
 leitura_do_terminal.py, da pasta irmã leitura-do-terminal. Só biblioteca padrão.
 """
 import argparse
@@ -118,12 +119,6 @@ def ler_configuracao(caminho):
 
 def juntar(caminhos):
     return SEPARADOR_DE_TEXTOS.join(Path(c).read_text(encoding=CODIFICACAO).strip() for c in caminhos)
-
-
-def arquivo_da_anotacao(config, sessao):
-    if not isinstance(sessao, str) or not sessao or Path(sessao).name != sessao or sessao.startswith("."):
-        raise ValueError(sessao)
-    return config["estado"] / sessao
 
 
 # ---- análise do comando de terminal ----
@@ -240,7 +235,7 @@ def main(argumentos=None):
     config = dict(ler_configuracao(args.config), regras=list(args.regras), fim=args.fim, bloqueio=args.bloqueio)
     proto = protocolo.ler(args.protocolo)
     partes = protocolo.le_evento(proto, sys.stdin.read())
-    anotacao = arquivo_da_anotacao(config, partes["sessao"])
+    anotacao = protocolo.anotacao(config["estado"], partes["sessao"])
     saida = TRATADORES[partes["evento"]](config, proto, partes, anotacao)
     if saida is not None:
         print(json.dumps(saida, ensure_ascii=False))

@@ -13,6 +13,13 @@ letras de fora do ASCII, e nada e de um programa de verdade. A semente e fixa (o
     de dentro dele, tambem nas listas e nos objetos de dentro, com as chaves e o que nao e
     texto como estao; o texto entra como e, com chaves, aspas, barra e quebra de linha; o
     modelo nao muda;
+  - a anotacao de uma sessao fica na pasta dada, com o nome de 64 algarismos hexadecimais,
+    a mesma para a mesma sessao e outra para outra; o id com nome de caminho nunca sai da
+    pasta; a sessao sem id, vazia ou que nao e texto, e erro;
+  - a anotacao de uma chave fica na pasta da sessao, com o nome de 64 algarismos
+    hexadecimais, a mesma para a mesma chave e outra para outra chave ou outra sessao; duas
+    chaves dao uma pasta dentro da outra, na ordem delas; a chave com nome de caminho nunca
+    sai da pasta da sessao; a chave que nao e texto e erro;
   - e erro, com o que ou onde na mensagem: a versao que nao e a do molde; campo
     desconhecido, que falta, de outro tipo ou vazio, tambem numa ferramenta de uma lista ou
     numa troca; os dois eventos com o mesmo nome; duas partes com a mesma chave; nenhum
@@ -201,6 +208,39 @@ for qual in ("nega", "contexto", "trava"):
     confere(LIDO["respostas"][qual] == antes, f"a resposta {qual} não muda o modelo")
 confere(protocolo.resposta(LIDO, "nega", ESCRITO) == protocolo.resposta(LIDO, "nega", ESCRITO),
         "duas respostas dão o mesmo")
+
+# ---- a anotação de uma sessão ----
+
+NOTAS, SESSAO, CHAVE, OUTRA = TRABALHO / nome(), nome(), nome(), nome()
+FUGAS = (f"../{nome()}", f"/{nome()}", f"{nome()}/{nome()}", "..", ".")
+
+
+def digital(caminho):
+    return len(caminho.name) == 64 and set(caminho.name) <= set(string.hexdigits.lower())
+
+
+NOTA = protocolo.anotacao(NOTAS, SESSAO)
+confere(NOTA.parent == NOTAS, "a anotação fica na pasta dada")
+confere(digital(NOTA), "o nome da anotação é a impressão digital do id da sessão")
+confere(protocolo.anotacao(NOTAS, SESSAO) == NOTA, "a mesma sessão dá a mesma anotação")
+confere(protocolo.anotacao(NOTAS, nome()) != NOTA, "outra sessão dá outra anotação")
+for fuga in FUGAS:
+    confere(protocolo.anotacao(NOTAS, fuga).parent == NOTAS, f"o id {fuga!r} não vira caminho")
+for sem_id in ("", None, SORTE.randint(1, 9)):
+    confere(erro_de(protocolo.anotacao, NOTAS, sem_id) is not None, f"a sessão {sem_id!r} é erro")
+DA_CHAVE = protocolo.anotacao(NOTAS, SESSAO, CHAVE)
+confere(DA_CHAVE.parent == NOTA, "a anotação de uma chave fica na pasta da sessão")
+confere(digital(DA_CHAVE), "o nome da anotação de uma chave é a impressão digital dela")
+confere(protocolo.anotacao(NOTAS, SESSAO, CHAVE) == DA_CHAVE, "a mesma chave dá a mesma anotação")
+confere(protocolo.anotacao(NOTAS, SESSAO, OUTRA) != DA_CHAVE, "outra chave dá outra anotação")
+confere(protocolo.anotacao(NOTAS, nome(), CHAVE) != DA_CHAVE, "a mesma chave noutra sessão dá outra anotação")
+DUAS = protocolo.anotacao(NOTAS, SESSAO, CHAVE, OUTRA)
+confere(DUAS.parent == DA_CHAVE and digital(DUAS), "duas chaves dão uma pasta dentro da outra")
+confere(protocolo.anotacao(NOTAS, SESSAO, OUTRA, CHAVE) != DUAS, "duas chaves noutra ordem dão outra anotação")
+for fuga in FUGAS:
+    confere(protocolo.anotacao(NOTAS, SESSAO, fuga).parent == NOTA, f"a chave {fuga!r} não vira caminho")
+for nao_texto in (None, SORTE.randint(1, 9), [CHAVE]):
+    confere(erro_de(protocolo.anotacao, NOTAS, SESSAO, nao_texto) is not None, f"a chave {nao_texto!r} é erro")
 
 # ---- os erros ----
 

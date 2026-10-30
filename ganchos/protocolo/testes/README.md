@@ -19,6 +19,13 @@ O teste confere o que o módulo faz, nunca uma frase pronta:
   de dentro dele, também nas listas e nos objetos de dentro, com as chaves e o que não é
   texto como estão; o texto entra como é, com chaves, aspas, barra e quebra de linha; o
   modelo não muda;
+- a anotação de uma sessão fica na pasta dada, com o nome de 64 algarismos hexadecimais, a
+  mesma para a mesma sessão e outra para outra; o id com nome de caminho nunca sai da pasta;
+  a sessão sem id, vazia ou que não é texto, é erro;
+- a anotação de uma chave fica na pasta da sessão, com o nome de 64 algarismos
+  hexadecimais, a mesma para a mesma chave e outra para outra chave ou outra sessão; duas
+  chaves dão uma pasta dentro da outra, na ordem delas; a chave com nome de caminho nunca
+  sai da pasta da sessão; a chave que não é texto é erro;
 - é erro, com o que ou onde na mensagem: a versão que não é a do molde; campo desconhecido,
   que falta, de outro tipo ou vazio, também numa ferramenta de uma lista ou numa troca; os
   dois eventos com o mesmo nome; duas partes com a mesma chave; nenhum campo de caminho de
