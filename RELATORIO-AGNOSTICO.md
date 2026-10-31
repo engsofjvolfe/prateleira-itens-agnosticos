@@ -58,15 +58,13 @@ Sem problema conhecido: as listagens são ordenadas e o sorteio dos testes tem s
    `extrator/extrator.py`, `historico-de-arquivo/historico_de_arquivo.py`,
    `itens-numerados/itens.py` e `moldes/entrada.py` saem com 1. Correção: 2 nesses casos,
    com o teste de cada um conferindo.
-7. **Ferramenta repetida calada.** Na configuração do `historico-de-arquivo`, duas
-   ferramentas com o mesmo nome passam, e a última vale. Correção: erro que diz o nome.
 
 ## Testes
 
 Toda peça com código tem teste com dados inventados e uma lista de estragos que o teste
 pega inteira, menos esta:
 
-8. **`documentos` fora da forma de uma peça.** Os testes ficam na pasta da peça, sem
+7. **`documentos` fora da forma de uma peça.** Os testes ficam na pasta da peça, sem
    `testes/` nem o README deles; o teste dos links usa dados fixos, não sorteados, e confere
    as linhas de saída como frases prontas; e o `teste_linhas_longas.py` não tem teste nem
    estragos. Correção: a forma de uma peça, com o teste conferindo regras.

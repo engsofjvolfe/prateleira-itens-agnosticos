@@ -64,6 +64,11 @@ prateleira segue o [Versionamento Semântico](https://semver.org/lang/pt-BR/spec
 - `ganchos/chamadas-permitidas`: o `dados.py`, que conferia os arquivos da peça valor por
   valor.
 
+### Corrigido
+
+- `historico-de-arquivo`: duas ferramentas com o mesmo nome na configuração são erro, que
+  diz o nome; antes, a última valia.
+
 ## [0.1.0] - 2026-10-29
 
 ### Adicionado

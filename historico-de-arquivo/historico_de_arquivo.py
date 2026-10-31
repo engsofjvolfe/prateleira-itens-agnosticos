@@ -37,13 +37,16 @@ QUEBRA, TAB = "\n", "\t"
 
 def ler_configuracao(caminho):
     """A configuracao, lida pelo molde dela, com as ferramentas pelo nome; erro quando ela tem um campo que o molde nao
-    conhece ou uma codificacao que nao existe."""
+    conhece, uma codificacao que nao existe ou duas ferramentas com o mesmo nome."""
     cfg = le_conferido(Path(caminho).resolve(), MOLDE)
     for codificacao in (cfg["transcricoes"]["codificacao"], cfg["saida"]["codificacao"]):
         try:
             codecs.lookup(codificacao)
         except LookupError:
             raise ErroDeDados(f"{caminho}: a codificação {codificacao!r} não existe") from None
+    mesmas = repetidos([f["nome"] for f in cfg["ferramentas"]])
+    if mesmas:
+        raise ErroDeDados(f"{caminho}: mais de uma ferramenta com o nome {', '.join(mesmas)}")
     return dict(cfg, ferramentas={f["nome"]: f for f in cfg["ferramentas"]})
 
 

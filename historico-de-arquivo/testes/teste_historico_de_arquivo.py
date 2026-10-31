@@ -21,9 +21,9 @@ verdade. Os testes conferem o que o script faz, nunca uma frase pronta:
     sem mensagem, a mensagem que nao e objeto, o conteudo que nao e lista (texto ou numero) e o bloco que nao e objeto
     nao quebram nada;
   - a configuracao com campo desconhecido, sem um dos campos que o script le, com uma codificacao que nao existe (a das
-    transcricoes, numa pasta sem transcricao nenhuma) ou com dois arquivos da saida de mesmo nome, e a pasta das
-    transcricoes que nao existe dao erro e nao criam a pasta de saida; a pasta de saida que ja existe da erro e fica
-    como estava;
+    transcricoes, numa pasta sem transcricao nenhuma), com dois arquivos da saida de mesmo nome ou com ferramentas de
+    mesmo nome, e a pasta das transcricoes que nao existe dao erro e nao criam a pasta de saida; o erro das ferramentas
+    de mesmo nome diz o nome de cada uma; a pasta de saida que ja existe da erro e fica como estava;
   - duas rodadas dao o mesmo.
 Uso:
     python3 -I teste_historico_de_arquivo.py <pasta de historico_de_arquivo.py> <pasta de trabalho nova> [--semente N]
@@ -344,18 +344,29 @@ def com(chaves, valor):
 VAZIA = TRABALHO / "vazia"  # uma pasta sem transcricao nenhuma
 VAZIA.mkdir()
 SEM = SORTE.choice([c for c in CONFIG if c != "versao_schema"])  # um dos campos que o script le
+REPETIDAS = SORTE.sample(sorted(CAMPOS), SORTE.randint(2, len(CAMPOS)))  # mais de uma, para o erro dizer cada uma
+DOBRADAS = CONFIG["ferramentas"] + [dict(f, resultado=not f["resultado"]) for f in CONFIG["ferramentas"]
+                                    if f["nome"] in REPETIDAS]
+SORTE.shuffle(DOBRADAS)
+MESMO_NOME_DE_FERRAMENTA = "ferramentas com o mesmo nome"
 ERROS = {
     "configuração com campo desconhecido": (dict(CONFIG, **{nova(): 1}), PASTA),
     f"configuração sem o campo {SEM}": ({c: v for c, v in CONFIG.items() if c != SEM}, PASTA),
     "codificação das transcrições que não existe": (com(["transcricoes", "codificacao"], nova()), VAZIA),
     "codificação da saída que não existe": (com(["saida", "codificacao"], nova()), PASTA),
     "dois arquivos da saída com o mesmo nome": (com(["saida", "ilegiveis"], SAIDA["lista"]), PASTA),
+    MESMO_NOME_DE_FERRAMENTA: (com(["ferramentas"], DOBRADAS), PASTA),
 }
+RODADAS = {}
 for numero, (caso, (dados, transcricoes)) in enumerate(ERROS.items()):
     configuracao, saida = TRABALHO / f"cfg-{numero}.json", TRABALHO / f"saida-erro-{numero}"
     configuracao.write_text(json.dumps(dados, ensure_ascii=False), encoding="utf-8")
-    rodada = rodar("--config", configuracao, "--transcricoes", transcricoes, "--arquivo", PEDIDO, "--saida", saida)
-    confere(rodada.returncode != 0 and not saida.exists(), f"{caso} dá erro e não cria a pasta de saída")
+    RODADAS[caso] = rodar("--config", configuracao, "--transcricoes", transcricoes, "--arquivo", PEDIDO,
+                          "--saida", saida)
+    confere(RODADAS[caso].returncode != 0 and not saida.exists(), f"{caso} dá erro e não cria a pasta de saída")
+MENSAGEM = RODADAS[MESMO_NOME_DE_FERRAMENTA].stderr
+confere(all(nome in MENSAGEM for nome in REPETIDAS),
+        f"o erro das {MESMO_NOME_DE_FERRAMENTA} diz cada nome: {MENSAGEM}")
 SEM_PASTA = TRABALHO / "saida-sem-pasta"
 confere(rodar("--config", CONFIGURACAO, "--transcricoes", TRABALHO / "nao-existe", "--arquivo", PEDIDO,
               "--saida", SEM_PASTA).returncode != 0 and not SEM_PASTA.exists(),
