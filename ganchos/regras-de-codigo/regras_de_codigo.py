@@ -16,12 +16,14 @@ gancho manda pela entrada padrao.
 
 As listas e a pasta da anotacao vem da configuracao (--config), lida pelo molde dela com o
 extrator_comum.py, do extrator, que fica duas pastas acima (na prateleira, em
-ganchos/<peca>/) ou na pasta irma (numa copia de teste); os textos, dos arquivos dados no
-comando: as regras (--regras), a ordem de conferir (--fim) e o aviso do bloqueio
-(--bloqueio). O evento, as ferramentas e as respostas vem do protocolo do programa
-(--protocolo), lido pelo protocolo.py, da pasta irma protocolo, que da tambem o arquivo da
-anotacao de cada sessao, com o nome tirado do id dela. O comando de terminal e lido pelo
-leitura_do_terminal.py, da pasta irma leitura-do-terminal. So biblioteca padrao.
+ganchos/<peca>/) ou na pasta irma (numa copia de teste); os prefixos, da configuracao da
+leitura do terminal (--terminal); os textos, dos arquivos dados no comando: as regras
+(--regras), a ordem de conferir (--fim) e o aviso do bloqueio (--bloqueio). O evento, as
+ferramentas e as respostas vem do protocolo do programa (--protocolo), lido pelo
+protocolo.py, da pasta irma protocolo, que da tambem o arquivo da anotacao de cada sessao,
+com o nome tirado do id dela. O comando de terminal e a configuracao da leitura do terminal
+sao lidos pelo leitura_do_terminal.py, da pasta irma leitura-do-terminal. So biblioteca
+padrao.
 """
 import argparse
 import json
@@ -34,7 +36,8 @@ for pasta in (PASTA.parent.parent / "extrator", PASTA.parent / "extrator", PASTA
     sys.path.insert(0, str(pasta))  # a ultima posta e a primeira lida
 from extrator_comum import le_conferido  # noqa: E402
 from leitura_do_terminal import (DUPLICACAO, ESCRITA, FECHA_DESCRITOR, OPCAO, TEXTO_EMBUTIDO,  # noqa: E402
-                                 ComandoIlegivel, eh_redirecionamento, lidos, opcao_bate, posicoes_de_comando)
+                                 ComandoIlegivel, eh_redirecionamento, lidos, opcao_bate, posicoes_de_comando,
+                                 prefixos_do_terminal)
 import protocolo  # noqa: E402
 
 MOLDE = PASTA / "esquemas" / "regras-de-codigo.schema.json"
@@ -46,7 +49,9 @@ ITEM_DE_LISTA = "- "
 SEPARADOR_DE_TEXTOS = QUEBRA * 2
 
 
-def ler_configuracao(caminho):
+def ler_configuracao(caminho, leitura):
+    """A configuracao, lida pelo molde dela, com os prefixos da configuracao da leitura do terminal (leitura) entre
+    os dados do terminal."""
     arquivo = Path(caminho).resolve()
     dados = le_conferido(arquivo, MOLDE)
     terminal = dados["terminal"]
@@ -55,7 +60,7 @@ def ler_configuracao(caminho):
         "sem_conferencia": {formato.casefold() for formato in dados["sem_conferencia"]},
         "terminal": {
             "destinos_livres": set(terminal["destinos_livres"]),
-            "prefixos": set(terminal["prefixos"]),
+            "prefixos": prefixos_do_terminal(leitura),
             "sempre_escrevem": set(terminal["sempre_escrevem"]),
             "escrevem_com_opcao": {
                 nome: list(opcoes) for nome, opcoes in terminal["escrevem_com_opcao"].items()
@@ -173,6 +178,8 @@ TRATADORES = {"antes": antes, "fim": no_fim}  # pelo nome que o protocolo.py da 
 def main(argumentos=None):
     leitor = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     leitor.add_argument("--config", required=True, type=Path, help="JSON com as listas e a pasta da anotação")
+    leitor.add_argument("--terminal", required=True, type=Path,
+                        help="JSON da leitura do terminal, com os prefixos do shell")
     leitor.add_argument("--protocolo", required=True, type=Path,
                         help="JSON com o protocolo do programa que roda o gancho")
     leitor.add_argument("--regras", action="append", required=True, type=Path,
@@ -180,7 +187,8 @@ def main(argumentos=None):
     leitor.add_argument("--fim", required=True, type=Path, help="texto da ordem de conferir")
     leitor.add_argument("--bloqueio", required=True, type=Path, help="texto do bloqueio no terminal")
     args = leitor.parse_args(argumentos)
-    config = dict(ler_configuracao(args.config), regras=list(args.regras), fim=args.fim, bloqueio=args.bloqueio)
+    config = dict(ler_configuracao(args.config, args.terminal), regras=list(args.regras),
+                  fim=args.fim, bloqueio=args.bloqueio)
     proto = protocolo.ler(args.protocolo)
     partes = protocolo.le_evento(proto, sys.stdin.read())
     anotacao = protocolo.anotacao(config["estado"], partes["sessao"])

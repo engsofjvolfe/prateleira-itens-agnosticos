@@ -2,10 +2,17 @@
 
     python3 -I teste_leitura_do_terminal.py <pasta do leitura_do_terminal.py> <pasta de trabalho nova>
 
-Os comandos, os prefixos e as opções são inventados: nenhum é de um programa de verdade. A
-pasta de trabalho não é usada, porque a leitura não grava nada. O teste confere o que a
-leitura dá, nunca uma frase pronta:
+Os comandos, os prefixos e as opções são inventados: nenhum é de um programa de verdade.
+Alguns prefixos são sorteados, com letras de fora do ASCII, pelo
+[`protocolo_inventado.py`](../../protocolo/testes/protocolo_inventado.py), e a configuração
+com eles fica na pasta de trabalho. Precisa do `extrator_comum.py`, do extrator, onde a
+leitura o acha. O teste confere o que a leitura dá, nunca uma frase pronta:
 
+- os prefixos da configuração, lidos de volta, entre eles os sorteados, cada um fazendo
+  comando a palavra que vem depois dele; a configuração fora do molde (com campo
+  desconhecido, sem os prefixos, com um prefixo vazio ou que não é texto, com os prefixos
+  fora de uma lista ou com outra versão) é erro, que diz o arquivo e o caminho do valor; a
+  configuração da peça segue o molde;
 - as palavras de cada comando simples: aspas simples e duplas, escape, continuação de
   linha, comentário só no começo de palavra, operadores com e sem espaço em volta, e os
   alvos de redirecionamento fora das palavras;
@@ -30,6 +37,7 @@ Diz `0 falha(s)` quando passa; senão, uma linha `FALHA` para cada conferência 
 passou, e sai com código 1.
 
 As cópias estragadas da peça estão em `estragos.json`, nesta pasta, para o
-[`estraga.py`](../../../copias-estragadas/README.md):
+[`estraga.py`](../../../copias-estragadas/README.md), com a pasta do extrator ao lado da
+cópia:
 
-    python3 -I ../../../copias-estragadas/estraga.py .. teste_leitura_do_terminal.py estragos.json <pasta de trabalho nova>
+    python3 -I ../../../copias-estragadas/estraga.py .. teste_leitura_do_terminal.py estragos.json <pasta de trabalho nova> --irma ../../../extrator

@@ -22,6 +22,9 @@ prateleira segue o [Versionamento Semântico](https://semver.org/lang/pt-BR/spec
   comando simples um comando de uma ou mais palavras, como `git grep`, também com outras
   palavras no meio, e a `comandos_achados`, que dá cada vez que um comando, ou um de dentro
   dele, roda um dos comandos procurados; o `busca-por-palavra` passa a usá-las.
+- `ganchos/leitura-do-terminal`: a configuração, com os prefixos do shell, e o molde dela; a
+  de uso geral fica na peça, e a função `prefixos_do_terminal` a lê pelo molde, com o
+  módulo comum.
 - `ganchos/protocolo`: a função `anotacao`, que dá o arquivo em que um gancho anota o que
   guarda de uma sessão, ou de cada chave dela, como um documento, com o nome tirado do id
   da sessão e da chave; o `destino-da-limpeza` e o `regras-de-codigo` passam a usá-la.
@@ -39,6 +42,9 @@ prateleira segue o [Versionamento Semântico](https://semver.org/lang/pt-BR/spec
   obrigatórios, o `allOf` e o `if`, com `$ref` para a raiz e para `$defs` — e diz o caminho
   de cada valor fora dele; antes, só acusava o campo que o molde não conhece. O próprio
   molde é conferido antes, contra o molde dos moldes.
+- `ganchos/busca-por-palavra` e `ganchos/regras-de-codigo`: os prefixos do shell saem da
+  configuração de cada um e vêm da configuração da `ganchos/leitura-do-terminal`, dada no
+  `--terminal`, que passa a ser pedido.
 - `ganchos/chamadas-permitidas`: a configuração e a lista das regras são lidas pelos moldes
   delas, em `esquemas/`, com o leitor do módulo comum, e as partes do evento também; o erro
   diz o caminho de cada valor fora do molde. Os dois arquivos passam a ter

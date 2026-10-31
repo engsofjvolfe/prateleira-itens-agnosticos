@@ -1,5 +1,10 @@
 """Testes do leitura_do_terminal.py, com comandos inventados: nenhum nome de comando, prefixo
 ou opcao e de um programa de verdade. Conferem o que a leitura da, nunca uma frase pronta:
+  - os prefixos da configuracao, lidos de volta, entre eles os sorteados, com letras de fora
+    do ASCII, cada um fazendo comando a palavra que vem depois dele; a configuracao fora do
+    molde (com campo desconhecido, sem os prefixos, com um prefixo vazio ou que nao e texto,
+    com os prefixos fora de uma lista ou com outra versao) e erro, que diz o arquivo e o
+    caminho do valor; a configuracao da peca segue o molde;
   - as palavras de cada comando simples: aspas simples e duplas, escape, continuacao de
     linha, comentario so no comeco de palavra, operadores com e sem espaco em volta, e os
     alvos de redirecionamento fora das palavras;
@@ -21,17 +26,47 @@ ou opcao e de um programa de verdade. Conferem o que a leitura da, nunca uma fra
   - duas leituras dao o mesmo.
 Uso:
     python3 -I teste_leitura_do_terminal.py <pasta do leitura_do_terminal.py> <pasta de trabalho nova>
-A pasta de trabalho nao e usada: a leitura nao grava nada.
+Na pasta de trabalho ficam as configuracoes inventadas. Precisa do extrator_comum.py, do
+extrator, onde a leitura o acha: na prateleira, ou na pasta irma da copia. Os nomes sorteados
+vem do protocolo_inventado.py, da pasta de testes do protocolo.
 """
+import json
+import random
 import sys
 from pathlib import Path
 
-PECA = Path(sys.argv[1]).resolve()
+PECA, TRABALHO = Path(sys.argv[1]).resolve(), Path(sys.argv[2]).resolve()
 sys.path.insert(0, str(PECA))
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent / "protocolo" / "testes"))
 import leitura_do_terminal as leitura  # noqa: E402
+import protocolo_inventado  # noqa: E402
+from extrator_comum import ErroDeDados  # noqa: E402 -- no caminho que o leitura_do_terminal.py poe
 
 FALHAS = []
-PREFIXOS = {"embrulho", "-faz"}  # prefixos inventados: um comando e uma opcao
+SORTE = random.Random(3)  # o sorteio e o mesmo em toda rodada
+NOMES = protocolo_inventado.nomes_sorteados(SORTE, SORTE.randint(3, 6))  # cada um com uma letra de fora do ASCII
+OUTRO = NOMES.pop()  # um campo que o molde nao conhece
+SORTEADOS = NOMES[:-1] + [f"-{NOMES[-1]}"]  # prefixos sorteados: comandos e uma opcao, como -exec
+PREFIXOS = {"embrulho", "-faz"} | set(SORTEADOS)  # os dos casos abaixo, inventados, e os sorteados
+CONFIG = {"versao_schema": 1, "prefixos": SORTE.sample(sorted(PREFIXOS), len(PREFIXOS))}
+ESTRAGADO = SORTE.randrange(len(CONFIG["prefixos"]))  # a posicao do prefixo que sai do molde
+
+
+def com_prefixo(valor):
+    """A configuracao com o valor no lugar de um dos prefixos."""
+    prefixos = list(CONFIG["prefixos"])
+    prefixos[ESTRAGADO] = valor
+    return dict(CONFIG, prefixos=prefixos)
+
+
+FORA_DO_MOLDE = {  # caso: (configuracao, o caminho do valor fora do molde)
+    "campo desconhecido": ({**CONFIG, OUTRO: SORTEADOS}, f"/{OUTRO}"),
+    "sem os prefixos": ({"versao_schema": CONFIG["versao_schema"]}, "/prefixos"),
+    "prefixo vazio": (com_prefixo(""), f"/prefixos/{ESTRAGADO}"),
+    "prefixo que não é texto": (com_prefixo(SORTE.randint(1, 9)), f"/prefixos/{ESTRAGADO}"),
+    "prefixos fora de uma lista": (dict(CONFIG, prefixos=SORTEADOS[0]), "/prefixos"),
+    "outra versão": (dict(CONFIG, versao_schema=CONFIG["versao_schema"] + 1), "/versao_schema"),
+}
 
 PALAVRAS = {  # comando -> as palavras de cada comando simples dele
     "eco a b": [["eco", "a", "b"]],
@@ -112,12 +147,28 @@ def simples(comando):
 
 
 def comandos(comando):
-    """As palavras que rodam como comando, do comando e dos de dentro dele, na ordem."""
-    return [p[i] for p in simples(comando) for i in leitura.posicoes_de_comando(p, PREFIXOS)]
+    """As palavras que rodam como comando, do comando e dos de dentro dele, na ordem, com os prefixos lidos."""
+    return [p[i] for p in simples(comando) for i in leitura.posicoes_de_comando(p, LIDOS)]
 
 
 def achados(comando, procurados):
-    return list(leitura.comandos_achados(comando, procurados, PREFIXOS))
+    return list(leitura.comandos_achados(comando, procurados, LIDOS))
+
+
+def grava(nome_do_arquivo, dados):
+    """O arquivo novo, na pasta de trabalho, com os dados em JSON."""
+    arquivo = TRABALHO / nome_do_arquivo
+    arquivo.write_text(json.dumps(dados, ensure_ascii=False), encoding="utf-8")
+    return arquivo
+
+
+def erro_ao_ler(arquivo):
+    """A mensagem do erro ao ler os prefixos da configuracao do arquivo; None quando ela se le."""
+    try:
+        leitura.prefixos_do_terminal(arquivo)
+    except ErroDeDados as e:
+        return str(e)
+    return None
 
 
 def ilegivel(comando, ler=lambda c: list(leitura.lidos(c))):
@@ -130,11 +181,23 @@ def ilegivel(comando, ler=lambda c: list(leitura.lidos(c))):
 
 def tudo():
     """O que a leitura da para todos os casos, para comparar duas leituras."""
-    return ([simples(c) for c in PALAVRAS], [comandos(c) for c in COMANDOS],
-            [leitura.depois_do_comando(c, p) for c, p, _ in DEPOIS], [achados(c, p) for c, p, _ in ACHADOS],
-            [ilegivel(c) for c in ILEGIVEIS + LEGIVEIS])
+    return (sorted(leitura.prefixos_do_terminal(ARQUIVO)), [simples(c) for c in PALAVRAS],
+            [comandos(c) for c in COMANDOS], [leitura.depois_do_comando(c, p) for c, p, _ in DEPOIS],
+            [achados(c, p) for c, p, _ in ACHADOS], [ilegivel(c) for c in ILEGIVEIS + LEGIVEIS])
 
 
+TRABALHO.mkdir(parents=True)
+ARQUIVO = grava("terminal.json", CONFIG)
+LIDOS = leitura.prefixos_do_terminal(ARQUIVO)
+confere(LIDOS == PREFIXOS, f"os prefixos lidos da configuração: {sorted(LIDOS)}")
+for prefixo in SORTEADOS:
+    confere(comandos(f"eco . {prefixo} ti") == ["eco", "ti"], f"o prefixo sorteado {prefixo!r} faz comando o seguinte")
+for numero, (caso, (dados, caminho)) in enumerate(FORA_DO_MOLDE.items()):
+    arquivo = grava(f"fora-do-molde-{numero}.json", dados)
+    mensagem = erro_ao_ler(arquivo)
+    confere(mensagem is not None and arquivo.name in mensagem and caminho in mensagem,
+            f"a configuração com {caso} é erro, que diz o arquivo e o caminho {caminho}: {mensagem}")
+confere(erro_ao_ler(PECA / "configuracao.json") is None, "a configuração da peça segue o molde")
 for comando, esperado in PALAVRAS.items():
     confere(simples(comando) == esperado, f"as palavras de {comando!r}: {simples(comando)!r}")
 for comando, esperado in COMANDOS.items():

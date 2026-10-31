@@ -2,11 +2,12 @@
 
     python3 -I teste_busca_por_palavra.py <pasta de busca_por_palavra.py> <pasta de trabalho nova>
 
-Tudo é inventado: os comandos de busca, as opções, o padrão livre, o prefixo, o texto do
-motivo, o arquivo da busca exata e a forma dos padrões dela; e o protocolo do programa que
-roda o gancho, sorteado pelo [`protocolo_inventado.py`](../../protocolo/testes/protocolo_inventado.py)
-(os eventos, as chaves e as respostas), com a ferramenta de terminal e a de busca. Nada é de
-um projeto real nem de um programa de verdade.
+Tudo é inventado: os comandos de busca, as opções, o padrão livre, o texto do motivo, o
+arquivo da busca exata e a forma dos padrões dela; e, sorteados pelo
+[`protocolo_inventado.py`](../../protocolo/testes/protocolo_inventado.py), com letras de
+fora do ASCII, o prefixo, na configuração da leitura do terminal, e o protocolo do programa
+que roda o gancho (os eventos, as chaves e as respostas), com a ferramenta de terminal e a
+de busca. Nada é de um projeto real nem de um programa de verdade.
 
 O teste confere o que o gancho faz, nunca uma frase pronta:
 
@@ -34,10 +35,11 @@ O teste confere o que o gancho faz, nunca uma frase pronta:
   passar o livre;
 - o bloqueio é a resposta que nega do protocolo, com o texto do motivo e a parte que
   bloqueou;
-- configuração com campo desconhecido ou que falta, protocolo fora da forma, a falta do
-  texto do motivo, evento de fim, evento desconhecido, ferramenta desconhecida, entrada que
-  não é JSON e, com `--exatas`, o arquivo que não existe, também o segundo de dois, e a
-  forma que não é expressão regular dão erro;
+- configuração com campo desconhecido (também os prefixos, que vêm da leitura do terminal)
+  ou que falta, a configuração da leitura do terminal fora do molde e a falta dela,
+  protocolo fora da forma, a falta do texto do motivo, evento de fim, evento desconhecido,
+  ferramenta desconhecida, entrada que não é JSON e, com `--exatas`, o arquivo que não
+  existe, também o segundo de dois, e a forma que não é expressão regular dão erro;
 - duas rodadas dão o mesmo.
 
 Diz `0 falha(s)` quando passa; senão, uma linha `FALHA` para cada conferência que não

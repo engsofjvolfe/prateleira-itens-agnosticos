@@ -19,11 +19,11 @@ sem extensão, ou de uma extensão que a lista `sem_conferencia` não traz, pede
 conferência.
 
 Usa só a biblioteca padrão do Python; lê a configuração pelo molde dela com o
-`extrator_comum.py`, do [extrator](../../extrator/README.md), o comando de terminal com a
-[leitura-do-terminal](../leitura-do-terminal/README.md) e o protocolo do programa com o
-[protocolo](../protocolo/README.md), das pastas irmãs. Nenhum texto, nome de ferramenta ou
-lista de comandos fica no código: tudo vem da configuração, do protocolo e dos arquivos de
-texto.
+`extrator_comum.py`, do [extrator](../../extrator/README.md), o comando de terminal e os
+prefixos do shell com a [leitura-do-terminal](../leitura-do-terminal/README.md) e o
+protocolo do programa com o [protocolo](../protocolo/README.md), das pastas irmãs. Nenhum
+texto, nome de ferramenta ou lista de comandos fica no código: tudo vem das configurações,
+do protocolo e dos arquivos de texto.
 
 ## Como rodar
 
@@ -32,8 +32,11 @@ escrevem arquivo e da de terminal, e no fim de cada resposta, e manda o evento p
 padrão, em JSON. O mesmo comando serve aos três momentos:
 
     python3 -I <prateleira>/ganchos/regras-de-codigo/regras_de_codigo.py --config <configuração.json> \
-        --protocolo <protocolo.json> --regras <texto> --fim <texto> --bloqueio <texto>
+        --terminal <terminal.json> --protocolo <protocolo.json> --regras <texto> --fim <texto> --bloqueio <texto>
 
+- `--terminal`: a configuração da
+  [leitura-do-terminal](../leitura-do-terminal/README.md#a-configuração), com os prefixos
+  do shell, como a `configuracao.json` de lá.
 - `--protocolo`: o protocolo do programa, na forma do [protocolo](../protocolo/README.md):
   dele vêm o evento, as respostas (a que dá contexto, com as regras; a que nega, com o
   bloqueio; e a que trava o fim), a ferramenta de terminal, com o campo do comando, e os
@@ -47,14 +50,16 @@ padrão, em JSON. O mesmo comando serve aos três momentos:
   que bloqueou.
 
 A resposta sai pela saída padrão, em JSON, só quando há o que dizer: as regras, o bloqueio
-ou a trava do fim. Configuração ou protocolo fora do molde, evento desconhecido, sessão sem
-id, ferramenta sem campo de caminho conhecido e texto que falta no comando dão erro.
+ou a trava do fim. Configuração, configuração da leitura do terminal ou protocolo fora do
+molde, a falta da configuração da leitura do terminal, evento desconhecido, sessão sem id,
+ferramenta sem campo de caminho conhecido e texto que falta no comando dão erro.
 
 ## A configuração
 
 O molde está em `esquemas/regras-de-codigo.schema.json`. O caminho da pasta parte da pasta
 da configuração. A `configuracao.json` desta pasta é a de uso geral: os comandos do
-terminal e os formatos de texto, que valem para qualquer programa.
+terminal e os formatos de texto, que valem para qualquer programa. Os prefixos do shell
+ficam na configuração da leitura do terminal.
 
 | Chave | O que é |
 | --- | --- |
@@ -62,7 +67,6 @@ terminal e os formatos de texto, que valem para qualquer programa.
 | `estado` | a pasta da anotação: um arquivo por sessão, com o nome tirado do id dela, que guarda os arquivos escritos e se apaga ao fim de cada tarefa |
 | `sem_conferencia` | os formatos de arquivo, pela extensão (como `.md`), que não recebem as regras nem a conferência, sem contar maiúsculas |
 | `terminal.destinos_livres` | destinos para onde escrever não conta como escrita, como `/dev/null` |
-| `terminal.prefixos` | palavras depois das quais as outras também contam como comando, como `xargs` ou `-exec` |
 | `terminal.sempre_escrevem` | comandos que sempre escrevem, como `tee` |
 | `terminal.escrevem_com_opcao` | para cada comando, as opções que o fazem escrever ou rodar código escrito no comando; a opção curta conta também junto de outras (`-pi` tem `-i`), e a longa também com `=valor` |
 | `terminal.leem_codigo_sem_arquivo` | interpretadores: chamados sem nenhum arquivo, leem código do terminal |

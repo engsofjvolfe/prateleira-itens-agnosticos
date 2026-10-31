@@ -1,10 +1,10 @@
 """Testes de regras_de_codigo.py.
 
 Tudo e inventado aqui: os textos das regras, os formatos sem conferencia, os comandos que
-escrevem, os prefixos e os destinos livres; e o protocolo do programa que roda o gancho,
-sorteado (os eventos, as chaves e as respostas), com a ferramenta de terminal e os campos do
-caminho de escrita. Nada e de um projeto real. Os testes conferem o que o gancho faz, nunca
-uma frase pronta:
+escrevem e os destinos livres; e, sorteados, com letras de fora do ASCII, o prefixo, na
+configuracao da leitura do terminal, e o protocolo do programa que roda o gancho (os eventos,
+as chaves e as respostas), com a ferramenta de terminal e os campos do caminho de escrita.
+Nada e de um projeto real. Os testes conferem o que o gancho faz, nunca uma frase pronta:
   - antes da primeira escrita de uma tarefa, entrega todos os textos de regras (cada um
     de --regras), na resposta de contexto do protocolo, para arquivo de qualquer formato
     fora da lista sem conferencia, sem extensao ou de extensao desconhecida; nas escritas
@@ -19,10 +19,11 @@ uma frase pronta:
     passar o resto, inclusive o que esta entre aspas ou nao esta no lugar de comando; o
     terminal nao anota nada;
   - cada sessao tem a sua anotacao, e o id da sessao nunca vira caminho;
-  - configuracao fora do molde, protocolo fora da forma, sessao sem id, evento
-    desconhecido, ferramenta sem campo de caminho conhecido, entrada que nao e JSON e a
-    falta de um dos textos do comando (as regras, a ordem de conferir, o bloqueio) dao
-    erro.
+  - configuracao fora do molde (tambem com os prefixos, que vem da leitura do terminal), a
+    configuracao da leitura do terminal fora do molde e a falta dela, protocolo fora da
+    forma, sessao sem id, evento desconhecido, ferramenta sem campo de caminho conhecido,
+    entrada que nao e JSON e a falta de um dos textos do comando (as regras, a ordem de
+    conferir, o bloqueio) dao erro.
 Uso:
     python3 -I teste_regras_de_codigo.py <pasta de regras_de_codigo.py> <pasta de trabalho nova>
 O protocolo inventado vem do protocolo_inventado.py, da pasta de testes do protocolo.
@@ -45,13 +46,14 @@ TEXTOS = {nome: f"conteúdo inventado de {nome}" for nome in
           ("regra_a.txt", "regra_b.txt", "fecho.txt", "veto.txt", "extra.txt")}
 REGRAS, EXTRA, FECHO, VETO = ("regra_a.txt", "regra_b.txt"), "extra.txt", "fecho.txt", "veto.txt"
 TEXTOS_DO_COMANDO = [("--regras", nome) for nome in REGRAS] + [("--fim", FECHO), ("--bloqueio", VETO)]
+PREFIXO = protocolo_inventado.nomes_sorteados(random.Random(3), 1)[0]  # com uma letra de fora do ASCII
+TERMINAL = {"versao_schema": 1, "prefixos": [PREFIXO]}  # a configuracao da leitura do terminal
 CONFIG = {
     "versao_schema": 1,
     "estado": "marcas",
     "sem_conferencia": [".txa", ".PLN"],
     "terminal": {
         "destinos_livres": ["/ralo/inventado"],
-        "prefixos": ["embrulho"],
         "sempre_escrevem": ["copiador"],
         "escrevem_com_opcao": {"editor": ["-q", "--no-lugar"]},
         "leem_codigo_sem_arquivo": ["interprete"],
@@ -69,7 +71,7 @@ BLOQUEADOS = [
     "copiador saida", "eco | copiador saida", "eco; copiador", "eco && copiador", "eco || copiador",
     "eco\ncopiador", "(copiador)", "VAR=1 copiador", "/caminho/copiador",
     "editor -q alvo", "editor -zq alvo", "editor -q.bak alvo", "editor --no-lugar alvo",
-    "editor --no-lugar=1 alvo", "editor alvo -q", "embrulho 5 editor -q alvo",
+    "editor --no-lugar=1 alvo", "editor alvo -q", f"{PREFIXO} 5 editor -q alvo",
     "interprete", "interprete -z", "eco | interprete", "interprete < arquivo",
     "x=$(copiador)", 'eco "$(copiador)"', "eco `copiador`", 'eco "`copiador`"',
     'eco "a $(eco "b $(copiador)")"',
@@ -89,6 +91,7 @@ FORA_DO_MOLDE = {
     "campo desconhecido": dict(CONFIG, outro=1),
     "campo que falta": {chave: valor for chave, valor in CONFIG.items() if chave != "estado"},
     "campo desconhecido no terminal": dict(CONFIG, terminal=dict(CONFIG["terminal"], outro=[])),
+    "prefixos no terminal": dict(CONFIG, terminal=dict(CONFIG["terminal"], prefixos=[PREFIXO])),
     "tipo errado": dict(CONFIG, estado=1),
     "tipo errado dentro de lista": dict(CONFIG, sem_conferencia=[".txa", 1]),
     "versao diferente": dict(CONFIG, versao_schema=CONFIG["versao_schema"] + 1),
@@ -112,10 +115,13 @@ def grava_json(nome, dados):
     return caminho
 
 
-def rodar(entrada, config, extras=(), protocolo=None, textos=None):
-    """O gancho com os textos do comando (os dados, ou os de sempre) e as regras a mais."""
+def rodar(entrada, config, extras=(), protocolo=None, textos=None, leitura=None):
+    """O gancho com os textos do comando (os dados, ou os de sempre), as regras a mais e a configuracao da leitura do
+    terminal: a dada, a de sempre ou, com leitura falsa, nenhuma."""
     argumentos = [sys.executable, "-I", str(PROGRAMA), "--config", str(config),
                   "--protocolo", str(protocolo or ARQUIVO_DO_PROTOCOLO)]
+    if leitura is not False:
+        argumentos += ["--terminal", str(leitura or ARQUIVO_DO_TERMINAL)]
     for opcao, nome in TEXTOS_DO_COMANDO if textos is None else textos:
         argumentos += [opcao, str(TRABALHO / nome)]
     for extra in extras:
@@ -130,8 +136,8 @@ def saida(entrada, extras=()):
     return resultado.stdout
 
 
-def da_erro(entrada, config=None, protocolo=None):
-    return rodar(entrada, config or CONFIGURACAO, protocolo=protocolo).returncode != 0
+def da_erro(entrada, config=None, protocolo=None, leitura=None):
+    return rodar(entrada, config or CONFIGURACAO, protocolo=protocolo, leitura=leitura).returncode != 0
 
 
 def escrita(sessao, caminho, campo="alvo_x"):
@@ -163,6 +169,7 @@ TRABALHO.mkdir(parents=True)
 for nome, texto in TEXTOS.items():
     (TRABALHO / nome).write_text(texto, encoding="utf-8")
 CONFIGURACAO = grava_json("cfg.json", CONFIG)
+ARQUIVO_DO_TERMINAL = grava_json("terminal.json", TERMINAL)
 ARQUIVO_DO_PROTOCOLO = grava_json("protocolo.json", PROTOCOLO)
 
 # começo: escrita de arquivo
@@ -232,6 +239,9 @@ confere(da_erro("isto nao e json"), "entrada que nao e JSON da erro")
 for numero, (caso, dados) in enumerate(FORA_DO_MOLDE.items()):
     confere(da_erro(fim("molde"), grava_json(f"fora-do-molde-{numero}.json", dados)),
             f"configuracao com {caso} da erro")
+confere(da_erro(fim("leitura"), leitura=grava_json("terminal-sem-prefixos.json", {"versao_schema": 1})),
+        "configuracao da leitura do terminal fora do molde da erro")
+confere(da_erro(fim("leitura"), leitura=False), "sem a configuracao da leitura do terminal da erro")
 SEM_RESPOSTAS = {chave: valor for chave, valor in PROTOCOLO.items() if chave != "respostas"}
 confere(da_erro(fim("protocolo"), protocolo=grava_json("protocolo-sem-respostas.json", SEM_RESPOSTAS)),
         "protocolo fora da forma da erro")

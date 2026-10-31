@@ -19,13 +19,14 @@ e a palavra que nao e opcao nem valor de opcao de padrao, e toda palavra depois 
 comando de busca de mais de uma palavra, como git grep, conta tambem com outras palavras no
 meio. Uma palavra depois de um prefixo, como xargs, conta como comando.
 
-As buscas do terminal, as opcoes, os padroes livres e os prefixos vem da configuracao
-(--config), lida pelo molde dela com o extrator_comum.py, do extrator, que fica duas pastas
-acima (na prateleira, em ganchos/<peca>/) ou na pasta irma (numa copia de teste); o texto do
-motivo, do arquivo dado no comando (--motivo). O evento, as ferramentas e a resposta vem do
-protocolo do programa que roda o gancho (--protocolo), lido pelo protocolo.py, da pasta irma
-protocolo. O comando e lido pelo leitura_do_terminal.py, da pasta irma leitura-do-terminal.
-So biblioteca padrao.
+As buscas do terminal, as opcoes e os padroes livres vem da configuracao (--config), lida
+pelo molde dela com o extrator_comum.py, do extrator, que fica duas pastas acima (na
+prateleira, em ganchos/<peca>/) ou na pasta irma (numa copia de teste); os prefixos, da
+configuracao da leitura do terminal (--terminal); o texto do motivo, do arquivo dado no
+comando (--motivo). O evento, as ferramentas e a resposta vem do protocolo do programa que
+roda o gancho (--protocolo), lido pelo protocolo.py, da pasta irma protocolo. O comando e a
+configuracao da leitura do terminal sao lidos pelo leitura_do_terminal.py, da pasta irma
+leitura-do-terminal. So biblioteca padrao.
 """
 import argparse
 import collections
@@ -40,7 +41,7 @@ for pasta in (PASTA.parent.parent / "extrator", PASTA.parent / "extrator", PASTA
     sys.path.insert(0, str(pasta))  # a ultima posta e a primeira lida
 from extrator_comum import ErroDeDados, le_conferido  # noqa: E402
 from leitura_do_terminal import (ATRIBUICAO, OPCAO, OPCAO_LONGA, ComandoIlegivel, comandos_achados,  # noqa: E402
-                                 letras_iniciais, opcao_bate)
+                                 letras_iniciais, opcao_bate, prefixos_do_terminal)
 import protocolo  # noqa: E402
 
 MOLDE = PASTA / "esquemas" / "busca-por-palavra.schema.json"
@@ -53,13 +54,14 @@ Exata = collections.namedtuple("Exata", "arquivo forma pasta")
 # o comando roda
 
 
-def ler_configuracao(caminho):
-    """A configuracao, lida pelo molde dela; cada campo e lido ja aqui, e o que falta e erro logo."""
+def ler_configuracao(caminho, leitura):
+    """A configuracao, lida pelo molde dela, e os prefixos, da configuracao da leitura do terminal (leitura); cada
+    campo e lido ja aqui, e o que falta e erro logo."""
     arquivo = Path(caminho).resolve()
     dados = le_conferido(arquivo, MOLDE)
     return {
         "livres": set(dados["padroes_livres"]),
-        "prefixos": set(dados["prefixos"]),
+        "prefixos": prefixos_do_terminal(leitura),
         "buscas": [{"palavras": busca["comando"].split(), "do_padrao": list(busca["opcoes_do_padrao"]),
                     "de_arquivo": list(busca["opcoes_de_arquivo"])} for busca in dados["buscas"]],
     }
@@ -158,8 +160,9 @@ def parte_da_entrada(config, proto, exatas, ferramenta, entrada):
 
 def main(argumentos=None):
     leitor = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    leitor.add_argument("--config", required=True, type=Path,
-                        help="JSON com as buscas, os padrões livres e os prefixos")
+    leitor.add_argument("--config", required=True, type=Path, help="JSON com as buscas e os padrões livres")
+    leitor.add_argument("--terminal", required=True, type=Path,
+                        help="JSON da leitura do terminal, com os prefixos do shell")
     leitor.add_argument("--protocolo", required=True, type=Path,
                         help="JSON com o protocolo do programa que roda o gancho")
     leitor.add_argument("--motivo", required=True, type=Path, help="o texto do motivo do bloqueio")
@@ -167,7 +170,8 @@ def main(argumentos=None):
                         help="o arquivo de uma busca exata e a forma de cada padrão dela, uma expressão regular; "
                              "uma vez para cada arquivo")
     args = leitor.parse_args(argumentos)
-    config = dict(ler_configuracao(args.config), motivo=args.motivo.read_text(encoding=CODIFICACAO).strip())
+    config = dict(ler_configuracao(args.config, args.terminal),
+                  motivo=args.motivo.read_text(encoding=CODIFICACAO).strip())
     proto = protocolo.ler(args.protocolo)
     partes = protocolo.le_evento(proto, sys.stdin.read())
     if partes["evento"] != EVENTO:

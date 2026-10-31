@@ -37,9 +37,9 @@ prefixo, como `xargs`, conta como comando. A busca feita por outro programa, com
 
 Usa só a biblioteca padrão do Python, o `extrator_comum.py`, do
 [extrator](../../extrator/README.md), que lê a configuração pelo molde dela, a
-[leitura-do-terminal](../leitura-do-terminal/README.md), que lê o comando, e o
-[protocolo](../protocolo/README.md), que lê o protocolo do programa que roda o gancho; os
-três são achados onde a prateleira os põe.
+[leitura-do-terminal](../leitura-do-terminal/README.md), que lê o comando e os prefixos do
+shell, e o [protocolo](../protocolo/README.md), que lê o protocolo do programa que roda o
+gancho; os três são achados onde a prateleira os põe.
 
 ## Como rodar
 
@@ -47,8 +47,11 @@ O programa que roda os ganchos chama este antes de cada chamada da ferramenta de
 das de busca, e manda o evento pela entrada padrão, em JSON:
 
     python3 -I <prateleira>/ganchos/busca-por-palavra/busca_por_palavra.py --config <configuração.json> \
-        --protocolo <protocolo.json> --motivo <texto>
+        --terminal <terminal.json> --protocolo <protocolo.json> --motivo <texto>
 
+- `--terminal`: a configuração da
+  [leitura-do-terminal](../leitura-do-terminal/README.md#a-configuração), com os prefixos
+  do shell, como a `configuracao.json` de lá.
 - `--protocolo`: o protocolo do programa, na forma do [protocolo](../protocolo/README.md):
   dele vêm o evento, a resposta que nega e as ferramentas de terminal e de busca, com o
   campo do comando e o do padrão.
@@ -63,22 +66,22 @@ das de busca, e manda o evento pela entrada padrão, em JSON:
   palavra no meio de `.*`.
 
 A resposta sai pela saída padrão só quando bloqueia: a que nega, do protocolo, com o motivo.
-Configuração ou protocolo fora do molde ou com campo que falta, texto do motivo que falta,
-evento que não é o de antes de uma chamada, ferramenta que o protocolo não dá como de
-terminal nem de busca e, com `--exatas`, o arquivo que não existe e a forma que não é
-expressão regular dão erro.
+Configuração, configuração da leitura do terminal ou protocolo fora do molde ou com campo
+que falta, a falta da configuração da leitura do terminal e do texto do motivo, evento que
+não é o de antes de uma chamada, ferramenta que o protocolo não dá como de terminal nem de
+busca e, com `--exatas`, o arquivo que não existe e a forma que não é expressão regular dão
+erro.
 
 ## A configuração
 
 O molde está em `esquemas/busca-por-palavra.schema.json`. A `configuracao.json` desta pasta
-é a de uso geral: os comandos de busca do terminal e os prefixos do shell, que valem para
-qualquer programa.
+é a de uso geral: os comandos de busca do terminal, que valem para qualquer programa. Os
+prefixos do shell ficam na configuração da leitura do terminal.
 
 | Chave | O que é |
 | --- | --- |
 | `versao_schema` | a versão do molde |
 | `padroes_livres` | os padrões que uma busca pode ter, como `^#`, que lista os títulos |
-| `prefixos` | palavras depois das quais as outras também contam como comando, como `xargs` ou `-exec` |
 | `buscas` | cada comando de busca do terminal: o `comando`, de uma ou mais palavras, as `opcoes_do_padrao`, que trazem um padrão, e as `opcoes_de_arquivo`, que tiram os padrões de um arquivo |
 
 ## Testes

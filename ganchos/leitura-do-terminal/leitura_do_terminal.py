@@ -10,9 +10,21 @@ tambem junto de outras, a longa tambem com =valor); e da o comando e cada comand
 dele, de $( ) e de crases, tambem entre aspas, um depois do outro. Comando com aspas, crase
 ou substituicao sem fechar e ComandoIlegivel.
 
+Os prefixos vem da configuracao da leitura (nos ganchos, a do --terminal), lida pelo molde
+dela com o extrator_comum.py, do extrator, que fica duas pastas acima (na prateleira, em
+ganchos/<peca>/) ou na pasta irma (numa copia de teste).
+
 Nao se roda: e importado. So biblioteca padrao.
 """
+import sys
 from pathlib import Path
+
+PASTA = Path(__file__).resolve().parent
+for pasta in (PASTA.parent.parent / "extrator", PASTA.parent / "extrator"):  # a ultima posta e a primeira lida
+    sys.path.insert(0, str(pasta))
+from extrator_comum import le_conferido  # noqa: E402
+
+MOLDE = PASTA / "esquemas" / "leitura-do-terminal.schema.json"
 
 # Gramatica do shell.
 PONTUACAO = "();<>|&\n"
@@ -186,6 +198,13 @@ def lidos(comando):
 def eh_atribuicao(palavra):
     nome, sinal, _ = palavra.partition(ATRIBUICAO)
     return bool(sinal) and nome.isidentifier()
+
+
+def prefixos_do_terminal(caminho):
+    """Os prefixos da configuracao da leitura (o arquivo do --terminal dos ganchos), lida pelo molde dela: as palavras
+    depois das quais as outras tambem contam como comando. Erro (ErroDeDados) que diz o caminho de cada valor fora
+    do molde."""
+    return frozenset(le_conferido(Path(caminho).resolve(), MOLDE)["prefixos"])
 
 
 def posicoes_de_comando(palavras, prefixos):

@@ -2,12 +2,11 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "busca-por-palavra.schema.json",
   "type": "object",
-  "required": ["versao_schema", "padroes_livres", "prefixos", "buscas"],
+  "required": ["versao_schema", "padroes_livres", "buscas"],
   "additionalProperties": false,
   "properties": {
     "versao_schema": { "const": 1 },
     "padroes_livres": { "$ref": "#/$defs/nomes" },
-    "prefixos": { "$ref": "#/$defs/nomes" },
     "buscas": { "type": "array", "items": { "$ref": "#/$defs/busca" } }
   },
   "$defs": {

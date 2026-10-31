@@ -1,0 +1,8 @@
+{
+  "versao_schema": 1,
+  "prefixos": [
+    "{", "!", "if", "then", "else", "elif", "while", "until", "do",
+    "env", "time", "nohup", "nice", "timeout", "stdbuf", "xargs", "exec", "command", "builtin", "sudo", "doas",
+    "-exec", "-execdir", "-ok", "-okdir"
+  ]
+}

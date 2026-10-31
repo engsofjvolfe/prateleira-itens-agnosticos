@@ -1,10 +1,11 @@
 """Testes de busca_por_palavra.py.
 
-Tudo e inventado aqui: os comandos de busca, as opcoes, o padrao livre, o prefixo, o texto do
-motivo, o arquivo da busca exata e a forma dos padroes dela; e o protocolo do programa que
-roda o gancho, sorteado (os eventos, as chaves e as respostas), com a ferramenta de terminal
-e a de busca. Nada e de um projeto real nem de um programa de verdade. Os testes conferem o
-que o gancho faz, nunca uma frase pronta:
+Tudo e inventado aqui: os comandos de busca, as opcoes, o padrao livre, o texto do motivo, o
+arquivo da busca exata e a forma dos padroes dela; e, sorteados, com letras de fora do ASCII,
+o prefixo, na configuracao da leitura do terminal, e o protocolo do programa que roda o
+gancho (os eventos, as chaves e as respostas), com a ferramenta de terminal e a de busca.
+Nada e de um projeto real nem de um programa de verdade. Os testes conferem o que o gancho
+faz, nunca uma frase pronta:
   - no terminal, bloqueia a busca com padrao que nao e livre: dado sem opcao; com a opcao
     curta sozinha, junto de outras ou com o valor colado; com a longa, com o valor depois do
     = ou na palavra seguinte; repetida; e o padrao de uma opcao que vem depois de um livre
@@ -30,10 +31,11 @@ que o gancho faz, nunca uma frase pronta:
     passar o livre;
   - o bloqueio e a resposta que nega do protocolo, com o texto do motivo e a parte que
     bloqueou;
-  - configuracao com campo desconhecido ou que falta, protocolo fora da forma, a falta do
-    texto do motivo, evento de fim, evento desconhecido, ferramenta desconhecida, entrada
-    que nao e JSON e, com --exatas, o arquivo que nao existe, tambem o segundo de dois, e a
-    forma que nao e expressao regular dao erro;
+  - configuracao com campo desconhecido (tambem os prefixos, que vem da leitura do terminal)
+    ou que falta, a configuracao da leitura do terminal fora do molde e a falta dela,
+    protocolo fora da forma, a falta do texto do motivo, evento de fim, evento desconhecido,
+    ferramenta desconhecida, entrada que nao e JSON e, com --exatas, o arquivo que nao existe,
+    tambem o segundo de dois, e a forma que nao e expressao regular dao erro;
   - duas rodadas dao o mesmo.
 Uso:
     python3 -I teste_busca_por_palavra.py <pasta de busca_por_palavra.py> <pasta de trabalho nova>
@@ -56,10 +58,11 @@ FALHAS = []
 
 MOTIVO, TEXTO = "aviso.txt", "conteúdo inventado do aviso"
 LIVRE = "^=="
+PREFIXO = protocolo_inventado.nomes_sorteados(random.Random(3), 1)[0]  # com uma letra de fora do ASCII
+TERMINAL = {"versao_schema": 1, "prefixos": [PREFIXO]}  # a configuracao da leitura do terminal
 CONFIG = {
     "versao_schema": 1,
     "padroes_livres": [LIVRE],
-    "prefixos": ["embrulho"],
     "buscas": [
         {"comando": "acha", "opcoes_do_padrao": ["-p", "--padrao"], "opcoes_de_arquivo": ["-a", "--arquivo"]},
         {"comando": "versao acha", "opcoes_do_padrao": ["-p"], "opcoes_de_arquivo": []},
@@ -79,7 +82,7 @@ BARRADOS = [
     "acha palavra x", "acha -n palavra x", "acha -p palavra x", "acha -np palavra x", "acha -ppalavra x",
     "acha --padrao=palavra x", "acha --padrao palavra x", f"acha -p {L} -p palavra x", f"acha {L} -p palavra",
     "acha -a lista x", "acha --arquivo=lista x", f"acha -a {L} x", "acha", "acha -p", "acha -n",
-    "eco x | acha palavra", "eco x; acha palavra", "embrulho acha palavra", "/caminho/acha palavra",
+    "eco x | acha palavra", "eco x; acha palavra", f"{PREFIXO} acha palavra", "/caminho/acha palavra",
     "eco \"$(acha palavra)\"", "eco `acha palavra`", "VAR=1 acha palavra",
     "versao acha palavra", "versao -C d acha palavra", f"versao acha --padrao={L} x", "cata palavra",
     "eco 'sem fim",
@@ -114,7 +117,7 @@ FORA_DO_MOLDE = {
     "campo desconhecido": dict(CONFIG, outro=1),
     "campo desconhecido numa busca": dict(CONFIG, buscas=[dict(CONFIG["buscas"][0], outro=1)]),
     "campo que falta": {chave: valor for chave, valor in CONFIG.items() if chave != "padroes_livres"},
-    "prefixos que faltam": {chave: valor for chave, valor in CONFIG.items() if chave != "prefixos"},
+    "os prefixos, que vêm da leitura do terminal": dict(CONFIG, prefixos=[PREFIXO]),
     "campo que falta numa busca": dict(CONFIG, buscas=[{c: v for c, v in CONFIG["buscas"][0].items()
                                                          if c != "opcoes_de_arquivo"}]),
 }
@@ -132,10 +135,12 @@ def grava_json(nome, dados):
     return caminho
 
 
-def rodar(entrada, config, *argumentos, protocolo=None, motivo=True):
-    """O gancho rodado da pasta dele, que nao e a do evento; com o texto do motivo, menos com motivo falso."""
+def rodar(entrada, config, *argumentos, protocolo=None, motivo=True, leitura=None):
+    """O gancho rodado da pasta dele, que nao e a do evento; com o texto do motivo, menos com motivo falso, e com a
+    configuracao da leitura do terminal: a dada, a de sempre ou, com leitura falsa, nenhuma."""
     texto_do_motivo = ["--motivo", str(TRABALHO / MOTIVO)] if motivo else []
-    return subprocess.run([sys.executable, "-I", str(PROGRAMA), "--config", str(config),
+    da_leitura = [] if leitura is False else ["--terminal", str(leitura or ARQUIVO_DO_TERMINAL)]
+    return subprocess.run([sys.executable, "-I", str(PROGRAMA), "--config", str(config), *da_leitura,
                            "--protocolo", str(protocolo or ARQUIVO_DO_PROTOCOLO), *texto_do_motivo, *argumentos],
                           input=entrada, capture_output=True, text=True, cwd=PECA)
 
@@ -147,8 +152,8 @@ def saida(entrada, *argumentos):
     return resultado.stdout
 
 
-def da_erro(entrada, config=None, *argumentos, protocolo=None):
-    return rodar(entrada, config or CONFIGURACAO, *argumentos, protocolo=protocolo).returncode != 0
+def da_erro(entrada, config=None, *argumentos, protocolo=None, leitura=None):
+    return rodar(entrada, config or CONFIGURACAO, *argumentos, protocolo=protocolo, leitura=leitura).returncode != 0
 
 
 def evento(nome, entrada, pasta=".", qual="antes"):
@@ -190,6 +195,7 @@ TRABALHO.mkdir(parents=True)
 (TRABALHO / INDICE).write_text("%3% conteúdo inventado\n", encoding="utf-8")
 (TRABALHO / OUTRO_INDICE).write_text("#abc# conteúdo inventado\n", encoding="utf-8")
 CONFIGURACAO = grava_json("cfg.json", CONFIG)
+ARQUIVO_DO_TERMINAL = grava_json("terminal.json", TERMINAL)
 ARQUIVO_DO_PROTOCOLO = grava_json("protocolo.json", PROTOCOLO)
 EXATA = opcao_exata(INDICE, FORMA)
 DUAS_EXATAS = EXATA + opcao_exata(OUTRO_INDICE, OUTRA_FORMA)
@@ -232,6 +238,9 @@ SEM_TERMINAL = {chave: valor for chave, valor in PROTOCOLO.items() if chave != "
 confere(da_erro(terminal("eco"), protocolo=grava_json("protocolo-sem-terminal.json", SEM_TERMINAL)),
         "protocolo fora da forma dá erro")
 confere(rodar(terminal("eco"), CONFIGURACAO, motivo=False).returncode != 0, "sem o texto do motivo dá erro")
+confere(da_erro(terminal("eco"), leitura=grava_json("terminal-sem-prefixos.json", {"versao_schema": 1})),
+        "configuração da leitura do terminal fora do molde dá erro")
+confere(da_erro(terminal("eco"), leitura=False), "sem a configuração da leitura do terminal dá erro")
 
 for f in FALHAS:
     print("FALHA:", f)

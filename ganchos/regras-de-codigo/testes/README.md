@@ -3,10 +3,11 @@
     python3 -I teste_regras_de_codigo.py <pasta de regras_de_codigo.py> <pasta de trabalho nova>
 
 Tudo é inventado: os textos das regras, os formatos sem conferência, os comandos que
-escrevem, os prefixos e os destinos livres; e o protocolo do programa que roda o gancho,
-sorteado pelo [`protocolo_inventado.py`](../../protocolo/testes/protocolo_inventado.py) (os
-eventos, as chaves e as respostas), com a ferramenta de terminal e os campos do caminho de
-escrita. Nada é de um projeto real.
+escrevem e os destinos livres; e, sorteados pelo
+[`protocolo_inventado.py`](../../protocolo/testes/protocolo_inventado.py), com letras de
+fora do ASCII, o prefixo, na configuração da leitura do terminal, e o protocolo do programa
+que roda o gancho (os eventos, as chaves e as respostas), com a ferramenta de terminal e os
+campos do caminho de escrita. Nada é de um projeto real.
 
 O teste confere o que o gancho faz, nunca uma frase pronta:
 
@@ -23,9 +24,10 @@ O teste confere o que o gancho faz, nunca uma frase pronta:
   passa, inclusive o que está entre aspas ou fora do lugar de comando; o terminal não anota
   nada;
 - cada sessão tem a sua anotação, e o id da sessão nunca vira caminho;
-- configuração fora do molde, protocolo fora da forma, sessão sem id, evento desconhecido,
-  ferramenta sem campo de caminho conhecido, entrada que não é JSON e a falta de um dos
-  textos do comando dão erro.
+- configuração fora do molde (também com os prefixos, que vêm da leitura do terminal), a
+  configuração da leitura do terminal fora do molde e a falta dela, protocolo fora da
+  forma, sessão sem id, evento desconhecido, ferramenta sem campo de caminho conhecido,
+  entrada que não é JSON e a falta de um dos textos do comando dão erro.
 
 Diz `0 falha(s)` quando passa; senão, uma linha `FALHA` para cada conferência que não
 passou, e sai com código 1.

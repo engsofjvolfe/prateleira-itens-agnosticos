@@ -11,16 +11,19 @@ opção aparece numa palavra (`-q` também em `-zq`, `--opcao` também em `--opc
 comando e cada comando de dentro dele, de `$( )` e de crases, também entre aspas, um depois
 do outro. Comando com aspa, crase ou substituição sem fechar é ilegível.
 
-Usa só a biblioteca padrão do Python. Não se roda: o `leitura_do_terminal.py` é importado, e
-os prefixos vêm do programa que o importa. Os ganchos
+Usa só a biblioteca padrão do Python e o `extrator_comum.py`, do
+[extrator](../../extrator/README.md), que lê a configuração pelo molde dela; ele é achado
+onde a prateleira o põe. Não se roda: o `leitura_do_terminal.py` é importado. Os ganchos
 [regras-de-codigo](../regras-de-codigo/README.md) e
-[busca-por-palavra](../busca-por-palavra/README.md) a usam, da pasta irmã.
+[busca-por-palavra](../busca-por-palavra/README.md) a usam, da pasta irmã, e recebem a
+configuração dela no `--terminal`.
 
 ## O que dá
 
 | Nome | O que é |
 | --- | --- |
 | `lidos(comando)` | para o comando e cada comando de dentro dele, na ordem: as partes (cada palavra ou operador) e as palavras de cada comando simples |
+| `prefixos_do_terminal(arquivo)` | os prefixos da configuração, lida pelo molde dela; `ErroDeDados`, do módulo comum, que diz o caminho de cada valor fora do molde |
 | `posicoes_de_comando(palavras, prefixos)` | as posições das palavras que rodam como comando |
 | `depois_do_comando(comando, palavras)` | as palavras depois do comando (a lista das palavras dele, uma ou mais), quando as palavras começam por ele: a primeira pelo nome, sem o caminho, e as outras na ordem, com outras palavras no meio; `None` quando não começam |
 | `comandos_achados(comando, procurados, prefixos)` | cada vez que o comando, ou um comando de dentro dele, roda um dos procurados (cada um a lista das palavras dele), na ordem: o índice do procurado, as palavras depois dele e a parte do comando simples da palavra dele em diante; `ComandoIlegivel` quando um comando não se lê |
@@ -30,6 +33,16 @@ os prefixos vêm do programa que o importa. Os ganchos
 
 Os sinais da gramática do shell, como `ESCRITA` (`>`) e `TEXTO_EMBUTIDO` (`<<`), ficam no
 começo do arquivo, para o programa que o importa.
+
+## A configuração
+
+O molde está em `esquemas/leitura-do-terminal.schema.json`. A `configuracao.json` desta
+pasta é a de uso geral: os prefixos do shell, que valem para qualquer programa.
+
+| Chave | O que é |
+| --- | --- |
+| `versao_schema` | a versão do molde |
+| `prefixos` | palavras depois das quais as outras também contam como comando, como `xargs` ou `-exec` |
 
 ## Testes
 

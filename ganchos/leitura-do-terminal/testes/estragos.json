@@ -79,6 +79,25 @@
    "de": "\" \".join(palavras[posicao:])", "para": "\" \".join(palavras)"},
   {"nome": "achados-so-o-primeiro-por-comando", "arquivo": "leitura_do_terminal.py",
    "de": "                        yield indice, seguintes, \" \".join(palavras[posicao:])\n",
-   "para": "                        yield indice, seguintes, \" \".join(palavras[posicao:])\n                        return\n"}
+   "para": "                        yield indice, seguintes, \" \".join(palavras[posicao:])\n                        return\n"},
+  {"nome": "configuracao-sem-molde", "arquivo": "leitura_do_terminal.py",
+   "de": "frozenset(le_conferido(Path(caminho).resolve(), MOLDE)[\"prefixos\"])",
+   "para": "frozenset(__import__(\"json\").loads(Path(caminho).read_text(encoding=\"utf-8\"))[\"prefixos\"])"},
+  {"nome": "so-parte-dos-prefixos", "arquivo": "leitura_do_terminal.py",
+   "de": "MOLDE)[\"prefixos\"])", "para": "MOLDE)[\"prefixos\"][1:])"},
+  {"nome": "campo-desconhecido-aceito", "arquivo": "esquemas/leitura-do-terminal.schema.json",
+   "de": "  \"additionalProperties\": false,\n", "para": ""},
+  {"nome": "prefixos-opcionais", "arquivo": "esquemas/leitura-do-terminal.schema.json",
+   "de": "\"required\": [\"versao_schema\", \"prefixos\"]", "para": "\"required\": [\"versao_schema\"]"},
+  {"nome": "prefixo-vazio-aceito", "arquivo": "esquemas/leitura-do-terminal.schema.json",
+   "de": ", \"minLength\": 1", "para": ""},
+  {"nome": "prefixo-de-qualquer-tipo", "arquivo": "esquemas/leitura-do-terminal.schema.json",
+   "de": "\"items\": { \"type\": \"string\", ", "para": "\"items\": { "},
+  {"nome": "prefixos-fora-de-lista-aceitos", "arquivo": "esquemas/leitura-do-terminal.schema.json",
+   "de": "\"prefixos\": { \"type\": \"array\", ", "para": "\"prefixos\": { "},
+  {"nome": "versao-livre", "arquivo": "esquemas/leitura-do-terminal.schema.json",
+   "de": "\"versao_schema\": { \"const\": 1 }", "para": "\"versao_schema\": { \"type\": \"integer\" }"},
+  {"nome": "configuracao-da-peca-fora-do-molde", "arquivo": "configuracao.json",
+   "de": "\"versao_schema\": 1", "para": "\"versao_schema\": 2"}
  ]
 }

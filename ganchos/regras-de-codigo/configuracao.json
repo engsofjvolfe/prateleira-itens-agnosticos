@@ -4,11 +4,6 @@
   "sem_conferencia": [".md", ".txt", ".tsv", ".csv"],
   "terminal": {
     "destinos_livres": ["/dev/null", "/dev/stdout", "/dev/stderr"],
-    "prefixos": [
-      "{", "!", "if", "then", "else", "elif", "while", "until", "do",
-      "env", "time", "nohup", "nice", "timeout", "stdbuf", "xargs", "exec", "command", "builtin", "sudo", "doas",
-      "-exec", "-execdir", "-ok", "-okdir"
-    ],
     "sempre_escrevem": ["tee"],
     "escrevem_com_opcao": {
       "sed": ["-i", "--in-place"],

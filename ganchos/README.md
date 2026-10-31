@@ -21,7 +21,8 @@ dos padrões livres, como a lista dos títulos de um texto, e, no terminal, a do
 exatos no arquivo que se dá a ele (com testes).
 
 **[leitura-do-terminal/](leitura-do-terminal/README.md)** — lê um comando de terminal como
-o shell lê, para os ganchos que precisam saber o que ele roda; não se roda (com testes).
+o shell lê, com os prefixos do shell na configuração dela, para os ganchos que precisam
+saber o que ele roda; não se roda (com testes).
 
 **[destino-da-limpeza/](destino-da-limpeza/README.md)** — gancho que guarda o arquivo para
 onde uma limpeza leva o que tira de outros arquivos: ele só cresce, entre blocos, e só na

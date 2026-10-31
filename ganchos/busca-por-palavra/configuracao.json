@@ -1,11 +1,6 @@
 {
   "versao_schema": 1,
   "padroes_livres": ["^#"],
-  "prefixos": [
-    "{", "!", "if", "then", "else", "elif", "while", "until", "do",
-    "env", "time", "nohup", "nice", "timeout", "stdbuf", "xargs", "exec", "command", "builtin", "sudo", "doas",
-    "-exec", "-execdir", "-ok", "-okdir"
-  ],
   "buscas": [
     {"comando": "grep", "opcoes_do_padrao": ["-e", "--regexp"], "opcoes_de_arquivo": ["-f", "--file"]},
     {"comando": "egrep", "opcoes_do_padrao": ["-e", "--regexp"], "opcoes_de_arquivo": ["-f", "--file"]},
