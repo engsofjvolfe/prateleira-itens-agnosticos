@@ -45,6 +45,11 @@ Sem problema conhecido: as listagens são ordenadas e o sorteio dos testes tem s
    embora a docstring diga que, com erro na lista, nada roda. Correção: antes da rodada, ler
    o arquivo de cada estrago escolhido pelo `le_texto` do módulo comum e contar nele o texto
    `de`, com o `ERRO` que diz o estrago e o arquivo e o código 2.
+4. **O documento gravado lido sem conferir a codificação.** Em
+   `grava-ou-confere/grava_ou_confere.py:34`, o `--conferir` lê o documento gravado com o
+   `read_text` direto: o que não se lê em UTF-8 dá o erro do Python, e não a mensagem de
+   falta. Correção: o documento gravado que não se lê em UTF-8 é diferente do texto e sai
+   com a mensagem de falta e o código 1.
 
 ## Testes
 

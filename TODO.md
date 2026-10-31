@@ -19,19 +19,21 @@ entra no [CHANGELOG.md](CHANGELOG.md), na seção `Não publicado`. O
 3. O `confere-forma` sem texto narrado no JSON (item 2 do relatório).
 4. A lista de estragos do `copias-estragadas` conferida contra a peça antes da rodada (item
    3 do relatório).
-5. **Os padrões proibidos do `confere-forma` em arquivos próprios**, só com dados e com o
+5. O documento gravado que não se lê em UTF-8 como falta no `grava-ou-confere` (item 4 do
+   relatório).
+6. **Os padrões proibidos do `confere-forma` em arquivos próprios**, só com dados e com o
    molde `esquemas/proibidos.schema.json`, dados pelo `--proibidos`, que pode se repetir: as
    regras de todos se somam, e duas com o mesmo nome são erro. A peça traz o
    `marcas-de-ia.json`, com as marcas que uma ferramenta de IA deixa num texto, para
    qualquer projeto. A opção, o molde e o nome do arquivo são esses porque os projetos já
    rodam o conferidor assim.
-6. **Um gancho de leitura completa**, que serve a qualquer projeto e a qualquer programa:
+7. **Um gancho de leitura completa**, que serve a qualquer projeto e a qualquer programa:
    todo documento se lê inteiro e se analisa, e o gancho barra todo meio de ler um
    documento cortando partes (busca por palavra, recorte de linhas ou de trechos, leitura de
    uma parte só, resumo feito por outra ferramenta). O
    [busca-por-palavra](ganchos/busca-por-palavra/README.md) cobre só a busca por palavra,
    deixa passar os padrões livres e não vê a busca feita por outro programa.
-7. **Um gancho do changelog**, para o `CHANGELOG.md` de cada repositório seguir, daqui a um
+8. **Um gancho do changelog**, para o `CHANGELOG.md` de cada repositório seguir, daqui a um
    ano como hoje, o [Keep a Changelog 1.1.0](https://keepachangelog.com/pt-BR/1.1.0/) e o
    [Versionamento Semântico 2.0.0](https://semver.org/lang/pt-BR/spec/v2.0.0.html). Uma
    peça que confere a forma, com a forma na configuração do projeto (só dados):
@@ -45,4 +47,4 @@ entra no [CHANGELOG.md](CHANGELOG.md), na seção `Não publicado`. O
 
    Ligada como gancho do git, antes do commit, para valer em todo commit, qualquer que seja
    o programa que o faz; com molde, teste e estragos, como toda peça.
-8. Quando houver um repositório remoto, pôr no fim do changelog o link de cada versão.
+9. Quando houver um repositório remoto, pôr no fim do changelog o link de cada versão.
