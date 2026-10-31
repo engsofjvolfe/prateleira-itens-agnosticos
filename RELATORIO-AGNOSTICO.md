@@ -37,8 +37,14 @@ Sem problema conhecido: as listagens são ordenadas e o sorteio dos testes tem s
 
 ## Preparo para o novo
 
-Sem problema conhecido: o desconhecido dá erro claro, que diz o que e onde, e a entrada que
-não serve sai com código 2.
+3. **A lista de estragos conferida só no meio da rodada.** Em
+   `copias-estragadas/estraga.py:53`, o arquivo de cada estrago é lido com o `read_text`
+   direto, quando a rodada já começou: o `arquivo` da lista que não existe na peça, ou que
+   não se lê em UTF-8, só aparece depois dos estragos de antes dele, com o erro do Python; e
+   o texto `de` que não aparece uma vez só no arquivo dá `ERRO` naquele estrago e código 1,
+   embora a docstring diga que, com erro na lista, nada roda. Correção: antes da rodada, ler
+   o arquivo de cada estrago escolhido pelo `le_texto` do módulo comum e contar nele o texto
+   `de`, com o `ERRO` que diz o estrago e o arquivo e o código 2.
 
 ## Testes
 
