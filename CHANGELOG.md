@@ -9,6 +9,7 @@ prateleira segue o [Versionamento Semântico](https://semver.org/lang/pt-BR/spec
 
 ### Adicionado
 
+- `documentos`: o teste do `linhas_longas.py`, com a lista de estragos dele.
 - `extrator`: o molde dos moldes (`esquemas/molde.schema.json`), que diz as palavras do
   JSON Schema que o leitor de molde do módulo comum entende e a forma do valor de cada uma;
   e o teste do módulo comum, com a lista de estragos dele.
@@ -52,11 +53,20 @@ prateleira segue o [Versionamento Semântico](https://semver.org/lang/pt-BR/spec
 - `confere-citacoes`, `custo-de-agentes`, `itens-numerados`, `marcas`, `moldes` e
   `texto-em-comum`: precisam do `texto_comum.py`, do `extrator`, na pasta irmã ou na mesma
   pasta.
-- `copia-para-projeto`, `copias-estragadas`, `documentos` (o `teste_linhas_longas.py`),
+- `copia-para-projeto`, `copias-estragadas`, `documentos` (o `linhas_longas.py`),
   `extrator`, `historico-de-arquivo`, `itens-numerados` e `moldes`: a entrada que não serve
   sai com código 2, e não mais com 1, que fica para o problema achado; o
   `historico-de-arquivo` escreve o `ERRO` na saída padrão, como as outras peças.
 - `copia-para-projeto`: lê os arquivos pelo `le_texto` do módulo comum e precisa do
+  `extrator_comum.py`, do `extrator`, na pasta irmã ou na mesma pasta.
+- `documentos`: na forma de uma peça. O `teste_linhas_longas.py`, que não é teste, passa a
+  se chamar `linhas_longas.py`; os testes ficam em `testes/`, com o README deles, e o dos
+  links sorteia os dados e confere regras, e não mais as linhas de saída prontas.
+- `documentos`: o `linhas_longas.py` mostra cada linha acima do limite como
+  `ERRO arquivo:linha: motivo`, com o tamanho dela, e um resumo no fim, como as outras
+  peças; o `confere_links.py` escreve o `ERRO` da pasta sem git na saída padrão, e não mais
+  na de erros.
+- `documentos`: lê os textos pelo `le_texto` do módulo comum e precisa do
   `extrator_comum.py`, do `extrator`, na pasta irmã ou na mesma pasta.
 - `extrator`: o leitor de molde do módulo comum confere o molde inteiro — o tipo, o valor
   fixo e a lista de valores, o tamanho, a forma do texto, os limites, os itens, os campos
@@ -95,8 +105,11 @@ prateleira segue o [Versionamento Semântico](https://semver.org/lang/pt-BR/spec
 
 - `copia-para-projeto` e `documentos`: o script de referência que não existe, no
   `copia-para-projeto`, e o limite que não é um inteiro de 1 para cima, no
-  `teste_linhas_longas.py`, dão `ERRO`, com código 2; antes, o erro do Python, ou nenhum
-  erro com o limite abaixo de 1.
+  `linhas_longas.py`, dão `ERRO`, com código 2; antes, o erro do Python, ou nenhum erro com
+  o limite abaixo de 1.
+- `documentos`: o arquivo que não se lê em UTF-8, no `linhas_longas.py`, e o documento, ou
+  o Markdown de destino de uma âncora, que não se lê em UTF-8, no `confere_links.py`, dão
+  `ERRO`, que diz o arquivo, com código 2; antes, o erro do Python.
 - `historico-de-arquivo`: duas ferramentas com o mesmo nome na configuração são erro, que
   diz o nome; antes, a última valia.
 - `itens-numerados` e `moldes`: a transcrição, ou a análise, que não se lê em UTF-8 dá o

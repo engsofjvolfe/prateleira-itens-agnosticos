@@ -42,11 +42,5 @@ não serve sai com código 2.
 
 ## Testes
 
-Toda peça com código tem teste com dados inventados e uma lista de estragos que o teste
-pega inteira, menos esta:
-
-3. **`documentos` fora da forma de uma peça.** Os testes ficam na pasta da peça, sem
-   `testes/` nem o README deles; o teste dos links usa dados fixos, não sorteados, e confere
-   as linhas de saída como frases prontas; e o `teste_linhas_longas.py` não tem teste nem
-   estragos, nem quem confira os códigos de saída dele. Correção: a forma de uma peça, com o
-   teste conferindo regras.
+Sem problema conhecido: toda peça com código tem, em `testes/`, teste com dados inventados e
+sorteados, que confere regras, e uma lista de estragos que o teste pega inteira.
