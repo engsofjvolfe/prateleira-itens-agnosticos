@@ -54,6 +54,10 @@ prateleira segue o [Versionamento Semântico](https://semver.org/lang/pt-BR/spec
 - `ganchos/protocolo`: a função `anotacao`, que dá o arquivo em que um gancho anota o que
   guarda de uma sessão, ou de cada chave dela, como um documento, com o nome tirado do id
   da sessão e da chave; o `destino-da-limpeza` e o `regras-de-codigo` passam a usá-la.
+- `grava-ou-confere`: o módulo `documento_gerado.py`, que lê o cabeçalho de um documento
+  gerado, que não pode estar vazio, confere que o arquivo dele não é uma das entradas nem uma
+  pasta e monta o texto, com o cabeçalho e os blocos; e o teste dele, com a lista de
+  estragos. O `divergencias` o usa.
 
 ### Modificado
 

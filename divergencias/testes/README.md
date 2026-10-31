@@ -25,12 +25,12 @@ pronta:
   que é a lista, o cabeçalho ou uma pasta saem com 2, sem nada gravado;
 - duas rodadas dão o mesmo.
 
-Precisa do `extrator_comum.py`, do `texto_comum.py` e do `grava_ou_confere.py`, nas pastas
-irmãs da peça. Diz `0 falha(s)` quando passa; senão, uma linha `FALHA` para cada
+Precisa do `extrator_comum.py`, do `texto_comum.py`, do `grava_ou_confere.py` e do
+`documento_gerado.py`, nas pastas irmãs da peça. Diz `0 falha(s)` quando passa; senão, uma linha `FALHA` para cada
 conferência que não passou, e sai com código 1.
 
 As cópias estragadas da peça estão em `estragos.json`, nesta pasta, para o
-[`estraga.py`](../../copias-estragadas/README.md), com as pastas do `grava_ou_confere.py` e
-do extrator ao lado da cópia:
+[`estraga.py`](../../copias-estragadas/README.md), com as pastas do grava-ou-confere e do
+extrator ao lado da cópia:
 
     python3 -I ../../copias-estragadas/estraga.py .. teste_divergencias.py estragos.json <pasta de trabalho nova> --irma ../../grava-ou-confere --irma ../../extrator

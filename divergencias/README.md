@@ -6,11 +6,12 @@ a fonte que a dá. Serve a qualquer projeto em que duas fontes, ou duas passagen
 mesma fonte, dizem um fato de formas diferentes e o material ensina uma delas, sem perder
 as outras.
 
-Usa só a biblioteca padrão do Python e três módulos de outras peças: o `extrator_comum.py`
+Usa só a biblioteca padrão do Python e quatro módulos de outras peças: o `extrator_comum.py`
 e o `texto_comum.py`, do [extrator](../extrator/README.md), que leem a lista pelo molde dela
-e põem os textos na forma em que se comparam, e o `grava_ou_confere.py`, do
-[grava-ou-confere](../grava-ou-confere/README.md), que grava o documento ou confere que ele
-está em dia. Na prateleira, eles são achados nas pastas irmãs; numa cópia fora da
+e põem os textos na forma em que se comparam, e o `documento_gerado.py` e o
+`grava_ou_confere.py`, do [grava-ou-confere](../grava-ou-confere/README.md), que leem o
+cabeçalho, conferem o arquivo do documento, montam o texto dele e o gravam, ou conferem que
+ele está em dia. Na prateleira, eles são achados nas pastas irmãs; numa cópia fora da
 prateleira, na mesma pasta do script.
 
 ## Como rodar

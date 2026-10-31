@@ -6,7 +6,8 @@ um documento, como um glossário, uma lista, um índice ou a cópia de um arquiv
 precisa de uma conferência antes de cada versão, sem gravar nada.
 
 Usa só a biblioteca padrão do Python. Não se roda: o script que gera o documento importa o
-`grava_ou_confere.py`.
+`grava_ou_confere.py`. O [documento gerado](#o-documento-gerado), o módulo que lê o
+cabeçalho, confere o arquivo do documento e monta o texto dele, também mora aqui.
 
 ## Como usar
 
@@ -23,6 +24,19 @@ Usa só a biblioteca padrão do Python. Não se roda: o script que gera o docume
 | Conferindo, com o arquivo diferente ou sem ele | nada é gravado nem criado | `falta` | 1 |
 
 O arquivo pode vir como caminho ou como texto.
+
+## O documento gerado
+
+O `documento_gerado.py` guarda o que os scripts que geram um documento a partir de dados
+fazem do mesmo jeito antes de gravá-lo. Não se roda: as peças o importam da pasta irmã
+`grava-ou-confere/` ou da própria pasta. Precisa do `extrator_comum.py`, do
+[extrator](../extrator/README.md), na pasta irmã `extrator/` ou na mesma pasta.
+
+| Função | O que faz |
+| --- | --- |
+| `le_cabecalho(arquivo)` | o cabeçalho que o projeto escreve para o documento, como o título e a abertura, sem os espaços e as quebras do fim; `ErroDeDados`, que diz o arquivo, quando ele não se lê em UTF-8 ou está vazio |
+| `confere_destino(destino, entradas)` | `ErroDeDados`, que diz o destino, quando o arquivo do documento é um dos arquivos de entrada, pelo caminho inteiro, ou existe e não é um arquivo |
+| `em_blocos(cabecalho, blocos)` | o texto do documento: o cabeçalho e os blocos, como vêm, com uma linha em branco entre um e o seguinte e uma quebra de linha no fim |
 
 ## Testes
 

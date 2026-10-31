@@ -22,3 +22,24 @@ As cópias estragadas da peça estão em `estragos.json`, nesta pasta, para o
 [`estraga.py`](../../copias-estragadas/README.md):
 
     python3 -I ../../copias-estragadas/estraga.py .. teste_grava_ou_confere.py estragos.json <pasta de trabalho nova>
+
+## O documento gerado
+
+    python3 -I teste_documento_gerado.py <pasta do documento_gerado.py> <pasta de trabalho nova>
+
+Os arquivos e os textos são inventados, sorteados e com letras de fora do ASCII. O teste
+confere regras, nunca uma frase pronta:
+
+- o cabeçalho vem sem os espaços e as quebras do fim, e o vazio (também só de espaços e
+  quebras), o que falta e o que não se lê em UTF-8 são `ErroDeDados` que diz o arquivo;
+- o destino que é uma das entradas, também por outro caminho que dá no mesmo arquivo, e o
+  que é uma pasta são `ErroDeDados` que diz o destino, e o que não existe ou é outro arquivo
+  serve;
+- o texto é o cabeçalho e os blocos, como vêm, com uma linha em branco entre um e o seguinte
+  e uma quebra de linha no fim, e, sem bloco, só o cabeçalho com a quebra;
+- duas montagens dão o mesmo.
+
+Precisa do `extrator_comum.py`, na pasta irmã `extrator/` da peça. As cópias estragadas do
+módulo estão em `estragos-documento-gerado.json`, nesta pasta:
+
+    python3 -I ../../copias-estragadas/estraga.py .. teste_documento_gerado.py estragos-documento-gerado.json <pasta de trabalho nova> --irma ../../extrator

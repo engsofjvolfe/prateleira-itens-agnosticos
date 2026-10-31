@@ -14,8 +14,8 @@ cabecalho que falta, que nao se le em UTF-8 ou que esta vazio, o rotulo que falt
 e uma linha so com alguma letra e o documento que e um dos arquivos de entrada ou uma pasta
 saem com 2, sem nada gravado; duas rodadas dao o mesmo. Uso:
     python3 -I teste_divergencias.py <pasta do divergencias.py> <pasta de trabalho nova>
-Precisa do extrator_comum.py, do texto_comum.py e do grava_ou_confere.py, nas pastas irmas
-da peca.
+Precisa do extrator_comum.py, do texto_comum.py, do grava_ou_confere.py e do
+documento_gerado.py, nas pastas irmas da peca.
 """
 import copy
 import json

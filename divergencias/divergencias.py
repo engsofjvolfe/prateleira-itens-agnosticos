@@ -29,7 +29,8 @@ que nao esta em dia; e 2, sem nada gravado, quando a lista ou o cabecalho nao se
 UTF-8, a lista nao e JSON ou sai do molde, o cabecalho esta vazio, um rotulo nao e uma linha
 so com alguma letra (a regra "linha" do molde), ou o documento e um dos arquivos de entrada
 ou nao e um arquivo. Precisa do extrator_comum.py e do texto_comum.py, do extrator, e do
-grava_ou_confere.py, do grava-ou-confere, nas pastas irmas ou na mesma pasta.
+grava_ou_confere.py e do documento_gerado.py, do grava-ou-confere, nas pastas irmas ou na
+mesma pasta.
 
 Uso:
     python3 -I divergencias.py <divergencias.json> <cabecalho.md> <documento.md>
@@ -43,15 +44,14 @@ from pathlib import Path
 PASTA = Path(__file__).resolve().parent
 for pasta in (PASTA.parent / "grava-ou-confere", PASTA.parent / "extrator", PASTA):  # na prateleira, as pastas irmas
     sys.path.insert(0, str(pasta))
-from extrator_comum import ErroDeDados, expressao, le_conferido, le_json, le_texto  # noqa: E402
+from documento_gerado import confere_destino, em_blocos, le_cabecalho  # noqa: E402
+from extrator_comum import ErroDeDados, expressao, le_conferido, le_json  # noqa: E402
 from grava_ou_confere import grava_ou_confere, opcao_conferir  # noqa: E402
 from texto_comum import espacos_juntos, nfc  # noqa: E402
 
 MOLDE = PASTA / "esquemas" / "divergencias.schema.json"  # o molde da lista
 LINHA = "$defs/linha/pattern"  # no molde, a regra de uma linha so com alguma letra, que tambem vale para os rotulos
 TITULO = "## "  # o comeco do titulo de cada fato no documento
-QUEBRA = "\n"  # o fim do documento
-ENTRE_BLOCOS = "\n\n"  # a linha em branco entre dois blocos do documento
 
 
 def comparavel(texto):
@@ -88,13 +88,13 @@ def problemas(divergencias):
 def documento(cabecalho, divergencias, ensinada, outra):
     """O texto do documento: o cabecalho e, para cada divergencia, o titulo com o fato e, para cada forma, o rotulo
     com o que ela diz e a fonte."""
-    blocos = [cabecalho.rstrip()]
+    blocos = []
     for d in divergencias:
         blocos.append(TITULO + d["fato"])
         for caminho, forma in formas(d):
             rotulo = ensinada if caminho == "ensinada" else outra
             blocos += [f"{rotulo} {forma['diz']}", forma["fonte"].strip()]
-    return ENTRE_BLOCOS.join(blocos) + QUEBRA
+    return em_blocos(cabecalho, blocos)
 
 
 def entrada(a):
@@ -104,13 +104,8 @@ def entrada(a):
     for opcao, rotulo in (("--ensinada", a.ensinada), ("--outra", a.outra)):
         if not linha.search(rotulo):
             raise ErroDeDados(f"{opcao}: o rótulo precisa ser uma linha só, com alguma letra: {rotulo!r}")
-    if a.documento.resolve() in (a.lista.resolve(), a.cabecalho.resolve()):
-        raise ErroDeDados(f"o documento é um dos arquivos de entrada: {a.documento}")
-    if a.documento.exists() and not a.documento.is_file():
-        raise ErroDeDados(f"o documento não é um arquivo: {a.documento}")
-    cabecalho = le_texto(a.cabecalho)
-    if not cabecalho.strip():
-        raise ErroDeDados(f"{a.cabecalho}: o cabeçalho está vazio")
+    confere_destino(a.documento, (a.lista, a.cabecalho))
+    cabecalho = le_cabecalho(a.cabecalho)
     return le_conferido(a.lista, MOLDE)["divergencias"], cabecalho
 
 
