@@ -1,11 +1,13 @@
 # documentos
 
 Conferências dos documentos e do código de um repositório: as linhas que passam de um limite
-de caracteres e os links internos dos documentos Markdown.
+de caracteres e os links internos dos documentos Markdown; e o módulo comum que lê um texto
+Markdown como o GitHub o lê.
 
 Usam a biblioteca padrão do Python e o `extrator_comum.py`, do
 [extrator](../extrator/README.md), que lê os textos; na prateleira, ele é achado na pasta
-irmã `extrator/`. O `confere_links.py` precisa também do git.
+irmã `extrator/`. O `confere_links.py` precisa também do git e lê o Markdown pelo
+[módulo de Markdown](#o-módulo-de-markdown), desta pasta.
 
 ## As linhas longas
 
@@ -42,6 +44,21 @@ começo do alvo, em ordem de arquivo e de linha, e um resumo com o número de li
 o dos com âncora e o de erros. Sai com código 0 quando nenhum está quebrado e 1 quando algum
 está. A pasta que não é um repositório git e o documento, ou o Markdown de destino de uma
 âncora, que não se lê em UTF-8 são `ERRO`, que sai com código 2, sem nenhum link mostrado.
+
+## O módulo de Markdown
+
+O `markdown_comum.py` guarda o que as peças da prateleira fazem do mesmo jeito com um texto
+Markdown, lido como o GitHub o lê. Não se roda: as peças o importam da pasta irmã
+`documentos/` ou da própria pasta (numa cópia fora da prateleira, ao lado do script). Usa só
+a biblioteca padrão do Python.
+
+| Função | O que faz |
+| --- | --- |
+| `linhas_fora_de_codigo(texto)` | o número e o texto de cada linha fora dos blocos de código: o bloco abre numa cerca de três ou mais `` ` `` ou `~`, com até três espaços antes, e fecha na primeira cerca do mesmo sinal, do mesmo tamanho ou maior, sem texto depois |
+| `texto_fora_de_codigo(texto)` | o texto com as linhas dos blocos de código vazias e sem o código na linha, cada linha no número dela |
+| `ancora(titulo)` | a âncora que o GitHub dá a um título: o texto como aparece, em minúsculas, sem pontuação, com hífen no lugar de cada espaço |
+| `titulos(texto)` | cada título fora dos blocos de código, na ordem, com a linha, o nível (quantos `#`), o texto, sem os `#` e os espaços das pontas, e a âncora; o título repetido ganha `-1`, `-2`... no fim dela |
+| `marcadores(texto)` | o valor do `id` e do `name` de cada tag HTML fora de código e de comentário, lida como o CommonMark lê uma tag |
 
 ## Testes
 

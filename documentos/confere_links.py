@@ -14,7 +14,7 @@ Escreve uma linha ERRO por link quebrado, em ordem de arquivo e linha, e um resu
 com codigo 1 se houver erro e 2, so com o ERRO do que nao serve, se a pasta nao for um
 repositorio git ou se um documento, ou o Markdown de destino de uma ancora, nao se ler em
 UTF-8. Le os documentos com o extrator_comum.py, do extrator, na pasta irma "extrator" ou
-na mesma pasta.
+na mesma pasta, e le o Markdown com o markdown_comum.py, desta pasta.
 """
 
 import re
@@ -27,25 +27,15 @@ PASTA = Path(__file__).resolve().parent
 for pasta in (PASTA.parent / "extrator", PASTA):  # na prateleira, o extrator fica na pasta irma
     sys.path.insert(0, str(pasta))
 from extrator_comum import ErroDeDados, le_texto  # noqa: E402
+from markdown_comum import QUEBRA, marcadores, texto_fora_de_codigo, titulos  # noqa: E402
 
 CODIFICACAO = "utf-8"  # a da lista que o git da
 EXTENSAO = ".md"  # a dos documentos Markdown: os que se conferem e os unicos com ancora de titulo ou marcador
 ANCORA = "#"  # o que separa, no alvo de um link, o arquivo da ancora
-QUEBRA = "\n"  # o que separa as linhas do texto corrido
 ERRO = "ERRO"  # o comeco de cada linha de erro
-CERCA = re.compile(r"^ {0,3}(`{3,}|~{3,})")
-CODIGO_NA_LINHA = re.compile(r"(`+)(?:(?!\1).)+?\1")
 LINK = re.compile(r"!?\[(?:[^\[\]]|\[[^\[\]]*\])*\]\(\s*(<[^>]*>|[^)\s]+)(?:\s+\"[^\"]*\")?\s*\)")
-TITULO = re.compile(r"^ {0,3}(#{1,6})\s+(.*?)\s*#*\s*$")
 ESQUEMA = re.compile(r"^[A-Za-z][A-Za-z0-9+.-]*:")
-TAG_HTML = re.compile(r"<[^>]+>")
-LINK_NO_TITULO = re.compile(r"!?\[([^\]]*)\]\([^)]*\)")
 LINHA = re.compile(r"L([1-9][0-9]*)")  # a ancora de uma linha do arquivo, pelo numero dela
-COMENTARIO_HTML = re.compile(r"<!--.*?-->", re.DOTALL)
-# um atributo de uma tag HTML como o CommonMark o le: o nome e o valor, sem aspas, entre simples ou entre duplas
-ATRIBUTO_HTML = re.compile(r"""\s+([A-Za-z_:][A-Za-z0-9_.:-]*)(?:\s*=\s*(?:([^\s"'=<>`]+)|'([^']*)'|"([^"]*)"))?""")
-TAG_DE_ABERTURA = re.compile(rf"<[A-Za-z][A-Za-z0-9-]*(?:{ATRIBUTO_HTML.pattern})*\s*/?>")
-ATRIBUTOS_DE_MARCADOR = ("id", "name")  # os atributos de uma tag HTML que um link alcanca pela ancora
 
 
 def documentos(raiz):
@@ -55,60 +45,11 @@ def documentos(raiz):
     return sorted({p for p in saida.split("\0") if p and (raiz / p).is_file()})
 
 
-def linhas_fora_de_codigo(texto):
-    """(numero, linha) de cada linha fora de bloco de codigo."""
-    cerca = None
-    for n, linha in enumerate(texto.splitlines(), 1):
-        m = CERCA.match(linha)
-        if cerca:
-            if m and m.group(1)[0] == cerca[0] and len(m.group(1)) >= len(cerca) \
-                    and not linha.strip()[len(m.group(1)):].strip():
-                cerca = None
-            continue
-        if m:
-            cerca = m.group(1)
-            continue
-        yield n, linha
-
-
-def texto_fora_de_codigo(texto):
-    """O texto com as linhas dos blocos de codigo vazias e sem o codigo na linha; cada linha
-    fica no numero dela."""
-    linhas = texto.splitlines()
-    fora = dict(linhas_fora_de_codigo(texto))
-    return QUEBRA.join(CODIGO_NA_LINHA.sub("", fora.get(n, "")) for n in range(1, len(linhas) + 1))
-
-
-def ancora(titulo):
-    """A ancora que o GitHub da a um titulo: o texto como aparece, em minusculas, sem
-    pontuacao, com hifen no lugar de cada espaco."""
-    texto = LINK_NO_TITULO.sub(r"\1", titulo)
-    texto = TAG_HTML.sub("", texto)
-    texto = texto.replace("`", "").lower()
-    return re.sub(r"[^\w\- ]", "", texto).replace(" ", "-")
-
-
-def marcadores(texto):
-    """O valor do id e do name de cada tag HTML fora de codigo e de comentario."""
-    sem_comentario = COMENTARIO_HTML.sub("", texto_fora_de_codigo(texto))
-    return {"".join(valor) for tag in TAG_DE_ABERTURA.finditer(sem_comentario)
-            for nome, *valor in ATRIBUTO_HTML.findall(tag.group()) if nome.lower() in ATRIBUTOS_DE_MARCADOR}
-
-
 def ancoras(caminho, cache):
     """As ancoras de um arquivo Markdown: as dos titulos e os marcadores."""
     if caminho not in cache:
         texto = le_texto(caminho)
-        vistas, todas = {}, marcadores(texto)
-        for _, linha in linhas_fora_de_codigo(texto):
-            m = TITULO.match(linha)
-            if not m:
-                continue
-            base = ancora(m.group(2))
-            n = vistas.get(base, 0)
-            vistas[base] = n + 1
-            todas.add(base if n == 0 else f"{base}-{n}")
-        cache[caminho] = todas
+        cache[caminho] = {t.ancora for t in titulos(texto)} | marcadores(texto)
     return cache[caminho]
 
 

@@ -14,6 +14,11 @@ prateleira segue o [Versionamento Semântico](https://semver.org/lang/pt-BR/spec
   documento deles, ou confere que o gravado está em dia; e o teste, com a lista de estragos
   dele.
 - `documentos`: o teste do `linhas_longas.py`, com a lista de estragos dele.
+- `documentos`: o módulo comum de Markdown, `markdown_comum.py`, que lê um texto Markdown como
+  o GitHub o lê: as linhas fora dos blocos de código, o texto sem o código, a âncora de um
+  título, os títulos, com a linha, o nível e a âncora de cada um, e os marcadores; e o teste
+  dele, com a lista de estragos. O `confere_links.py`, que fazia isso por conta própria, passa
+  a usá-lo.
 - `extrator`: o molde dos moldes (`esquemas/molde.schema.json`), que diz as palavras do
   JSON Schema que o leitor de molde do módulo comum entende e a forma do valor de cada uma;
   e o teste do módulo comum, com a lista de estragos dele.

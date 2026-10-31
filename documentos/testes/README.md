@@ -2,13 +2,14 @@
 
     python3 -I teste_linhas_longas.py <pasta do linhas_longas.py> <pasta de trabalho nova> [--semente N]
     python3 -I teste_confere_links.py <pasta do confere_links.py> <pasta de trabalho nova> [--semente N]
+    python3 -I teste_markdown_comum.py <pasta do markdown_comum.py> <pasta de trabalho nova>
 
-A pasta de trabalho precisa ser nova ou vazia; o teste escreve nela. Os dois sorteiam tudo o
-que testam, sempre igual, porque a semente é fixa (outra semente vem com `--semente`), com
-letras de fora do ASCII, e conferem regras, nunca uma frase pronta. Precisam do
-`extrator_comum.py`, do extrator, na pasta irmã `extrator/` da peça ou na própria pasta da
-peça. Cada um diz `0 falha(s)` quando passa; senão, uma linha `FALHA` para cada conferência
-que não passou, e sai com código 1.
+A pasta de trabalho precisa ser nova ou vazia; o teste escreve nela. Os três sorteiam tudo o
+que testam, sempre igual, porque a semente é fixa (nos dois primeiros, outra semente vem com
+`--semente`), com letras de fora do ASCII, e conferem regras, nunca uma frase pronta. Os dois
+primeiros precisam do `extrator_comum.py`, do extrator, na pasta irmã `extrator/` da peça ou
+na própria pasta da peça. Cada um diz `0 falha(s)` quando passa; senão, uma linha `FALHA`
+para cada conferência que não passou, e sai com código 1.
 
 ## As linhas longas
 
@@ -75,11 +76,30 @@ Confere:
   quebrado antes;
 - duas rodadas dão a mesma saída.
 
+## O módulo de Markdown
+
+O `teste_markdown_comum.py` confere o que só as peças que importam o `markdown_comum.py`
+usam; a âncora, o código na linha e os marcadores, o teste dos links confere. Ele monta um
+documento sorteado, com títulos de nível 1 a 6, com recuo de zero a três espaços e com ou
+sem os `#` do fim, um título repetido três vezes, parágrafos, blocos de código com cercas dos
+dois sinais, com títulos dentro e com cercas que não fecham o bloco (a do outro sinal, a mais
+curta e a com texto depois, cada uma com um título logo depois), e linhas que não são título
+(sete `#`, `#` sem espaço, recuo de quatro espaços). Confere:
+
+- cada título fora de bloco de código, e só ele, sai na ordem, com a linha, o nível, o texto
+  sem os `#` e os espaços das pontas e a âncora, com `-1` e `-2` no título repetido;
+- as linhas fora de código são as do documento menos as dos blocos, cercas incluídas, cada
+  uma com o número dela, a partir de 1;
+- duas leituras dão o mesmo.
+
 ## As cópias estragadas
 
-Estão em duas listas, nesta pasta, para o [`estraga.py`](../../copias-estragadas/README.md),
-rodado desta pasta: `estragos-linhas-longas.json`, para o `teste_linhas_longas.py`, e
-`estragos-confere-links.json`, para o `teste_confere_links.py`:
+Estão em três listas, nesta pasta, para o [`estraga.py`](../../copias-estragadas/README.md),
+rodado desta pasta: `estragos-linhas-longas.json`, para o `teste_linhas_longas.py`;
+`estragos-confere-links.json`, para o `teste_confere_links.py`, com os do
+`markdown_comum.py` que o `confere_links.py` usa; e `estragos-markdown-comum.json`, para o
+`teste_markdown_comum.py`:
 
     python3 -I ../../copias-estragadas/estraga.py .. teste_linhas_longas.py estragos-linhas-longas.json <pasta de trabalho nova> --irma ../../extrator
     python3 -I ../../copias-estragadas/estraga.py .. teste_confere_links.py estragos-confere-links.json <pasta de trabalho nova> --irma ../../extrator
+    python3 -I ../../copias-estragadas/estraga.py .. teste_markdown_comum.py estragos-markdown-comum.json <pasta de trabalho nova>
