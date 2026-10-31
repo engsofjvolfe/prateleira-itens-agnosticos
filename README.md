@@ -20,6 +20,7 @@ pega os defeitos. Nos comandos dos READMEs, `<prateleira>` é a pasta onde a pra
 | [copia-para-projeto/](copia-para-projeto/README.md) | levar os arquivos de uma peça para um projeto, com o cabeçalho dos scripts dele, e conferir que as cópias estão em dia (com testes) |
 | [copias-estragadas/](copias-estragadas/README.md) | provar que o teste de uma peça pega os defeitos dela, rodando-o contra cópias estragadas (com testes) |
 | [custo-de-agentes/](custo-de-agentes/README.md) | mostrar o uso de tokens de cada transcrição de sessão, como as dos agentes de um programa de IA (com testes) |
+| [divergencias/](divergencias/README.md) | conferir a lista dos fatos que as fontes dizem de formas diferentes, com a forma que o material ensina e as outras, e gravar o documento deles, ou conferir que o gravado está em dia (com testes) |
 | [documentos/](documentos/README.md) | conferir os links internos dos documentos de um repositório git e as linhas que passam de um limite de caracteres (com testes) |
 | [extrator/](extrator/README.md) | tirar por programa o texto de documentos (PDF, HTML, XML, JSON) e gravar a transcrição de cada um, página por página; o módulo comum que lê dados JSON pelo molde; e o módulo de texto comum, que passa um texto para a forma NFC e junta os espaços (com testes) |
 | [ganchos/](ganchos/README.md) | ganchos para o programa em que a IA trabalha: as regras de código no começo e no fim de cada tarefa que escreve código ou dados; a barreira à busca por palavra; o arquivo que só cresce para onde a limpeza leva o que tira; a cancela e o registro das chamadas de ferramenta; a leitura do comando de terminal que dois deles usam; e a leitura do protocolo de cada programa, que todos usam (com testes) |
@@ -47,10 +48,10 @@ prateleira) ou na própria pasta (numa cópia fora da prateleira).
 
 | Módulo comum | Da peça | Peças que o usam |
 | --- | --- | --- |
-| `extrator_comum.py`: ler um texto em UTF-8, ler JSON pelo molde, pegar um campo com o tipo pedido, achar os valores repetidos de uma lista, compilar uma expressão, conferir que uma codificação existe, dividir uma transcrição em páginas | [extrator](extrator/README.md#o-módulo-comum) | confere-citacoes, confere-forma, copia-para-projeto, copias-estragadas, custo-de-agentes, documentos, historico-de-arquivo, itens-numerados, marcas, moldes, ganchos/busca-por-palavra, ganchos/chamadas-permitidas, ganchos/destino-da-limpeza, ganchos/leitura-do-terminal, ganchos/protocolo, ganchos/regras-de-codigo |
-| `texto_comum.py`: passar um texto para a forma Unicode NFC e juntar os espaços | [extrator](extrator/README.md#o-módulo-de-texto) | confere-citacoes, custo-de-agentes, extrator, itens-numerados, marcas, moldes, texto-em-comum |
+| `extrator_comum.py`: ler um texto em UTF-8, ler JSON pelo molde, pegar um campo com o tipo pedido, achar os valores repetidos de uma lista, compilar uma expressão, conferir que uma codificação existe, dividir uma transcrição em páginas | [extrator](extrator/README.md#o-módulo-comum) | confere-citacoes, confere-forma, copia-para-projeto, copias-estragadas, custo-de-agentes, divergencias, documentos, historico-de-arquivo, itens-numerados, marcas, moldes, ganchos/busca-por-palavra, ganchos/chamadas-permitidas, ganchos/destino-da-limpeza, ganchos/leitura-do-terminal, ganchos/protocolo, ganchos/regras-de-codigo |
+| `texto_comum.py`: passar um texto para a forma Unicode NFC e juntar os espaços | [extrator](extrator/README.md#o-módulo-de-texto) | confere-citacoes, custo-de-agentes, divergencias, extrator, itens-numerados, marcas, moldes, texto-em-comum |
 | `transcricoes.py`: ler as transcrições de sessão, um evento por linha | [historico-de-arquivo](historico-de-arquivo/README.md) | historico-de-arquivo, custo-de-agentes |
-| `grava_ou_confere.py`: gravar um documento gerado ou conferir que está em dia | [grava-ou-confere](grava-ou-confere/README.md) | copia-para-projeto |
+| `grava_ou_confere.py`: gravar um documento gerado ou conferir que está em dia | [grava-ou-confere](grava-ou-confere/README.md) | copia-para-projeto, divergencias |
 | `leitura_do_terminal.py`: ler um comando de terminal como o shell lê, com os prefixos do shell da configuração dela | [ganchos/leitura-do-terminal](ganchos/leitura-do-terminal/README.md) | ganchos/regras-de-codigo, ganchos/busca-por-palavra |
 | `protocolo.py`: ler o protocolo dos ganchos de um programa, ler o evento, montar a resposta e dar o arquivo da anotação de cada sessão | [ganchos/protocolo](ganchos/protocolo/README.md) | ganchos/busca-por-palavra, ganchos/chamadas-permitidas, ganchos/destino-da-limpeza, ganchos/regras-de-codigo |
 
@@ -59,6 +60,8 @@ E os encadeamentos, em que uma peça grava o arquivo que a próxima lê:
 - Documentos + configuração do extrator → `extrator/extrator.py` → transcrições, página por
   página → `confere-citacoes` (como fontes) e `itens-numerados/itens.py`.
 - Textos Markdown → `confere-forma` (a forma) e `confere-citacoes` (as citações).
+- A lista das divergências + o cabeçalho → `divergencias/divergencias.py` → o documento das
+  divergências → `confere-citacoes` (a citação da fonte de cada forma).
 - Análises + a forma delas + as regras de lugar → `moldes/contar.py` e `moldes/separar.py`.
 - Transcrições de sessão → `historico-de-arquivo` (o histórico de um arquivo) e
   `custo-de-agentes` (o custo de cada uma).

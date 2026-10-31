@@ -9,6 +9,10 @@ prateleira segue o [Versionamento Semântico](https://semver.org/lang/pt-BR/spec
 
 ### Adicionado
 
+- `divergencias`: confere a lista dos fatos que as fontes dizem de formas diferentes, cada
+  um com a forma que o material ensina e as outras, cada forma com a fonte, e grava o
+  documento deles, ou confere que o gravado está em dia; e o teste, com a lista de estragos
+  dele.
 - `documentos`: o teste do `linhas_longas.py`, com a lista de estragos dele.
 - `extrator`: o molde dos moldes (`esquemas/molde.schema.json`), que diz as palavras do
   JSON Schema que o leitor de molde do módulo comum entende e a forma do valor de cada uma;

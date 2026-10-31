@@ -125,6 +125,7 @@ dele). O que as outras peças usam:
 | `conferido(dados, molde, nome)` | o mesmo, com dados já lidos, como as partes de um evento; o erro diz o nome dado a eles |
 | `fora_do_molde(dados, molde)` | o caminho e o motivo de cada valor dos dados fora do molde, todos, não só o primeiro |
 | `le_texto(arquivo)` | o texto de um arquivo em UTF-8, com `ErroDeDados` que diz o arquivo quando ele falta ou não se lê |
+| `le_json(arquivo)` | os dados de um arquivo JSON em UTF-8, sem molde, com `ErroDeDados` que diz o arquivo quando ele falta ou não se lê como JSON |
 | `campo(dados, "a/b", tipo)` | o valor no caminho, do tipo pedido (um tipo ou uma tupla), com `ErroDeDados` que diz o caminho quando ele falta ou é de outro tipo; um booleano só vale quando o tipo pedido é `bool` |
 | `expressao(dados, "a/b")` | a expressão regular do campo, compilada, com `ErroDeDados` que diz o caminho quando não compila |
 | `codificacao(dados, "a/b")` | a codificação do campo, quando o Python a conhece, com `ErroDeDados` que diz o caminho e a codificação quando ela não existe |

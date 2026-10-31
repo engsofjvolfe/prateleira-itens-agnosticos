@@ -62,8 +62,9 @@ alguma ainda quebra.
       .gitignore                   o cache do Python e as anotações de sessão dos ganchos
       organizacao/                 esta documentação
       confere-citacoes/  confere-forma/  copia-para-projeto/  copias-estragadas/
-      custo-de-agentes/  documentos/  extrator/  ganchos/  grava-ou-confere/
-      historico-de-arquivo/  itens-numerados/  marcas/  moldes/  texto-em-comum/
+      custo-de-agentes/  divergencias/  documentos/  extrator/  ganchos/
+      grava-ou-confere/  historico-de-arquivo/  itens-numerados/  marcas/  moldes/
+      texto-em-comum/
 
 ## Como um projeto usa uma peça
 

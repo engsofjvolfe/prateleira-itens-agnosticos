@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "divergencias.schema.json",
+  "type": "object",
+  "required": ["versao_schema", "divergencias"],
+  "additionalProperties": false,
+  "properties": {
+    "versao_schema": { "const": 1 },
+    "divergencias": { "type": "array", "items": { "$ref": "#/$defs/divergencia" } }
+  },
+  "$defs": {
+    "linha": {
+      "description": "uma linha só, com alguma letra",
+      "type": "string",
+      "pattern": "^[^\\n\\r]*\\S[^\\n\\r]*(?![\\s\\S])"
+    },
+    "texto": { "type": "string", "pattern": "\\S" },
+    "forma": {
+      "type": "object",
+      "required": ["diz", "fonte"],
+      "additionalProperties": false,
+      "properties": {
+        "diz": { "$ref": "#/$defs/linha" },
+        "fonte": { "$ref": "#/$defs/texto" }
+      }
+    },
+    "divergencia": {
+      "type": "object",
+      "required": ["fato", "ensinada", "outras"],
+      "additionalProperties": false,
+      "properties": {
+        "fato": { "$ref": "#/$defs/linha" },
+        "ensinada": { "$ref": "#/$defs/forma" },
+        "outras": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/forma" } }
+      }
+    }
+  }
+}

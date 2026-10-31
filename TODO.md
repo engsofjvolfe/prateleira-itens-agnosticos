@@ -4,14 +4,9 @@ O que falta fazer na prateleira, e só o que falta, em ordem. O que fica pronto 
 entra no [CHANGELOG.md](CHANGELOG.md), na seção `Não publicado`. O
 [relatório](RELATORIO-AGNOSTICO.md) diz onde está cada problema e como corrigir.
 
-1. **As peças das divergências, do dicionário das dúvidas e do glossário**, para qualquer
-   projeto que ensina a partir de fontes, com o que é de cada projeto na configuração ou no
-   comando:
+1. **As peças do dicionário das dúvidas e do glossário**, para qualquer projeto que ensina a
+   partir de fontes, com o que é de cada projeto na configuração ou no comando:
 
-   - **as divergências:** a lista dos fatos que as fontes dizem de formas diferentes, cada
-     um com a forma que o material ensina e as outras, cada forma com a fonte; a peça
-     confere o fato repetido e grava o documento delas, ou confere que ele está em dia, e a
-     citação de cada fonte se confere no documento gravado, pela peça que confere citações;
    - **o dicionário das dúvidas:** as dúvidas que as fontes deixam, cada uma sob os códigos
      do que ela toca e com as respostas que teve, para a mesma informação não se repetir; a
      peça confere os códigos dos títulos (a forma de cada um, a ordem, o código que cobre
