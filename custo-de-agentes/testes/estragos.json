@@ -33,7 +33,7 @@
   {"nome": "entrada-vazia-passa", "arquivo": "esquemas/custo-de-agentes.schema.json",
    "de": "\"entrada\": { \"type\": \"array\", \"minItems\": 1, ", "para": "\"entrada\": { \"type\": \"array\", "},
   {"nome": "codificacao-inventada-passa", "arquivo": "custo.py",
-   "de": "        codecs.lookup(conf[\"codificacao\"])", "para": "        pass"},
+   "de": "codificacao(dados, \"transcricoes/codificacao\")", "para": "dados[\"transcricoes\"][\"codificacao\"]"},
   {"nome": "pasta-que-falta-passa", "arquivo": "custo.py",
    "de": "    if not a.pasta.is_dir():", "para": "    if False:"},
   {"nome": "caminho-inteiro", "arquivo": "custo.py",

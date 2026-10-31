@@ -25,7 +25,8 @@ recebe texto e que o que ele tem fica como está, não que o texto novo seja o q
 origem.
 
 Usa só a biblioteca padrão do Python, o `extrator_comum.py`, do
-[extrator](../../extrator/README.md), que lê a configuração pelo molde dela, e o
+[extrator](../../extrator/README.md), que lê a configuração pelo molde dela e, em UTF-8, os
+textos dos avisos e os arquivos de destino e de origem, e o
 [protocolo](../protocolo/README.md), da pasta irmã, que lê o protocolo do programa que roda
 o gancho e dá o arquivo da anotação de cada sessão; o extrator é achado duas pastas acima
 (na prateleira) ou na pasta irmã (numa cópia de teste).

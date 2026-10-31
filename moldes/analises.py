@@ -39,7 +39,7 @@ from pathlib import Path
 PASTA = Path(__file__).resolve().parent
 for pasta in (PASTA.parent / "extrator", PASTA):  # na prateleira, o extrator fica na pasta irma
     sys.path.insert(0, str(pasta))
-from extrator_comum import repetidos  # noqa: E402
+from extrator_comum import le_texto, repetidos  # noqa: E402
 from texto_comum import nfc  # noqa: E402
 
 PAPEIS = ("tipo", "grupo", "caminho", "destino")  # o que um campo pode fazer, como o molde da forma declara
@@ -219,7 +219,7 @@ def ler_analise(caminho, forma):
     campo_do_papel = {c["papel"]: c["nome"] for c in campos if "papel" in c}
     abre_campos = forma["separador_texto"] + campos[0]["nome"] + ": "
     trechos, notas, slide, posicao = [], 0, None, 0
-    for n, linha in enumerate(Path(caminho).read_text(encoding="utf-8").splitlines(), 1):
+    for n, linha in enumerate(le_texto(caminho).splitlines(), 1):
         onde = f"{Path(caminho).name}:{n}"
         if linha.startswith(forma["prefixo_slide"]):
             numero = linha[len(forma["prefixo_slide"]):].strip()
@@ -259,7 +259,8 @@ def ler_analises(pasta, forma):
     """(trechos, notas por aula, aulas em ordem natural) dos arquivos da pasta que seguem o
     padrao da forma, ja conferida pelo molde dela. ErroDeForma quando a forma tem problema
     que o molde nao ve (todos numa mensagem), quando nenhum arquivo segue o padrao, quando
-    dois arquivos dao a mesma aula, numa linha fora da forma e quando um id se repete."""
+    dois arquivos dao a mesma aula, numa linha fora da forma e quando um id se repete; o
+    arquivo que nao se le em UTF-8 e ErroDeDados, do modulo comum, que diz o arquivo."""
     erros = erros_da_forma(forma)
     if erros:
         raise ErroDeForma("a forma das análises: " + "; ".join(erros))

@@ -18,7 +18,7 @@ Pode barrar a mais, nunca a menos: uma palavra que aparece depois de um prefixo 
 sem extensão, ou de uma extensão que a lista `sem_conferencia` não traz, pede a
 conferência.
 
-Usa só a biblioteca padrão do Python; lê a configuração pelo molde dela com o
+Usa só a biblioteca padrão do Python; lê a configuração pelo molde dela e os textos com o
 `extrator_comum.py`, do [extrator](../../extrator/README.md), o comando de terminal e os
 prefixos do shell com a [leitura-do-terminal](../leitura-do-terminal/README.md) e o
 protocolo do programa com o [protocolo](../protocolo/README.md), das pastas irmãs. Nenhum

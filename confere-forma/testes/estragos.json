@@ -55,7 +55,7 @@
    "de": "    return 1 if erros else 0", "para": "    return 0"},
   {"nome": "configuracao-sem-molde", "arquivo": "confere_forma.py",
    "de": "    dados = le_conferido(caminho, MOLDE)",
-   "para": "    dados = __import__(\"json\").loads(Path(caminho).read_text(encoding=CODIFICACAO))"},
+   "para": "    dados = __import__(\"json\").loads(Path(caminho).read_text(encoding=\"utf-8\"))"},
   {"nome": "item-com-dois-campos-passa", "arquivo": "esquemas/confere-forma.schema.json",
    "de": "      \"maxProperties\": 1,\n", "para": ""},
   {"nome": "texto-vazio-passa", "arquivo": "esquemas/confere-forma.schema.json",
@@ -65,6 +65,7 @@
   {"nome": "minimo-maior-passa", "arquivo": "confere_forma.py",
    "de": "    if conf[\"minimo\"] > conf[\"maximo\"]:", "para": "    if False:"},
   {"nome": "texto-ilegivel-passa", "arquivo": "confere_forma.py",
-   "de": "        raise ErroDeDados(f\"o texto {arquivo} não se lê em {CODIFICACAO} ({e})\")", "para": "        return [], [], 0"}
+   "de": "    linhas = le_texto(arquivo).split(\"\\n\")",
+   "para": "    linhas = Path(arquivo).read_bytes().decode(\"utf-8\", \"replace\").split(\"\\n\")"}
  ]
 }

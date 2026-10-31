@@ -15,7 +15,8 @@ Os testes conferem regras que valem para qualquer forma, nunca uma lista pronta:
   - sem erro, a saida e gravada, numa pasta que o script cria quando ela ainda nao existe,
     e a contagem traz a tabela das classes;
   - forma, regras e analises erradas dao ERRO, que diz o que esta errado (no que o molde
-    pega, o caminho do valor), e nada e gravado;
+    pega, o caminho do valor), e nada e gravado; a analise que nao se le em UTF-8 tambem, e
+    o ERRO diz o arquivo dela;
   - duas rodadas dao a mesma saida, e a ordem em que os arquivos foram criados nao muda
     nada; com problema nas analises, a contagem sai com codigo 1, e sem problema, com 0.
 Uso:
@@ -25,6 +26,7 @@ pasta da peca, como os scripts.
 """
 import argparse
 import collections
+import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -154,6 +156,20 @@ def teste_erros(mundo):
                     f"erro {nome} no {script}: ERRO que diz {culpado!r}, nada gravado: {res.stdout}{res.stderr}")
 
 
+def teste_analise_fora_do_utf8(mundo):
+    """A analise que nao se le em UTF-8 da ERRO, que diz o arquivo dela, e nada e gravado."""
+    pasta = TRABALHO / "erros" / "fora-do-utf8"
+    shutil.copytree(mundo["pasta"], pasta)
+    arquivo = SORTEIO.choice(sorted(p for p in pasta.glob(mundo["forma"]["arquivos"]) if p.is_file()))
+    arquivo.write_bytes(arquivo.read_bytes() + b"\xff")  # um byte que o UTF-8 nunca tem
+    for script, extra in [("contar.py", []), ("separar.py", ["--assunto"])]:
+        saida = pasta.parent / f"saida-fora-do-utf8-{script}.md"
+        res = roda(script, pasta, mundo["arquivo_forma"], mundo["arquivo_regras"], saida, *extra)
+        confere(res.returncode == 1 and not saida.exists() and res.stdout.startswith("ERRO")
+                and arquivo.name in res.stdout,
+                f"análise fora do UTF-8 no {script}: ERRO que diz o arquivo, nada gravado: {res.stdout}{res.stderr}")
+
+
 def main():
     if TRABALHO.exists() and any(TRABALHO.iterdir()):
         sys.exit("a pasta de trabalho precisa ser nova ou vazia")
@@ -164,6 +180,7 @@ def main():
     teste_contagem(mundo, trechos, frases)
     teste_scripts(mundo, frases)
     teste_erros(mundo)
+    teste_analise_fora_do_utf8(mundo)
     print(f"{len(FALHAS)} falha(s) (semente {ARGS.semente})")
     sys.exit(1 if FALHAS else 0)
 

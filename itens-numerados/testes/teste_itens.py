@@ -21,8 +21,9 @@ Os testes conferem regras que valem para qualquer documento, nunca uma lista pro
     entradas, menos o ultimo, que tem de 1 ao tamanho; as paginas de cada grupo sao a do
     primeiro e a do ultimo item;
   - todo erro para tudo, sem gravar nada; a expressao que nao compila, de uma forma do
-    corpo, de uma do sumario ou a do numero sozinho, da o erro que diz o campo dela; duas
-    rodadas dao a mesma saida.
+    corpo, de uma do sumario ou a do numero sozinho, da o erro que diz o campo dela; a
+    transcricao que nao se le em UTF-8 da o erro que diz o arquivo; duas rodadas dao a mesma
+    saida.
 Uso:
     python3 -I teste_itens.py <pasta de itens.py> <pasta de trabalho nova>
 Precisa do extrator_comum.py, do extrator, na pasta irma "extrator" ou na mesma pasta.
@@ -235,10 +236,10 @@ def transcricao(itens, sumario, inserir=None):
             onde)
 
 
-def roda(nome, texto, paginas, grupo=2, formas=FORMAS, padrao=PADRAO, corpo=None):
+def roda(nome, texto, paginas, grupo=2, formas=FORMAS, padrao=PADRAO, corpo=None, codificacao="utf-8"):
     pasta = TRABALHO / nome
     pasta.mkdir(parents=True)
-    (pasta / "manual.md").write_text(texto, encoding="utf-8")
+    (pasta / "manual.md").write_bytes(texto.encode(codificacao))
     config = {"versao_schema": 1, "formas": formas, "grupo": grupo, "documentos": [
         {"transcricao": "manual.md", "sumario": [{"de": 2, "ate": 2}], "corpo": corpo or [{"de": 3, "ate": paginas}]}]}
     extrator = {"versao_schema": 1, "padrao": padrao, "leitores": {}}
@@ -396,6 +397,8 @@ erro("padrao-desconhecido", "campo da configuração do extrator que o molde del
      padrao=dict(PADRAO, **{"titulo_pagina_" + palavra(string.ascii_lowercase): PADRAO["titulo_pagina"]}))
 erro("padrao-ruim", "padrão em que a marca se confunde com o texto",
      padrao=dict(PADRAO, escapar=[c for c in PADRAO["escapar"] if c != "<"]))
+confere(any(ord(c) > 127 for c in TEXTO), "o documento sorteado tem letra de fora do ASCII")
+erro("transcricao-fora-do-utf8", "transcrição que não se lê em UTF-8", "manual.md", codificacao="latin-1")
 
 for f in FALHAS:
     print("FALHA:", f)

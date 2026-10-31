@@ -3,13 +3,14 @@ O que o extrator, os leitores dele e as outras pecas da prateleira fazem do mesm
 num lugar so: ler um texto em UTF-8, ler um arquivo de dados JSON e conferir os dados contra
 o molde deles (JSON Schema), que antes e conferido contra o molde dos moldes (o que o leitor
 de molde entende), pegar um campo dos dados com o tipo pedido, achar os valores repetidos de
-uma lista, compilar a expressao regular de um campo, ler a configuracao do extrator contra o
-molde dela, conferir o padrao, preencher um modelo do padrao, reconhecer o titulo de pagina
-que o modelo faz, dividir uma transcricao em paginas, juntar os pedacos de uma linha com
-destaques, tirar de uma linha as marcas de destaque e os escapes e expandir faixas de
-paginas.
+uma lista, compilar a expressao regular de um campo, conferir que a codificacao de um campo
+existe, ler a configuracao do extrator contra o molde dela, conferir o padrao, preencher um
+modelo do padrao, reconhecer o titulo de pagina que o modelo faz, dividir uma transcricao em
+paginas, juntar os pedacos de uma linha com destaques, tirar de uma linha as marcas de
+destaque e os escapes e expandir faixas de paginas.
 """
 
+import codecs
 import json
 import re
 from collections import Counter
@@ -249,6 +250,17 @@ def campo(dados, caminho, tipo):
 def expressao(dados, caminho):
     """A expressao regular do campo de texto, compilada; erro claro quando nao compila."""
     return compila(campo(dados, caminho, str), f"o campo {caminho}")
+
+
+def codificacao(dados, caminho):
+    """A codificacao do campo de texto, quando o Python a conhece; erro claro, que diz o caminho e a codificacao,
+    quando nao conhece."""
+    nome = campo(dados, caminho, str)
+    try:
+        codecs.lookup(nome)
+    except LookupError:
+        raise ErroDeDados(f"o campo {caminho}: a codificação {nome!r} não existe") from None
+    return nome
 
 
 def repetidos(valores):

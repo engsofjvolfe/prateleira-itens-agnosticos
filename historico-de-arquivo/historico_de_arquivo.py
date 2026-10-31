@@ -14,7 +14,6 @@ dos arquivos, os rotulos, as marcas e a codificacao. Tudo e lido e montado antes
 erro, ela nao e criada. So biblioteca padrao.
 """
 import argparse
-import codecs
 import csv
 import io
 import json
@@ -24,10 +23,11 @@ from pathlib import Path
 PASTA = Path(__file__).resolve().parent
 for lugar in (PASTA.parent / "extrator", PASTA):  # na prateleira, o extrator fica na pasta irma
     sys.path.insert(0, str(lugar))
-from extrator_comum import ErroDeDados, le_conferido, repetidos  # noqa: E402
+from extrator_comum import ErroDeDados, codificacao, le_conferido, repetidos  # noqa: E402
 from transcricoes import blocos, eventos  # noqa: E402
 
 MOLDE = PASTA / "esquemas" / "historico-de-arquivo.schema.json"
+CODIFICACOES = ("transcricoes/codificacao", "saida/codificacao")  # os campos da configuracao que dao uma codificacao
 DADOS = ("sessao", "hora", "ferramenta", "caminho", "transcricao", "linha")  # o que se diz de cada achado, nesta ordem
 COLUNAS = ("numero", "arquivo")  # as colunas da lista dos achados antes dos dados de cada um
 ONDE = ("transcricao", "linha")  # as colunas da lista das linhas que nao se leram
@@ -39,11 +39,8 @@ def ler_configuracao(caminho):
     """A configuracao, lida pelo molde dela, com as ferramentas pelo nome; erro quando ela tem um campo que o molde nao
     conhece, uma codificacao que nao existe ou duas ferramentas com o mesmo nome."""
     cfg = le_conferido(Path(caminho).resolve(), MOLDE)
-    for codificacao in (cfg["transcricoes"]["codificacao"], cfg["saida"]["codificacao"]):
-        try:
-            codecs.lookup(codificacao)
-        except LookupError:
-            raise ErroDeDados(f"{caminho}: a codificação {codificacao!r} não existe") from None
+    for campo_da_codificacao in CODIFICACOES:
+        codificacao(cfg, campo_da_codificacao)
     mesmas = repetidos([f["nome"] for f in cfg["ferramentas"]])
     if mesmas:
         raise ErroDeDados(f"{caminho}: mais de uma ferramenta com o nome {', '.join(mesmas)}")

@@ -16,7 +16,8 @@ campos que dizem o tipo dele, o grupo, o caminho e para onde ele vai. Serve para
 
 Usa só a biblioteca padrão do Python e dois módulos do [extrator](../extrator/README.md): o
 `extrator_comum.py`, pelo qual os scripts leem a forma e as regras pelos moldes delas e as
-peças comuns acham os valores repetidos de uma lista, e o `texto_comum.py`, que passa os
+peças comuns leem as análises e acham os valores repetidos de uma lista, e o
+`texto_comum.py`, que passa os
 textos para a forma NFC. Eles são achados na pasta irmã `extrator/` ou na mesma pasta.
 
 ## Como rodar

@@ -1,6 +1,6 @@
 """Testes do que o extrator_comum.py da para as pecas lerem os proprios dados: o leitor de
-molde (fora_do_molde, confere_molde, conferido e le_conferido), le_texto, campo, expressao e
-repetidos. Nao precisa de PDF.
+molde (fora_do_molde, confere_molde, conferido e le_conferido), le_texto, campo, expressao,
+codificacao e repetidos. Nao precisa de PDF.
 
 Os nomes dos campos e os valores sao sorteados, com semente fixa (o sorteio e o mesmo em toda
 rodada; outra semente vem com --semente), e cada molde e inventado aqui. Os testes conferem
@@ -31,6 +31,8 @@ regras, nunca uma frase pronta:
     le em UTF-8 e erro, que diz o arquivo;
   - campo da o valor no caminho com o tipo pedido e da erro, dizendo o caminho, quando ele
     falta ou e de outro tipo; expressao compila o campo ou da erro, dizendo o caminho;
+  - codificacao da a codificacao do campo, quando o Python a conhece, e da erro, dizendo o
+    caminho, quando ela nao existe (e a mensagem diz qual), nao e texto ou falta;
   - repetidos da cada valor que aparece mais de uma vez na lista, uma vez so, em ordem,
     qualquer que seja a ordem da lista, e nada quando nada se repete;
   - duas conferencias dao o mesmo.
@@ -45,7 +47,8 @@ import string
 import sys
 from pathlib import Path
 
-LEITOR = argparse.ArgumentParser(description="Testes do leitor de molde, de campo, de expressao e dos repetidos.")
+LEITOR = argparse.ArgumentParser(description="Testes do leitor de molde, de campo, de expressao, de codificacao e "
+                                             "dos repetidos.")
 LEITOR.add_argument("peca", type=Path, help="a pasta do extrator")
 LEITOR.add_argument("trabalho", type=Path, help="uma pasta de trabalho nova")
 LEITOR.add_argument("--semente", type=int, default=7, help="a semente do sorteio")
@@ -271,6 +274,20 @@ confere(extrator_comum.expressao(DADOS, TEXTO).search(f"{OUTRO} {VALOR}").group(
 for caminho, descricao in ((RUIM, "expressão que não compila"), (f"{BASE}/{NUMERO}", "expressão que não é texto")):
     mensagem = erro_de(extrator_comum.expressao, DADOS, caminho)
     confere(mensagem is not None and caminho in mensagem, f"{descricao} é erro, e a mensagem diz o caminho: {mensagem}")
+
+# ---- codificacao ----
+
+CODIGO, INVENTADA = nome(), f"{nome()}ç"  # um campo e uma codificacao que nao existe, com letra de fora do ASCII
+CONHECIDA = SORTE.choice(["utf-8", "UTF-16", "latin-1", "cp1252", "ascii"])  # escrita como o Python a aceita
+COM_CODIFICACAO = {FORA: {CODIGO: CONHECIDA, TEXTO: INVENTADA, NUMERO: N}}
+confere(extrator_comum.codificacao(COM_CODIFICACAO, f"{FORA}/{CODIGO}") == CONHECIDA,
+        "codificacao dá a codificação do campo, quando o Python a conhece")
+for caminho, diz, descricao in ((f"{FORA}/{TEXTO}", INVENTADA, "codificação que não existe"),
+                                (f"{FORA}/{NUMERO}", "", "codificação que não é texto"),
+                                (f"{FORA}/{RUIM}", "", "codificação que falta")):
+    mensagem = erro_de(extrator_comum.codificacao, COM_CODIFICACAO, caminho)
+    confere(mensagem is not None and caminho in mensagem and diz in mensagem,
+            f"{descricao} é erro, que diz o caminho e a codificação que não existe: {mensagem}")
 
 # ---- repetidos ----
 

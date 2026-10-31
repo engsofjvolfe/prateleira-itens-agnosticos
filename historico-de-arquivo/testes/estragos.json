@@ -71,7 +71,7 @@
    "de": "    cfg = le_conferido(Path(caminho).resolve(), MOLDE)",
    "para": "    cfg = json.loads(Path(caminho).read_text(encoding=\"utf-8\"))"},
   {"nome": "codificacao-sem-conferir", "arquivo": "historico_de_arquivo.py",
-   "de": "            codecs.lookup(codificacao)\n", "para": "            pass\n"},
+   "de": "        codificacao(cfg, campo_da_codificacao)\n", "para": "        pass\n"},
   {"nome": "ferramenta-repetida-aceita", "arquivo": "historico_de_arquivo.py",
    "de": "    if mesmas:\n", "para": "    if False:\n"},
   {"nome": "ferramenta-repetida-sem-o-nome", "arquivo": "historico_de_arquivo.py",

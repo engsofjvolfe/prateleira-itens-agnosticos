@@ -34,7 +34,7 @@
   {"nome": "estado-fora-da-configuracao", "arquivo": "destino_da_limpeza.py",
    "de": "arquivo.parent / dados[\"estado\"]", "para": "Path(dados[\"estado\"])"},
   {"nome": "texto-do-aviso-ignorado", "arquivo": "destino_da_limpeza.py",
-   "de": "getattr(args, aviso).read_text(encoding=CODIFICACAO).strip()", "para": "str(getattr(args, aviso))"},
+   "de": "extrator_comum.le_texto(getattr(args, aviso)).strip()", "para": "str(getattr(args, aviso))"},
   {"nome": "aviso-trocado", "arquivo": "destino_da_limpeza.py",
    "de": "config[\"avisos\"][\"sem_origem\"]", "para": "config[\"avisos\"][\"muda\"]"},
   {"nome": "motivo-sem-caminhos", "arquivo": "destino_da_limpeza.py",

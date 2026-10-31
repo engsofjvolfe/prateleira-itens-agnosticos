@@ -7,8 +7,9 @@ a qualquer coleção de documentos que seguem um mesmo modelo, como fichas, rela
 textos de estudo.
 
 Usa só a biblioteca padrão do Python e o `extrator_comum.py`, do
-[extrator](../extrator/README.md), que lê a configuração pelo molde dela. Na prateleira, ele
-é achado na pasta irmã `extrator/`; numa cópia fora da prateleira, na mesma pasta do script.
+[extrator](../extrator/README.md), que lê a configuração pelo molde dela e os textos em
+UTF-8. Na prateleira, ele é achado na pasta irmã `extrator/`; numa cópia fora da prateleira,
+na mesma pasta do script.
 
 ## Como rodar
 

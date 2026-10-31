@@ -7,8 +7,9 @@ qualquer texto que cita uma fonte transcrita em páginas, como os textos de estu
 um livro.
 
 Usa só a biblioteca padrão do Python e dois módulos do [extrator](../extrator/README.md): o
-`extrator_comum.py`, que lê a configuração pelo molde dela e divide a transcrição em
-páginas pelo modelo do título de página, e o `texto_comum.py`, que passa o texto para a
+`extrator_comum.py`, que lê a configuração pelo molde dela, lê os textos e as fontes em
+UTF-8 e divide a transcrição em páginas pelo modelo do título de página, e o
+`texto_comum.py`, que passa o texto para a
 forma NFC e junta os espaços. Na prateleira, eles são achados na pasta irmã `extrator/`;
 numa cópia fora da prateleira, na mesma pasta do script.
 

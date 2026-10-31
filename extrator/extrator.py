@@ -57,7 +57,7 @@ from pathlib import Path
 PASTA = Path(__file__).resolve().parent
 sys.path.insert(0, str(PASTA))
 from extrator_comum import (MOLDES, ErroDeDados, como_padrao, confere_padrao, le_configuracao,  # noqa: E402
-                            le_conferido, paginas_das_faixas, preenche, repetidos)
+                            le_conferido, le_texto, paginas_das_faixas, preenche, repetidos)
 
 NOME_DE_LEITOR = re.compile(r"^[a-z0-9_]+$")
 
@@ -355,7 +355,7 @@ def prepara(config, documentos, raiz, so, substituir):
             if saida.exists():
                 if not substituir:
                     raise ErroDeDados(f"{doc['saida']} já existe; só se grava por cima com --substituir")
-                linhas = cabecalho(saida.read_text(encoding="utf-8"), config["padrao"]) + linhas
+                linhas = cabecalho(le_texto(saida), config["padrao"]) + linhas
             prontos.append((saida, "\n".join(linhas), resumo))
         except (ErroDeDados, KeyError, ValueError, TypeError, OSError, UnicodeDecodeError, LookupError,
                 subprocess.CalledProcessError) as e:

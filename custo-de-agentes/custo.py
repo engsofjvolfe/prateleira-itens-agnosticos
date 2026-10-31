@@ -22,7 +22,6 @@ Uso:
 """
 
 import argparse
-import codecs
 import sys
 from pathlib import Path
 
@@ -30,7 +29,7 @@ PASTA = Path(__file__).resolve().parent
 # as pecas irmas, na prateleira, ou a mesma pasta, numa copia fora da prateleira
 for pasta in (PASTA.parent / "extrator", PASTA.parent / "historico-de-arquivo", PASTA):
     sys.path.insert(0, str(pasta))
-from extrator_comum import ErroDeDados, le_conferido  # noqa: E402
+from extrator_comum import ErroDeDados, codificacao, le_conferido  # noqa: E402
 from texto_comum import espacos_juntos  # noqa: E402
 from transcricoes import eventos  # noqa: E402
 
@@ -45,15 +44,10 @@ def le_configuracao(caminho):
     ve, e erro aqui."""
     dados = le_conferido(caminho, MOLDE)
     eventos_, uso = dados["eventos"], dados["uso"]
-    conf = {"padrao": dados["transcricoes"]["padrao"], "codificacao": dados["transcricoes"]["codificacao"],
+    return {"padrao": dados["transcricoes"]["padrao"], "codificacao": codificacao(dados, "transcricoes/codificacao"),
             "tipo": eventos_["tipo"], "pergunta": eventos_["pergunta"], "mensagem": eventos_["mensagem"],
             "conteudo": eventos_["conteudo"], "uso": eventos_["uso"], "entrada": uso["entrada"], "saida": uso["saida"],
             "letras": dados["comeco"]["letras"], "rotulos": [dados["colunas"][c] for c in COLUNAS]}
-    try:
-        codecs.lookup(conf["codificacao"])
-    except LookupError:
-        raise ErroDeDados(f"codificação que não existe: {conf['codificacao']}")
-    return conf
 
 
 def numero(uso, nome):

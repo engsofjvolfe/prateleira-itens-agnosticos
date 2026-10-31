@@ -36,7 +36,8 @@ prefixo, como `xargs`, conta como comando. A busca feita por outro programa, com
 `awk` com um padrão, não é vista.
 
 Usa só a biblioteca padrão do Python, o `extrator_comum.py`, do
-[extrator](../../extrator/README.md), que lê a configuração pelo molde dela, a
+[extrator](../../extrator/README.md), que lê a configuração pelo molde dela e o texto do
+motivo, a
 [leitura-do-terminal](../leitura-do-terminal/README.md), que lê o comando e os prefixos do
 shell, e o [protocolo](../protocolo/README.md), que lê o protocolo do programa que roda o
 gancho; os três são achados onde a prateleira os põe.

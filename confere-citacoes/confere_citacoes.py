@@ -32,12 +32,12 @@ from pathlib import Path
 PASTA = Path(__file__).resolve().parent
 for pasta in (PASTA.parent / "extrator", PASTA):  # na prateleira, a peca extrator fica na pasta irma
     sys.path.insert(0, str(pasta))
-from extrator_comum import ErroDeDados, expressao, le_conferido, paginas_da_transcricao, preenche  # noqa: E402
+from extrator_comum import (ErroDeDados, expressao, le_conferido, le_texto, paginas_da_transcricao,  # noqa: E402
+                            preenche)
 from texto_comum import espacos_juntos, nfc  # noqa: E402
 
 MOLDE = PASTA / "esquemas" / "confere-citacoes.schema.json"
 GRUPOS = {"referencia": ("fonte", "paginas"), "citacao": ("trecho",)}  # os grupos que cada expressao tem de ter
-CODIFICACAO = "utf-8"
 MOSTRA = 80  # quantas letras do pedaco a mensagem mostra
 
 
@@ -72,12 +72,8 @@ def comparavel(texto, conf):
 def le_fonte(caminho, conf):
     """(texto comparavel da fonte, rotulo da pagina de cada letra dele). As linhas fora de
     pagina e as dos blocos ignorados ficam de fora; bloco que nao fecha e erro."""
-    try:
-        texto = Path(caminho).read_text(encoding=CODIFICACAO)
-    except (OSError, UnicodeDecodeError) as e:
-        raise ErroDeDados(f"a fonte {caminho} não se lê em {CODIFICACAO} ({e})")
     saida, rotulos, fecha, aberto = [], [], None, None
-    for rotulo, _, linhas in paginas_da_transcricao(texto, conf["titulo_pagina"]):
+    for rotulo, _, linhas in paginas_da_transcricao(le_texto(caminho), conf["titulo_pagina"]):
         for n, linha in linhas:
             if fecha is not None:
                 if fecha.search(linha):
@@ -190,10 +186,7 @@ def confere_sequencia(achados, texto, pontas):
 
 def confere_texto(arquivo, conf, pasta, lidas):
     """([(linha, motivo)], citacoes, pedacos) de um texto."""
-    try:
-        linhas = Path(arquivo).read_text(encoding=CODIFICACAO).split("\n")
-    except (OSError, UnicodeDecodeError) as e:
-        raise ErroDeDados(f"o texto {arquivo} não se lê em {CODIFICACAO} ({e})")
+    linhas = le_texto(arquivo).split("\n")
     erros, citacoes, pedacos, k = [], 0, 0, 0
     while k < len(linhas):
         ref = conf["referencia"].search(linhas[k])

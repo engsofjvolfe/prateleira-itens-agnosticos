@@ -13,7 +13,14 @@ prateleira segue o [Versionamento Semântico](https://semver.org/lang/pt-BR/spec
   JSON Schema que o leitor de molde do módulo comum entende e a forma do valor de cada uma;
   e o teste do módulo comum, com a lista de estragos dele.
 - `extrator`: no módulo comum, a função `le_texto`, que lê um texto em UTF-8 com o erro que
-  diz o arquivo, e a `conferido`, que confere contra um molde dados já lidos.
+  diz o arquivo, e a `conferido`, que confere contra um molde dados já lidos. O
+  `confere-citacoes`, o `confere-forma`, o `extrator` (na transcrição que já existe), o
+  `itens-numerados`, o `moldes` e os ganchos `busca-por-palavra`, `destino-da-limpeza` e
+  `regras-de-codigo`, que liam os textos por conta própria, passam a usar a `le_texto`.
+- `extrator`: no módulo comum, a função `codificacao`, que dá a codificação de um campo e
+  confere que o Python a conhece, com o erro que diz o caminho; o `custo-de-agentes` e o
+  `historico-de-arquivo`, que conferiam a codificação cada um por conta própria, passam a
+  usá-la.
 - `extrator`: no módulo comum, a função `repetidos`, que dá os valores que aparecem mais de
   uma vez numa lista; o próprio `extrator`, o `copias-estragadas`, o `historico-de-arquivo`,
   o `marcas`, o `moldes`, o `ganchos/chamadas-permitidas` e o `ganchos/protocolo`, que
@@ -82,6 +89,8 @@ prateleira segue o [Versionamento Semântico](https://semver.org/lang/pt-BR/spec
 
 - `historico-de-arquivo`: duas ferramentas com o mesmo nome na configuração são erro, que
   diz o nome; antes, a última valia.
+- `itens-numerados` e `moldes`: a transcrição, ou a análise, que não se lê em UTF-8 dá o
+  erro que diz o arquivo; antes, o erro trazia só a mensagem do Python.
 
 ## [0.1.0] - 2026-10-29
 

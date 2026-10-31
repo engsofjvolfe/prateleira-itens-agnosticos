@@ -44,6 +44,12 @@
    "para": "False"
   },
   {
+   "nome": "analise-fora-do-utf8-sem-o-arquivo",
+   "arquivo": "analises.py",
+   "de": "le_texto(caminho).splitlines()",
+   "para": "Path(caminho).read_text(encoding=\"utf-8\").splitlines()"
+  },
+  {
    "nome": "forma-sem-molde",
    "arquivo": "entrada.py",
    "de": "extrator_comum.le_conferido(a.forma, MOLDES / \"forma-analise.schema.json\")",

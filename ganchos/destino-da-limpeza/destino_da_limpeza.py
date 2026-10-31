@@ -35,7 +35,6 @@ import extrator_comum  # noqa: E402
 import protocolo  # noqa: E402
 
 MOLDE = PASTA / "esquemas" / "destino-da-limpeza.schema.json"
-CODIFICACAO = "utf-8"
 TIRAM, INSERE = ("replace", "delete"), "insert"  # as operacoes do difflib que tiram ou mudam linhas, e a que poe
 AVISOS = {  # os textos dos bloqueios, pelo nome da opcao do comando que os da, e a ajuda de cada opcao
     "muda": "texto do bloqueio da escrita que não só faz o destino crescer, entre blocos",
@@ -85,7 +84,7 @@ def depois_da_troca(texto, entrada, campos):
 def textos_da_escrita(escritas, ferramenta, entrada, arquivo):
     """(texto de antes, texto de depois) do arquivo, ou None quando o gancho nao sabe ler a
     ferramenta."""
-    antes = arquivo.read_text(encoding=CODIFICACAO) if arquivo.is_file() else ""
+    antes = extrator_comum.le_texto(arquivo) if arquivo.is_file() else ""
     if ferramenta in escritas["trocas"]:
         return antes, depois_da_troca(antes, entrada, escritas["trocas"][ferramenta])
     if ferramenta in escritas["inteiros"]:
@@ -185,7 +184,7 @@ def main(argumentos=None):
     proto = protocolo.ler(args.protocolo)  # sem o protocolo nao ha como responder: o erro sai
     try:
         config = dict(ler_configuracao(args.config), avisos={
-            aviso: getattr(args, aviso).read_text(encoding=CODIFICACAO).strip() for aviso in AVISOS})
+            aviso: extrator_comum.le_texto(getattr(args, aviso)).strip() for aviso in AVISOS})
         saida = tratar(config, proto, lugares, entrada)
     except Exception as erro:  # o que nao se confere nao passa, quando toca um destino
         achados = nomeados(lugares.destinos, entrada)

@@ -134,6 +134,12 @@
    "para": "\"grupo\": { \"type\": \"integer\" }"
   },
   {
+   "nome": "itens-transcricao-sem-o-leitor-comum",
+   "arquivo": "itens.py",
+   "de": "paginas_da_transcricao(le_texto(raiz / doc[\"transcricao\"]), padrao[\"titulo_pagina\"])",
+   "para": "paginas_da_transcricao((raiz / doc[\"transcricao\"]).read_text(encoding=\"utf-8\"), padrao[\"titulo_pagina\"])"
+  },
+  {
    "nome": "itens-configuracao-do-extrator-sem-molde",
    "arquivo": "itens.py",
    "de": "padrao = le_configuracao(a.extrator)[\"padrao\"]",

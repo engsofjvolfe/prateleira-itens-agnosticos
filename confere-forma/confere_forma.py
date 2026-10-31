@@ -34,10 +34,9 @@ from pathlib import Path
 PASTA = Path(__file__).resolve().parent
 for pasta in (PASTA.parent / "extrator", PASTA):  # na prateleira, a peca extrator fica na pasta irma
     sys.path.insert(0, str(pasta))
-from extrator_comum import ErroDeDados, expressao, le_conferido  # noqa: E402
+from extrator_comum import ErroDeDados, expressao, le_conferido, le_texto  # noqa: E402
 
 MOLDE = PASTA / "esquemas" / "confere-forma.schema.json"
-CODIFICACAO = "utf-8"
 PALAVRA = re.compile(r"\w+")  # o que se conta como palavra
 
 
@@ -108,10 +107,7 @@ def nomes_fora_do_italico(linha, conf):
 
 def confere_texto(arquivo, conf):
     """([(linha, motivo)], [aviso], palavras) de um texto."""
-    try:
-        linhas = Path(arquivo).read_text(encoding=CODIFICACAO).split("\n")
-    except (OSError, UnicodeDecodeError) as e:
-        raise ErroDeDados(f"o texto {arquivo} não se lê em {CODIFICACAO} ({e})")
+    linhas = le_texto(arquivo).split("\n")
     erros = []
     secoes = [k for k, l in enumerate(linhas) if conf["secao"].search(l)]
     divisores = {k for k, l in enumerate(linhas) if conf["divisor"].search(l)}

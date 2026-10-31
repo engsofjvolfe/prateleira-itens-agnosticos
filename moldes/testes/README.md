@@ -75,7 +75,8 @@ O `teste_contar_e_separar.py`:
 - sem erro, a saída é gravada, numa pasta que o script cria quando ela ainda não existe, e
   a contagem traz a tabela das classes;
 - forma, regras e análises erradas dão `ERRO`, que diz o que está errado (no que o molde
-  pega, o caminho do valor), e nada é gravado;
+  pega, o caminho do valor), e nada é gravado; a análise que não se lê em UTF-8 também, e o
+  `ERRO` diz o arquivo dela;
 - duas rodadas dão a mesma saída, e a ordem em que os arquivos foram criados não muda nada;
   com problema nas análises, a contagem sai com código 1, e sem problema, com 0.
 

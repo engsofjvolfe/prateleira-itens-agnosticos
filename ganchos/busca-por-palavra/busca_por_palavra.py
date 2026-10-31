@@ -39,13 +39,12 @@ PASTA = Path(__file__).resolve().parent
 for pasta in (PASTA.parent.parent / "extrator", PASTA.parent / "extrator", PASTA.parent / "leitura-do-terminal",
               PASTA.parent / "protocolo"):
     sys.path.insert(0, str(pasta))  # a ultima posta e a primeira lida
-from extrator_comum import ErroDeDados, le_conferido  # noqa: E402
+from extrator_comum import ErroDeDados, le_conferido, le_texto  # noqa: E402
 from leitura_do_terminal import (ATRIBUICAO, OPCAO, OPCAO_LONGA, ComandoIlegivel, comandos_achados,  # noqa: E402
                                  letras_iniciais, opcao_bate, prefixos_do_terminal)
 import protocolo  # noqa: E402
 
 MOLDE = PASTA / "esquemas" / "busca-por-palavra.schema.json"
-CODIFICACAO = "utf-8"
 EVENTO = "antes"  # o evento que o gancho trata, pelo nome que o protocolo.py da a ele
 QUEBRA = "\n"
 FIM_DAS_OPCOES = "--"  # a palavra depois da qual toda palavra de uma busca e solta
@@ -170,8 +169,7 @@ def main(argumentos=None):
                         help="o arquivo de uma busca exata e a forma de cada padrão dela, uma expressão regular; "
                              "uma vez para cada arquivo")
     args = leitor.parse_args(argumentos)
-    config = dict(ler_configuracao(args.config, args.terminal),
-                  motivo=args.motivo.read_text(encoding=CODIFICACAO).strip())
+    config = dict(ler_configuracao(args.config, args.terminal), motivo=le_texto(args.motivo).strip())
     proto = protocolo.ler(args.protocolo)
     partes = protocolo.le_evento(proto, sys.stdin.read())
     if partes["evento"] != EVENTO:

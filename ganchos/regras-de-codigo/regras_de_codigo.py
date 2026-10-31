@@ -34,7 +34,7 @@ PASTA = Path(__file__).resolve().parent
 for pasta in (PASTA.parent.parent / "extrator", PASTA.parent / "extrator", PASTA.parent / "leitura-do-terminal",
               PASTA.parent / "protocolo"):
     sys.path.insert(0, str(pasta))  # a ultima posta e a primeira lida
-from extrator_comum import le_conferido  # noqa: E402
+from extrator_comum import le_conferido, le_texto  # noqa: E402
 from leitura_do_terminal import (DUPLICACAO, ESCRITA, FECHA_DESCRITOR, OPCAO, TEXTO_EMBUTIDO,  # noqa: E402
                                  ComandoIlegivel, eh_redirecionamento, lidos, opcao_bate, posicoes_de_comando,
                                  prefixos_do_terminal)
@@ -71,7 +71,7 @@ def ler_configuracao(caminho, leitura):
 
 
 def juntar(caminhos):
-    return SEPARADOR_DE_TEXTOS.join(Path(c).read_text(encoding=CODIFICACAO).strip() for c in caminhos)
+    return SEPARADOR_DE_TEXTOS.join(le_texto(c).strip() for c in caminhos)
 
 
 # ---- analise do comando de terminal ----
@@ -163,7 +163,7 @@ def antes(config, proto, partes, anotacao):
 def no_fim(config, proto, partes, anotacao):
     if not anotacao.exists():
         return None
-    caminhos = list(dict.fromkeys(anotacao.read_text(encoding=CODIFICACAO).splitlines()))
+    caminhos = list(dict.fromkeys(le_texto(anotacao).splitlines()))
     anotacao.unlink()
     if partes.get("fim_repetido"):
         return None

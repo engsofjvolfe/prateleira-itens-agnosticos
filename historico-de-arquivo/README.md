@@ -20,8 +20,8 @@ leu ou gravou nele, sempre os mesmos.
 | `esquemas/historico-de-arquivo.schema.json` | o molde da configuração |
 
 Usa só a biblioteca padrão do Python e o `extrator_comum.py`, do
-[extrator](../extrator/README.md), que lê a configuração pelo molde dela; na prateleira,
-ele é achado na pasta irmã `extrator/`.
+[extrator](../extrator/README.md), que lê a configuração pelo molde dela e confere que as
+codificações dela existem; na prateleira, ele é achado na pasta irmã `extrator/`.
 
 ## Como rodar
 

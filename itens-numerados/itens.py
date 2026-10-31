@@ -47,7 +47,7 @@ PASTA = Path(__file__).resolve().parent
 for pasta in (PASTA.parent / "extrator", PASTA):  # na prateleira, o extrator fica na pasta irma
     sys.path.insert(0, str(pasta))
 from extrator_comum import (ErroDeDados, compila, confere_padrao, le_conferido, le_configuracao,  # noqa: E402
-                            paginas_da_transcricao, paginas_das_faixas, texto_simples)
+                            le_texto, paginas_da_transcricao, paginas_das_faixas, texto_simples)
 from texto_comum import espacos_juntos  # noqa: E402
 
 MOLDE = PASTA / "esquemas" / "itens-numerados.schema.json"  # o molde da configuracao dos itens
@@ -212,13 +212,9 @@ def grupos(sumario, itens, tamanho):
 
 
 def documento(doc, config, formas, padrao, raiz):
-    """O resultado de um documento, com as formas ja compiladas (expressoes)."""
-    caminho = raiz / doc["transcricao"]
-    try:
-        texto = caminho.read_text(encoding="utf-8")
-    except OSError as e:
-        raise ErroDeDados(f"{doc['transcricao']}: não se lê ({e})")
-    paginas = paginas_da_transcricao(texto, padrao["titulo_pagina"])
+    """O resultado de um documento, com as formas ja compiladas (expressoes); a transcricao que falta, ou que nao se le
+    em UTF-8, e erro, que diz o arquivo."""
+    paginas = paginas_da_transcricao(le_texto(raiz / doc["transcricao"]), padrao["titulo_pagina"])
     sumario = entradas_do_sumario(linhas_das_faixas(paginas, doc["sumario"], padrao), formas["sumario"],
                                   formas["junta"])
     itens = itens_do_corpo(linhas_das_faixas(paginas, doc["corpo"], padrao), formas["item"], sumario)
