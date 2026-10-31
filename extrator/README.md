@@ -128,6 +128,7 @@ dele). O que as outras peças usam:
 | `le_json(arquivo)` | os dados de um arquivo JSON em UTF-8, sem molde, com `ErroDeDados` que diz o arquivo quando ele falta ou não se lê como JSON |
 | `campo(dados, "a/b", tipo)` | o valor no caminho, do tipo pedido (um tipo ou uma tupla), com `ErroDeDados` que diz o caminho quando ele falta ou é de outro tipo; um booleano só vale quando o tipo pedido é `bool` |
 | `expressao(dados, "a/b")` | a expressão regular do campo, compilada, com `ErroDeDados` que diz o caminho quando não compila |
+| `compila(texto, onde)` | a expressão regular de um texto, compilada, com `ErroDeDados` que diz onde ela está quando não compila, para a expressão que não está num campo só, como a de uma lista |
 | `codificacao(dados, "a/b")` | a codificação do campo, quando o Python a conhece, com `ErroDeDados` que diz o caminho e a codificação quando ela não existe |
 | `repetidos(valores)` | os valores que aparecem mais de uma vez na lista, cada um uma vez, em ordem; nenhum quando nada se repete |
 | `paginas_da_transcricao(texto, modelo)` | as páginas de uma transcrição pelo modelo do título de página (`{rotulo}` e `{arquivo}`), cada uma com as linhas numeradas |

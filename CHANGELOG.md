@@ -9,6 +9,10 @@ prateleira segue o [Versionamento Semântico](https://semver.org/lang/pt-BR/spec
 
 ### Adicionado
 
+- `dicionario-das-duvidas`: confere os códigos dos títulos de um dicionário das dúvidas (só
+  códigos entre as marcas, cada um com as partes na forma dada, nenhum o começo de outro, em
+  ordem natural), com a forma dos códigos na configuração; e o teste, com a lista de
+  estragos dele.
 - `divergencias`: confere a lista dos fatos que as fontes dizem de formas diferentes, cada
   um com a forma que o material ensina e as outras, cada forma com a fonte, e grava o
   documento deles, ou confere que o gravado está em dia; e o teste, com a lista de estragos

@@ -4,17 +4,11 @@ O que falta fazer na prateleira, e só o que falta, em ordem. O que fica pronto 
 entra no [CHANGELOG.md](CHANGELOG.md), na seção `Não publicado`. O
 [relatório](RELATORIO-AGNOSTICO.md) diz onde está cada problema e como corrigir.
 
-1. **As peças do dicionário das dúvidas e do glossário**, para qualquer projeto que ensina a
-   partir de fontes, com o que é de cada projeto na configuração ou no comando:
-
-   - **o dicionário das dúvidas:** as dúvidas que as fontes deixam, cada uma sob os códigos
-     do que ela toca e com as respostas que teve, para a mesma informação não se repetir; a
-     peça confere os códigos dos títulos (a forma de cada um, a ordem, o código que cobre
-     outro e o repetido), com a forma dos códigos na configuração;
-   - **o glossário:** os termos com a definição tirada da fonte e a citação dela, mais os
-     termos que os documentos marcam com `<dfn>`; a peça grava o glossário em ordem
-     alfabética, ou confere que ele está em dia, com a âncora de cada termo e o link para o
-     lugar de cada marca.
+1. **A peça do glossário**, para qualquer projeto que ensina a partir de fontes, com o que é
+   de cada projeto na configuração ou no comando: os termos com a definição tirada da fonte
+   e a citação dela, mais os termos que os documentos marcam com `<dfn>`; a peça grava o
+   glossário em ordem alfabética, ou confere que ele está em dia, com a âncora de cada termo
+   e o link para o lugar de cada marca.
 2. O JSON de saída do `itens-numerados` só com dados (item 1 do relatório).
 3. O `confere-forma` sem texto narrado no JSON (item 2 do relatório).
 4. A lista de estragos do `copias-estragadas` conferida contra a peça antes da rodada (item
