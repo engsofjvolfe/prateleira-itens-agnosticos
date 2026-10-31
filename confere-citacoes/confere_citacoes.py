@@ -18,7 +18,8 @@ espacos vira um espaco so; maiusculas contam.
 
 Mostra uma linha "ERRO arquivo:linha: motivo" por problema e um resumo; sai com 0 sem
 erro, 1 com erro e 2 quando a configuracao ou um argumento nao serve. Usa so a biblioteca
-padrao e o extrator_comum.py, da peca extrator, na pasta irma "extrator" ou na mesma pasta.
+padrao, o extrator_comum.py e o texto_comum.py, da peca extrator, na pasta irma "extrator"
+ou na mesma pasta.
 
 Uso:
     python3 -I confere_citacoes.py <configuracao.json> <pasta das fontes> <texto.md>...
@@ -26,13 +27,13 @@ Uso:
 
 import argparse
 import sys
-import unicodedata
 from pathlib import Path
 
 PASTA = Path(__file__).resolve().parent
 for pasta in (PASTA.parent / "extrator", PASTA):  # na prateleira, a peca extrator fica na pasta irma
     sys.path.insert(0, str(pasta))
 from extrator_comum import ErroDeDados, expressao, le_conferido, paginas_da_transcricao, preenche  # noqa: E402
+from texto_comum import espacos_juntos, nfc  # noqa: E402
 
 MOLDE = PASTA / "esquemas" / "confere-citacoes.schema.json"
 GRUPOS = {"referencia": ("fonte", "paginas"), "citacao": ("trecho",)}  # os grupos que cada expressao tem de ter
@@ -60,12 +61,12 @@ def le_configuracao(caminho):
 
 def letras(texto, equivalentes):
     """O texto em NFC, com cada caractere de um grupo de equivalentes trocado pelo primeiro do grupo."""
-    return "".join(equivalentes.get(c, c) for c in unicodedata.normalize("NFC", texto))
+    return "".join(equivalentes.get(c, c) for c in nfc(texto))
 
 
 def comparavel(texto, conf):
     """O texto como se compara: equivalentes iguais e cada trecho de espacos um espaco so, sem espaco nas pontas."""
-    return " ".join(letras(texto, conf["equivalentes"]).split())
+    return espacos_juntos(letras(texto, conf["equivalentes"]))
 
 
 def le_fonte(caminho, conf):

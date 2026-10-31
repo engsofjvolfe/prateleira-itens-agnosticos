@@ -31,8 +31,8 @@ Ele confere regras, nunca uma frase pronta:
 - com um nível só, a unidade é a região;
 - níveis e esperado que não servem dão `ErroDeMarcas`, que diz o que está errado.
 
-Precisa do `extrator_comum.py`, do extrator, na pasta irmã `extrator/` da peça ou na
-própria pasta da peça. Diz `0 falha(s)` quando passa; senão, uma linha `FALHA` para cada
+Precisa do `extrator_comum.py` e do `texto_comum.py`, do extrator, na pasta irmã
+`extrator/` da peça ou na própria pasta da peça. Diz `0 falha(s)` quando passa; senão, uma linha `FALHA` para cada
 conferência que não passou, e sai com código 1.
 
 As cópias estragadas da peça estão em `estragos.json`, nesta pasta, para o

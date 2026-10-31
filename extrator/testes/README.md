@@ -84,3 +84,27 @@ passou, e sai com código 1. As cópias estragadas do módulo comum estão em
 `estragos-extrator-comum.json`, nesta pasta:
 
     python3 -I ../../copias-estragadas/estraga.py .. teste_extrator_comum.py estragos-extrator-comum.json <pasta de trabalho nova>
+
+## O módulo de texto
+
+    python3 -I teste_texto_comum.py <pasta do extrator> <pasta de trabalho nova> [--semente N]
+
+Testa o `texto_comum.py`. As palavras e os trechos de espaços são sorteados, sempre os
+mesmos, porque a semente é fixa (outra vem com `--semente`), com letras de fora do ASCII,
+cada uma escrita como um caractere só ou como a letra e o acento separados. A pasta de
+trabalho não é usada. O teste confere regras, nunca uma frase pronta:
+
+- `nfc` dá cada letra com acento como um caractere só, escrita assim ou como a letra e o
+  acento separados, também misturadas no mesmo texto; o texto já em NFC não muda; e o
+  caractere de compatibilidade, como uma ligadura, fica como está;
+- `espacos_juntos` dá as palavras do texto, na ordem, separadas por um espaço só: cada
+  trecho de espaços, de qualquer espaço do Unicode, com as quebras de linha e as
+  tabulações, vira um espaço, e os das pontas saem; as letras ficam como estão; o texto só
+  de espaços, ou vazio, dá o texto vazio;
+- duas rodadas dão o mesmo.
+
+Diz `0 falha(s)` quando passa; senão, uma linha `FALHA` para cada conferência que não
+passou, e sai com código 1. As cópias estragadas do módulo de texto estão em
+`estragos-texto-comum.json`, nesta pasta:
+
+    python3 -I ../../copias-estragadas/estraga.py .. teste_texto_comum.py estragos-texto-comum.json <pasta de trabalho nova>

@@ -10,10 +10,11 @@ regulamento — e confere a numeração deles, por programa. Serve para três co
 - dividir o documento em grupos de tópicos do sumário, para dividir a leitura dele em
   partes.
 
-Usa só a biblioteca padrão do Python e o `extrator_comum.py`, do
-[extrator](../extrator/README.md), que divide a transcrição em páginas pelo mesmo modelo
-de título que o extrator usa para escrevê-la. Na prateleira, ele é achado na pasta irmã
-`extrator/`; numa cópia fora da prateleira, os dois ficam na mesma pasta.
+Usa só a biblioteca padrão do Python e dois módulos do [extrator](../extrator/README.md): o
+`extrator_comum.py`, que divide a transcrição em páginas pelo mesmo modelo de título que o
+extrator usa para escrevê-la, e o `texto_comum.py`, que junta os espaços dos títulos que se
+comparam. Na prateleira, eles são achados na pasta irmã `extrator/`; numa cópia fora da
+prateleira, ficam na mesma pasta do script.
 
 ## Como rodar
 

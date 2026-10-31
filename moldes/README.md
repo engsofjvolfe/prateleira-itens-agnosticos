@@ -14,10 +14,10 @@ campos que dizem o tipo dele, o grupo, o caminho e para onde ele vai. Serve para
 - aplicar um limite por aula a um material que cobre só as aulas até uma última: de que
   cada aula trata, o que ela só menciona e que lugares ficam.
 
-Usa só a biblioteca padrão do Python e o `extrator_comum.py`, do
-[extrator](../extrator/README.md): os scripts leem por ele a forma e as regras pelos moldes
-delas, e as peças comuns acham por ele os valores repetidos de uma lista. Ele é achado na
-pasta irmã `extrator/` ou na mesma pasta.
+Usa só a biblioteca padrão do Python e dois módulos do [extrator](../extrator/README.md): o
+`extrator_comum.py`, pelo qual os scripts leem a forma e as regras pelos moldes delas e as
+peças comuns acham os valores repetidos de uma lista, e o `texto_comum.py`, que passa os
+textos para a forma NFC. Eles são achados na pasta irmã `extrator/` ou na mesma pasta.
 
 ## Como rodar
 
@@ -161,7 +161,7 @@ que não está entre as aulas, que vem depois da última ou que não tem trecho 
 ## Peças comuns
 
 Não rodam sozinhas: os scripts desta pasta, e os de um projeto que as copie (com o
-`extrator_comum.py` ao lado), as importam.
+`extrator_comum.py` e o `texto_comum.py` ao lado), as importam.
 
 - `analises.py` — lê as análises da pasta pela forma, já conferida pelo molde dela, depois
   de conferir o que o molde não vê (o nome de campo repetido e o papel em mais de um campo,

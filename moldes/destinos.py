@@ -10,12 +10,20 @@ cabecalho "destino, unidade" e uma linha por id nomeado: o destino e o pedaco, c
 analises o escrevem; a unidade e o id que ele nomeia, como o projeto chama as coisas que
 ganham material (uma unidade, um item, um conjunto). O pedaco que nomeia mais de um id tem
 uma linha para cada; o que nao nomeia nenhum tem uma linha com a unidade vazia. Os textos
-se comparam em NFC. O programa que usa a tabela confere os ids dela contra os que tem,
-pelo desconhecidos().
+se comparam em NFC, pelo texto_comum.py, do extrator, na pasta irma "extrator" ou na mesma
+pasta. O programa que usa a tabela confere os ids dela contra os que tem, pelo
+desconhecidos().
 """
-import lugares
-import tabela
-from analises import nfc, unicos
+import sys
+from pathlib import Path
+
+PASTA = Path(__file__).resolve().parent
+for pasta in (PASTA.parent / "extrator", PASTA):  # na prateleira, o extrator fica na pasta irma
+    sys.path.insert(0, str(pasta))
+import lugares  # noqa: E402
+import tabela  # noqa: E402
+from analises import unicos  # noqa: E402
+from texto_comum import nfc  # noqa: E402
 
 CABECALHO = ("destino", "unidade")  # as colunas da tabela, na ordem
 

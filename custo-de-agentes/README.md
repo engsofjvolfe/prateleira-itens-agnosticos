@@ -7,9 +7,10 @@ trabalho e qual deles encheu o contexto.
 
 Usa só a biblioteca padrão do Python, o `transcricoes.py`, do
 [historico-de-arquivo](../historico-de-arquivo/README.md), que lê as transcrições (um evento
-JSON por linha, pulando a linha que não é um objeto JSON), e o `extrator_comum.py`, do
-[extrator](../extrator/README.md), que lê a configuração pelo molde dela. Na prateleira,
-eles são achados nas pastas irmãs; numa cópia fora da prateleira, na mesma pasta do script.
+JSON por linha, pulando a linha que não é um objeto JSON), e, do
+[extrator](../extrator/README.md), o `extrator_comum.py`, que lê a configuração pelo molde
+dela, e o `texto_comum.py`, que junta os espaços do começo da pergunta. Na prateleira, eles
+são achados nas pastas irmãs; numa cópia fora da prateleira, na mesma pasta do script.
 
 ## Como rodar
 

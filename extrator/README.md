@@ -146,6 +146,17 @@ tem ou que volta a ela mesma e a forma que não compila também são `ErroDeDado
 palavra nova é uma linha no molde dos moldes e o código que a confere, com o caso dela no
 teste.
 
+## O módulo de texto
+
+O `texto_comum.py` guarda o que as peças da prateleira fazem do mesmo jeito com um texto.
+Não se roda: as peças o importam da pasta irmã `extrator/` ou da própria pasta (numa cópia
+fora da prateleira, ao lado do script). Usa só a biblioteca padrão do Python.
+
+| Função | O que faz |
+| --- | --- |
+| `nfc(texto)` | o texto na forma Unicode NFC, em que a mesma letra se escreve sempre do mesmo jeito: a letra com acento, escrita como um caractere só ou como a letra e o acento separados, vira um caractere só; o caractere de compatibilidade, como uma ligadura, fica como está |
+| `espacos_juntos(texto)` | o texto com cada trecho de espaços (qualquer espaço do Unicode, com as quebras de linha e as tabulações) virando um espaço só, sem espaço nas pontas; as letras ficam como estão |
+
 ## Testes
 
 Em [testes/](testes/README.md).

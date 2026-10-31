@@ -2,7 +2,8 @@
 Diz quais arquivos de uma pasta tem texto em comum com os arquivos de outras pastas. Texto
 em comum e uma sequencia de N palavras seguidas igual nos dois arquivos. As palavras sao
 comparadas sem diferenca de maiuscula, de acento escrito de um jeito ou de outro (as formas
-sao juntadas pela NFC) e do que fica entre elas: espaco, quebra de linha ou pontuacao.
+sao juntadas pela NFC) e do que fica entre elas: espaco, quebra de linha ou pontuacao. A NFC
+vem do texto_comum.py, do extrator, na pasta irma "extrator" ou na mesma pasta.
 
 Texto e o arquivo que se le em UTF-8 e nao tem o byte zero. Um arquivo examinado que nao e
 texto sai no relatorio com "não" na coluna texto, nunca pulado calado; um comparado que nao
@@ -32,9 +33,13 @@ import fnmatch
 import os
 import re
 import sys
-import unicodedata
 from collections import Counter
 from pathlib import Path
+
+PASTA = Path(__file__).resolve().parent
+for pasta in (PASTA.parent / "extrator", PASTA):  # na prateleira, o extrator fica na pasta irma
+    sys.path.insert(0, str(pasta))
+from texto_comum import nfc  # noqa: E402
 
 PALAVRA = re.compile(r"[^\W_]+")  # letras e algarismos seguidos
 COLUNAS = ["arquivo", "texto", "sequencias", "em_comum", "mais_parecido", "em_comum_com_ele"]
@@ -67,7 +72,7 @@ def texto_de(caminho):
 
 def sequencias(texto, n):
     """As sequencias de n palavras seguidas do texto, cada uma uma vez."""
-    palavras = PALAVRA.findall(unicodedata.normalize("NFC", texto.casefold()))
+    palavras = PALAVRA.findall(nfc(texto.casefold()))
     return {" ".join(palavras[i:i + n]) for i in range(len(palavras) - n + 1)}
 
 

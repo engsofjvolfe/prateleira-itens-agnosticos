@@ -14,8 +14,8 @@ mesma pasta.
 
 Escreve na tela uma tabela separada por tabulacao: o cabecalho e uma linha por transcricao
 que tem alguma linha, na ordem do caminho; no comeco, cada trecho de espacos (com quebras de
-linha e tabulacoes) vira um espaco. Sai com 0, ou com 2 quando a configuracao ou a pasta nao
-serve.
+linha e tabulacoes) vira um espaco, pelo texto_comum.py, da peca extrator. Sai com 0, ou com
+2 quando a configuracao ou a pasta nao serve.
 
 Uso:
     python3 -I custo.py <configuracao.json> <pasta das transcricoes>
@@ -31,6 +31,7 @@ PASTA = Path(__file__).resolve().parent
 for pasta in (PASTA.parent / "extrator", PASTA.parent / "historico-de-arquivo", PASTA):
     sys.path.insert(0, str(pasta))
 from extrator_comum import ErroDeDados, le_conferido  # noqa: E402
+from texto_comum import espacos_juntos  # noqa: E402
 from transcricoes import eventos  # noqa: E402
 
 MOLDE = PASTA / "esquemas" / "custo-de-agentes.schema.json"
@@ -72,7 +73,7 @@ def custo(pasta, conf):
             continue
         texto = mensagem.get(conf["conteudo"])
         if linha["comeco"] is None and evento.get(conf["tipo"]) == conf["pergunta"] and isinstance(texto, str):
-            linha["comeco"] = " ".join(texto.split())[:conf["letras"]]
+            linha["comeco"] = espacos_juntos(texto)[:conf["letras"]]
         uso = mensagem.get(conf["uso"])
         if isinstance(uso, dict):
             contexto, saida = sum(numero(uso, c) for c in conf["entrada"]), numero(uso, conf["saida"])

@@ -31,6 +31,7 @@ from html.parser import HTMLParser
 from pathlib import Path
 
 from extrator_comum import pedacos
+from texto_comum import espacos_juntos
 
 OPCOES = ("codificacao", "blocos", "quebras", "vazios", "ignorar", "conteudo", "tabela", "destaques")
 
@@ -50,7 +51,7 @@ def _junta(partes):
     """O texto das partes (texto, destaques), com os espacos juntados: a linha escrita,
     quando nada tem destaque, ou a lista de pedacos."""
     if not any(d for _, d in partes):
-        return " ".join("".join(s for s, _ in partes).split())
+        return espacos_juntos("".join(s for s, _ in partes))
     return pedacos(partes)
 
 

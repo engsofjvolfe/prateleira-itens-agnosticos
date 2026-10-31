@@ -160,7 +160,7 @@
   {
    "nome": "marcacao-sem-juntar-espacos",
    "arquivo": "leitor_marcacao.py",
-   "de": "return \" \".join(\"\".join(s for s, _ in partes).split())",
+   "de": "return espacos_juntos(\"\".join(s for s, _ in partes))",
    "para": "return \"\".join(s for s, _ in partes).strip()"
   },
   {

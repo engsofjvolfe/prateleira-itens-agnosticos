@@ -22,10 +22,12 @@ no fim. O teste confere regras, nunca uma frase pronta:
 - o relatório tem uma linha por arquivo, em ordem de caminho, e duas rodadas dão a mesma
   saída.
 
-Diz `0 falha(s)` quando passa; senão, uma linha `FALHA` para cada conferência que não
-passou, e sai com código 1.
+Precisa do `texto_comum.py`, do extrator, na pasta irmã `extrator/` da peça ou na própria
+pasta da peça. Diz `0 falha(s)` quando passa; senão, uma linha `FALHA` para cada
+conferência que não passou, e sai com código 1.
 
 As cópias estragadas da peça estão em `estragos.json`, nesta pasta, para o
-[`estraga.py`](../../copias-estragadas/README.md):
+[`estraga.py`](../../copias-estragadas/README.md), com a pasta do extrator ao lado da
+cópia:
 
-    python3 -I ../../copias-estragadas/estraga.py .. teste_texto_em_comum.py estragos.json <pasta de trabalho nova>
+    python3 -I ../../copias-estragadas/estraga.py .. teste_texto_em_comum.py estragos.json <pasta de trabalho nova> --irma ../../extrator

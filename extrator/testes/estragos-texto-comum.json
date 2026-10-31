@@ -1,0 +1,19 @@
+{
+ "versao_schema": 1,
+ "estragos": [
+  {"nome": "nfc-pela-nfd", "arquivo": "texto_comum.py",
+   "de": "FORMA = \"NFC\"", "para": "FORMA = \"NFD\""},
+  {"nome": "nfc-pela-nfkc", "arquivo": "texto_comum.py",
+   "de": "FORMA = \"NFC\"", "para": "FORMA = \"NFKC\""},
+  {"nome": "nfc-sem-normalizar", "arquivo": "texto_comum.py",
+   "de": "    return unicodedata.normalize(FORMA, texto)", "para": "    return texto"},
+  {"nome": "espacos-so-o-espaco-comum", "arquivo": "texto_comum.py",
+   "de": "ESPACO.join(texto.split())", "para": "ESPACO.join(p for p in texto.split(ESPACO) if p)"},
+  {"nome": "espacos-com-as-pontas", "arquivo": "texto_comum.py",
+   "de": "return ESPACO.join(texto.split())", "para": "return __import__(\"re\").sub(r\"\\s+\", ESPACO, texto)"},
+  {"nome": "espacos-sem-espaco", "arquivo": "texto_comum.py",
+   "de": "ESPACO.join(", "para": "\"\".join("},
+  {"nome": "espacos-mudam-as-letras", "arquivo": "texto_comum.py",
+   "de": "ESPACO.join(texto.split())", "para": "ESPACO.join(nfc(texto).split())"}
+ ]
+}

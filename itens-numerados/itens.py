@@ -48,6 +48,7 @@ for pasta in (PASTA.parent / "extrator", PASTA):  # na prateleira, o extrator fi
     sys.path.insert(0, str(pasta))
 from extrator_comum import (ErroDeDados, compila, confere_padrao, le_conferido, le_configuracao,  # noqa: E402
                             paginas_da_transcricao, paginas_das_faixas, texto_simples)
+from texto_comum import espacos_juntos  # noqa: E402
 
 MOLDE = PASTA / "esquemas" / "itens-numerados.schema.json"  # o molde da configuracao dos itens
 LISTAS_DE_FORMAS = ("item", "sumario")  # as listas de formas de linha, cada forma com a expressao dela
@@ -81,7 +82,8 @@ def seguintes(anterior):
 
 
 def normal(texto):
-    return " ".join(texto.split()).casefold()
+    """O texto como os titulos se comparam: com os espacos juntos e sem diferenca de maiuscula."""
+    return espacos_juntos(texto).casefold()
 
 
 def expressoes(config, chave):

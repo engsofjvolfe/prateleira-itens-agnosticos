@@ -18,6 +18,11 @@ prateleira segue o [Versionamento Semântico](https://semver.org/lang/pt-BR/spec
   uma vez numa lista; o próprio `extrator`, o `copias-estragadas`, o `historico-de-arquivo`,
   o `marcas`, o `moldes`, o `ganchos/chamadas-permitidas` e o `ganchos/protocolo`, que
   achavam os repetidos cada um por conta própria, passam a usá-la.
+- `extrator`: o módulo de texto comum, `texto_comum.py`, com a função `nfc`, que passa o
+  texto para a forma Unicode NFC, e a `espacos_juntos`, que junta cada trecho de espaços
+  num espaço só; e o teste dele, com a lista de estragos. O leitor de marcação do
+  `extrator`, o `confere-citacoes`, o `custo-de-agentes`, o `itens-numerados`, o `marcas`, o
+  `moldes` e o `texto-em-comum`, que faziam isso cada um por conta própria, passam a usá-lo.
 - `ganchos/leitura-do-terminal`: a função `depois_do_comando`, que acha nas palavras de um
   comando simples um comando de uma ou mais palavras, como `git grep`, também com outras
   palavras no meio, e a `comandos_achados`, que dá cada vez que um comando, ou um de dentro
@@ -37,6 +42,9 @@ prateleira segue o [Versionamento Semântico](https://semver.org/lang/pt-BR/spec
   diz o caminho do valor.
 - `confere-citacoes`: os pedaços de um trecho têm de estar na fonte na ordem do trecho, e
   cada supressão entre dois deles tem de omitir alguma coisa além das pontas e dos espaços.
+- `confere-citacoes`, `custo-de-agentes`, `itens-numerados`, `marcas`, `moldes` e
+  `texto-em-comum`: precisam do `texto_comum.py`, do `extrator`, na pasta irmã ou na mesma
+  pasta.
 - `extrator`: o leitor de molde do módulo comum confere o molde inteiro — o tipo, o valor
   fixo e a lista de valores, o tamanho, a forma do texto, os limites, os itens, os campos
   obrigatórios, o `allOf` e o `if`, com `$ref` para a raiz e para `$defs` — e diz o caminho

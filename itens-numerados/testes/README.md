@@ -24,7 +24,8 @@ O teste confere regras que valem para qualquer documento, nunca uma lista pronta
   de uma do sumário ou a do número sozinho, dá o erro que diz o campo dela; duas rodadas dão
   a mesma saída.
 
-Precisa do `extrator_comum.py`, do extrator, na pasta irmã `extrator/` ou na mesma pasta.
+Precisa do `extrator_comum.py` e do `texto_comum.py`, do extrator, na pasta irmã
+`extrator/` ou na mesma pasta.
 Diz `0 falha(s)` quando passa; senão, uma linha `FALHA` para cada conferência que não
 passou, e sai com código 1.
 

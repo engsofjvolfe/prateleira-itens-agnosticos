@@ -79,8 +79,8 @@ O `teste_contar_e_separar.py`:
 - duas rodadas dão a mesma saída, e a ordem em que os arquivos foram criados não muda nada;
   com problema nas análises, a contagem sai com código 1, e sem problema, com 0.
 
-Precisam do `extrator_comum.py`, do extrator, na pasta irmã `extrator/` da peça ou na
-própria pasta da peça. Cada um diz `0 falha(s)` quando passa; senão, uma linha `FALHA` para
+Precisam do `extrator_comum.py` e do `texto_comum.py`, do extrator, na pasta irmã
+`extrator/` da peça ou na própria pasta da peça. Cada um diz `0 falha(s)` quando passa; senão, uma linha `FALHA` para
 cada conferência que não passou, e sai com código 1.
 
 As cópias estragadas da peça estão em duas listas, nesta pasta, para o

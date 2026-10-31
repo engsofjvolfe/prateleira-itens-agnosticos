@@ -9,7 +9,10 @@ Na comparação não importa maiúscula ou minúscula, acento escrito de um jeit
 o que fica entre as palavras (espaço, quebra de linha, pontuação). Exemplo, com N = 4: "a
 parede da célula" e "A PAREDE, da célula" são a mesma sequência.
 
-Usa só a biblioteca padrão do Python.
+Usa só a biblioteca padrão do Python e o `texto_comum.py`, do
+[extrator](../extrator/README.md#o-módulo-de-texto), que passa o texto para a forma NFC. Na
+prateleira, ele é achado na pasta irmã `extrator/`; numa cópia fora da prateleira, na mesma
+pasta do script.
 
 ## Como rodar
 

@@ -27,20 +27,20 @@ muda, e a mudanca aparece em toda decisao guardada pelo id. O id se monta por id
 e um id, ou o comeco dele (a aula; a aula e o slide; a aula, o slide e a posicao), se le por
 le_codigo, que le o que id_do_trecho escreve.
 
-O nome de campo repetido e o id repetido sao achados pelo extrator_comum.py, do extrator, na
-pasta irma "extrator" ou na mesma pasta.
+O nome de campo repetido e o id repetido sao achados pelo extrator_comum.py, e a NFC vem do
+texto_comum.py, os dois do extrator, na pasta irma "extrator" ou na mesma pasta.
 """
 import collections
 import hashlib
 import re
 import sys
-import unicodedata
 from pathlib import Path
 
 PASTA = Path(__file__).resolve().parent
 for pasta in (PASTA.parent / "extrator", PASTA):  # na prateleira, o extrator fica na pasta irma
     sys.path.insert(0, str(pasta))
 from extrator_comum import repetidos  # noqa: E402
+from texto_comum import nfc  # noqa: E402
 
 PAPEIS = ("tipo", "grupo", "caminho", "destino")  # o que um campo pode fazer, como o molde da forma declara
 PAPEIS_EM_LISTA = ("tipo", "grupo", "caminho")  # os papeis que pedem um valor em lista
@@ -56,10 +56,6 @@ Codigo = collections.namedtuple("Codigo", "aula slide posicao hash")
 
 class ErroDeForma(ValueError):
     """Forma, arquivo ou linha fora do que a forma declara; a mensagem diz o que e onde."""
-
-
-def nfc(texto):
-    return unicodedata.normalize("NFC", texto)
 
 
 def id_do_trecho(aula, slide, posicao, texto):

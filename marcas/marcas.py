@@ -22,19 +22,19 @@ recebem codigos.
 
 Os avisos (Aviso) saem em ordem de arquivo e linha; CASOS da o tipo de cada caso, FALTA ou
 ERRO. Niveis ou esperado que nao servem dao ErroDeMarcas, que diz o que esta errado. O nivel
-e o codigo repetidos sao achados pelo extrator_comum.py, do extrator, na pasta irma
-"extrator" ou na mesma pasta.
+e o codigo repetidos sao achados pelo extrator_comum.py, e a NFC vem do texto_comum.py, os
+dois do extrator, na pasta irma "extrator" ou na mesma pasta.
 """
 import bisect
 import collections
 import sys
-import unicodedata
 from pathlib import Path
 
 PASTA = Path(__file__).resolve().parent
 for pasta in (PASTA.parent / "extrator", PASTA):  # na prateleira, o extrator fica na pasta irma
     sys.path.insert(0, str(pasta))
 from extrator_comum import repetidos  # noqa: E402
+from texto_comum import nfc  # noqa: E402
 
 ABRE, FECHA = "<!--", "-->"  # o comeco e o fim de um comentario HTML
 INICIO_DO_FIM = ABRE.index(FECHA[:2])  # o fim pode usar os hifens do comeco: <!--> e <!---> sao comentarios vazios
@@ -65,10 +65,6 @@ Indice = collections.namedtuple("Indice", "ordem listadas lugares livres codigos
 
 class ErroDeMarcas(ValueError):
     """Niveis ou esperado que nao servem; a mensagem diz o que e onde."""
-
-
-def nfc(texto):
-    return unicodedata.normalize("NFC", texto)
 
 
 def e_codigo(valor):

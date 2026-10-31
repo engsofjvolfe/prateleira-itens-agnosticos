@@ -4,14 +4,14 @@
   {
    "nome": "sem-juntar-acentos",
    "arquivo": "texto_em_comum.py",
-   "de": "unicodedata.normalize(\"NFC\", texto.casefold())",
+   "de": "nfc(texto.casefold())",
    "para": "texto.casefold()"
   },
   {
    "nome": "com-maiusculas",
    "arquivo": "texto_em_comum.py",
-   "de": "unicodedata.normalize(\"NFC\", texto.casefold())",
-   "para": "unicodedata.normalize(\"NFC\", texto)"
+   "de": "nfc(texto.casefold())",
+   "para": "nfc(texto)"
   },
   {
    "nome": "uma-sequencia-a-menos",
