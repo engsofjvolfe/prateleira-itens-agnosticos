@@ -22,8 +22,26 @@
   {
    "nome": "origem-sem-conferir",
    "arquivo": "copia.py",
-   "de": "        if not (a.peca / origem).is_file():\n",
-   "para": "        if False:\n"
+   "de": "texto = le_texto(a.peca / origem)",
+   "para": "texto = (a.peca / origem).read_text(encoding=\"utf-8\") if (a.peca / origem).is_file() else \"\""
+  },
+  {
+   "nome": "referencia-sem-conferir",
+   "arquivo": "copia.py",
+   "de": "linhas = le_texto(referencia).split(\"\\n\")",
+   "para": "linhas = Path(referencia).read_text(encoding=\"utf-8\").split(\"\\n\") if Path(referencia).is_file() else []"
+  },
+  {
+   "nome": "sinal-vazio-aceito",
+   "arquivo": "copia.py",
+   "de": "    if not a.comentario:\n",
+   "para": "    if False:\n"
+  },
+  {
+   "nome": "erro-sai-com-1",
+   "arquivo": "copia.py",
+   "de": "        return 2\n",
+   "para": "        return 1\n"
   },
   {
    "nome": "cabecalho-sem-linha-em-branco",

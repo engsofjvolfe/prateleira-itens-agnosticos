@@ -20,10 +20,10 @@ Os testes conferem regras que valem para qualquer documento, nunca uma lista pro
     comeca na primeira vez que aparece uma entrada do sumario; cada um tem o tamanho em
     entradas, menos o ultimo, que tem de 1 ao tamanho; as paginas de cada grupo sao a do
     primeiro e a do ultimo item;
-  - todo erro para tudo, sem gravar nada; a expressao que nao compila, de uma forma do
-    corpo, de uma do sumario ou a do numero sozinho, da o erro que diz o campo dela; a
-    transcricao que nao se le em UTF-8 da o erro que diz o arquivo; duas rodadas dao a mesma
-    saida.
+  - todo erro sai com codigo 2 e para tudo, sem gravar nada; a expressao que nao compila,
+    de uma forma do corpo, de uma do sumario ou a do numero sozinho, da o erro que diz o
+    campo dela; a transcricao que nao se le em UTF-8 da o erro que diz o arquivo; duas
+    rodadas dao a mesma saida.
 Uso:
     python3 -I teste_itens.py <pasta de itens.py> <pasta de trabalho nova>
 Precisa do extrator_comum.py, do extrator, na pasta irma "extrator" ou na mesma pasta.
@@ -367,11 +367,11 @@ for nome, erro_ in ERROS.items():
 
 
 def erro(nome, descricao, diz=None, **kw):
-    """Confere que o caso e erro, sem gravar nada; com diz, que a mensagem diz esse texto."""
+    """Confere que o caso e erro, que sai com 2, sem gravar nada; com diz, que a mensagem diz esse texto."""
     cod, out, d, saida = roda(nome, TEXTO, PAGINAS, **kw)
     fala = "" if diz is None else f", e diz {diz!r}"
-    confere(cod == 1 and out.startswith("ERRO") and not saida.exists() and (diz is None or diz in out),
-            f"{descricao} é erro, sem gravar nada{fala}: {out}")
+    confere(cod == 2 and out.startswith("ERRO") and not saida.exists() and (diz is None or diz in out),
+            f"{descricao} é erro, que sai com 2, sem gravar nada{fala}: {out}")
 
 
 def com_forma_ruim(tipo):

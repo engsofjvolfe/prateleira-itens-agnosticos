@@ -18,8 +18,9 @@ nenhum tipo de arquivo fica no código: tudo vem de dois arquivos de dados.
   título de página dela, como o registro de onde ela veio, fica como está.
 
 Sem `--substituir`, a transcrição que já existe não é tocada. Com qualquer `ERRO`, em
-qualquer documento, nada é gravado. No fim, uma linha por transcrição gravada: quantas
-páginas, quantas sem texto, quantas lidas pelo OCR, quantas trocas e quantas correções.
+qualquer documento, sai com código 2 e nada é gravado. No fim, uma linha por transcrição
+gravada: quantas páginas, quantas sem texto, quantas lidas pelo OCR, quantas trocas e
+quantas correções; e sai com código 0.
 
 ## O que precisa estar instalado
 

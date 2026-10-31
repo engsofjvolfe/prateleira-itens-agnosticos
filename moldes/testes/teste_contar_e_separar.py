@@ -11,12 +11,13 @@ Os testes conferem regras que valem para qualquer forma, nunca uma lista pronta:
   - a contagem de cada documento e de cada classe bate com o que foi sorteado, com um
     problema por trecho com problema; o do grupo desconhecido diz o grupo;
   - a lista do separar.py traz exatamente os trechos do documento, ou os que esperam o
-    assunto; a lista de um documento que nao e de conteudo e ERRO e nao grava;
+    assunto; a lista de um documento que nao e de conteudo e ERRO, que sai com codigo 2, e
+    nao grava;
   - sem erro, a saida e gravada, numa pasta que o script cria quando ela ainda nao existe,
     e a contagem traz a tabela das classes;
   - forma, regras e analises erradas dao ERRO, que diz o que esta errado (no que o molde
-    pega, o caminho do valor), e nada e gravado; a analise que nao se le em UTF-8 tambem, e
-    o ERRO diz o arquivo dela;
+    pega, o caminho do valor) e sai com codigo 2, e nada e gravado; a analise que nao se le
+    em UTF-8 tambem, e o ERRO diz o arquivo dela;
   - duas rodadas dao a mesma saida, e a ordem em que os arquivos foram criados nao muda
     nada; com problema nas analises, a contagem sai com codigo 1, e sem problema, com 0.
 Uso:
@@ -136,8 +137,8 @@ def teste_scripts(mundo, frases):
     for documento in [SORTEIO.choice(todos), "nao-" + conteudo[0]]:
         saida = pasta / f"lista-errada-{documento}.md"
         r = roda("separar.py", m["pasta"], m["arquivo_forma"], m["arquivo_regras"], saida, "--documento", documento)
-        confere(r.returncode == 1 and not saida.exists() and documento in r.stdout,
-                f"a lista de um documento que não é de conteúdo é ERRO e não grava: {documento}")
+        confere(r.returncode == 2 and not saida.exists() and documento in r.stdout,
+                f"a lista de um documento que não é de conteúdo é ERRO, que sai com 2, e não grava: {documento}")
 
     limpo = sorteia_mundo(TRABALHO / "limpo", com_problemas=False)
     r = roda("contar.py", limpo["pasta"], limpo["arquivo_forma"], limpo["arquivo_regras"], pasta / "limpo.md")
@@ -151,9 +152,10 @@ def teste_erros(mundo):
         for script, extra in [("contar.py", []), ("separar.py", ["--assunto"])]:
             saida = caso / f"saida-{script}.md"
             res = roda(script, pasta, f, r, saida, *extra)
-            confere(res.returncode == 1 and not saida.exists() and res.stdout.startswith("ERRO")
+            confere(res.returncode == 2 and not saida.exists() and res.stdout.startswith("ERRO")
                     and diz(res.stdout, culpado),
-                    f"erro {nome} no {script}: ERRO que diz {culpado!r}, nada gravado: {res.stdout}{res.stderr}")
+                    f"erro {nome} no {script}: ERRO que diz {culpado!r}, sai com 2, nada gravado: "
+                    f"{res.stdout}{res.stderr}")
 
 
 def teste_analise_fora_do_utf8(mundo):
@@ -165,7 +167,7 @@ def teste_analise_fora_do_utf8(mundo):
     for script, extra in [("contar.py", []), ("separar.py", ["--assunto"])]:
         saida = pasta.parent / f"saida-fora-do-utf8-{script}.md"
         res = roda(script, pasta, mundo["arquivo_forma"], mundo["arquivo_regras"], saida, *extra)
-        confere(res.returncode == 1 and not saida.exists() and res.stdout.startswith("ERRO")
+        confere(res.returncode == 2 and not saida.exists() and res.stdout.startswith("ERRO")
                 and arquivo.name in res.stdout,
                 f"análise fora do UTF-8 no {script}: ERRO que diz o arquivo, nada gravado: {res.stdout}{res.stderr}")
 

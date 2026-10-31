@@ -4,7 +4,8 @@ so pelas regras, ou os que esperam o assunto para ter documento: cada um com o i
 tipos, os grupos, os caminhos, as marcas, o destino e o texto, aula por aula.
 
 As entradas, o aviso de erro e a gravacao sao os do entrada.py, desta pasta. O documento
-pedido tem de ser de conteudo; senao, e erro, como qualquer entrada errada.
+pedido tem de ser de conteudo; senao, e erro, como qualquer entrada errada, que sai com
+codigo 2 e nao grava nada.
 
 Uso:
     python3 -I separar.py <pasta das analises> <forma.json> <regras.json> <saida.md> --documento <id>

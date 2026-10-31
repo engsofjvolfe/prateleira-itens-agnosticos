@@ -11,14 +11,16 @@ cabeçalho de tamanho sorteado. O teste confere regras, nunca uma frase pronta:
 - com `--conferir`, nada é gravado, as cópias em dia passam e a cópia mudada é acusada,
   pelo nome;
 - sem cabeçalho no script de referência, a cópia é o arquivo como está;
-- arquivo da peça que não existe e par sem destino são erro, sem gravar nada;
+- o arquivo da peça ou o script de referência que não existe, o par sem destino e o sinal
+  de comentário vazio são erro, que sai com código 2, sem gravar nada;
 - duas rodadas dão o mesmo.
 
-Diz `0 falha(s)` quando passa; senão, uma linha `FALHA` para cada conferência que não
-passou, e sai com código 1.
+Precisa do `grava_ou_confere.py` e do `extrator_comum.py`, nas pastas irmãs da peça. Diz
+`0 falha(s)` quando passa; senão, uma linha `FALHA` para cada conferência que não passou, e
+sai com código 1.
 
 As cópias estragadas da peça estão em `estragos.json`, nesta pasta, para o
-[`estraga.py`](../../copias-estragadas/README.md), com a pasta do `grava_ou_confere.py` ao
-lado da cópia:
+[`estraga.py`](../../copias-estragadas/README.md), com as pastas do `grava_ou_confere.py` e
+do extrator ao lado da cópia:
 
-    python3 -I ../../copias-estragadas/estraga.py .. teste_copia.py estragos.json <pasta de trabalho nova> --irma ../../grava-ou-confere
+    python3 -I ../../copias-estragadas/estraga.py .. teste_copia.py estragos.json <pasta de trabalho nova> --irma ../../grava-ou-confere --irma ../../extrator

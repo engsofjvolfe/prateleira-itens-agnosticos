@@ -23,7 +23,8 @@ escrita é lida de volta pela definição do padrão, e as regras são estas:
 - os títulos seguem o modelo, e o número impresso, lido de volta, é o da numeração; os
   estilos de numeração dão o número certo de 1 a 3999;
 - as trocas e as correções dão o que a regra delas diz e são contadas no resumo;
-- todo erro para tudo, sem gravar nada, e a mensagem diz o dado que o causou;
+- todo erro sai com código 2 e para tudo, sem gravar nada, e a mensagem diz o dado que o
+  causou;
 - duas rodadas dão a mesma saída.
 
 O que o módulo comum dá para as peças lerem os próprios dados tem o teste dele, abaixo.

@@ -7,7 +7,9 @@ passam de um limite de caracteres. Só usam a biblioteca padrão do Python.
 **teste_linhas_longas.py** — lista as linhas que passam de um limite de caracteres (o
 limite das regras de código é 120): em cada arquivo dado e, numa pasta, em cada arquivo
 dela e das subpastas cujo nome segue o padrão. Lê o código, não roda nada. Mostra
-`arquivo:linha (tamanho)` de cada uma, em ordem, e sai com código 0 quando nenhuma passa.
+`arquivo:linha (tamanho)` de cada uma, em ordem; sai com código 0 quando nenhuma passa, 1
+quando alguma passa e 2 quando um argumento não serve (o limite que não é um inteiro de 1
+para cima, o arquivo ou a pasta que não existe).
 
     python3 -I <prateleira>/documentos/teste_linhas_longas.py 120 "*.py" <arquivo ou pasta>...
 

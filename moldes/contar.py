@@ -10,8 +10,8 @@ As entradas, o aviso de erro e a gravacao sao os do entrada.py, desta pasta.
 
 Uso:
     python3 -I contar.py <pasta das analises> <forma.json> <regras.json> <saida.md>
-Sai com codigo 1 quando ha problema (a saida e gravada, com a lista deles) ou erro (nada e
-gravado).
+Sai com codigo 1 quando ha problema (a saida e gravada, com a lista deles) e com 2 quando uma
+entrada nao serve (nada e gravado).
 """
 import collections
 import sys

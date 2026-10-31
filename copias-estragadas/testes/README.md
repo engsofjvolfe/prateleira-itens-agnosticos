@@ -13,8 +13,9 @@ listas de estragos inventadas. O teste confere regras, nunca uma frase pronta:
   filtro sem o `=`, ou que não bate com nenhum estrago, é erro;
 - os argumentos de `--antes` chegam ao teste, e cada pasta de `--irma` fica ao lado da
   cópia, sem a pasta `testes/`; duas com o mesmo nome são erro;
-- lista com campo desconhecido ou que falta é erro;
-- com erro, nada roda;
+- lista com campo desconhecido ou que falta e pasta de trabalho que não está vazia são
+  erro;
+- com erro, que sai com código 2, nada roda;
 - duas rodadas dão a mesma saída.
 
 Precisa do `extrator_comum.py`, do extrator, na pasta irmã `extrator/`. Diz `0 falha(s)`

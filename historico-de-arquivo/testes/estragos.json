@@ -83,6 +83,10 @@
   {"nome": "pasta-das-transcricoes-sem-conferir", "arquivo": "historico_de_arquivo.py",
    "de": "        if not args.transcricoes.is_dir():\n", "para": "        if False:\n"},
   {"nome": "saida-existente-aceita", "arquivo": "historico_de_arquivo.py",
-   "de": "        args.saida.mkdir(parents=True)\n", "para": "        args.saida.mkdir(parents=True, exist_ok=True)\n"}
+   "de": "        args.saida.mkdir(parents=True)\n", "para": "        args.saida.mkdir(parents=True, exist_ok=True)\n"},
+  {"nome": "erro-sai-com-1", "arquivo": "historico_de_arquivo.py",
+   "de": "        print(f\"ERRO: {erro}\")\n        return 2\n", "para": "        print(f\"ERRO: {erro}\")\n        return 1\n"},
+  {"nome": "saida-existente-sai-com-1", "arquivo": "historico_de_arquivo.py",
+   "de": "já existe: {args.saida}\")\n        return 2\n", "para": "já existe: {args.saida}\")\n        return 1\n"}
  ]
 }

@@ -52,6 +52,12 @@ prateleira segue o [Versionamento Semântico](https://semver.org/lang/pt-BR/spec
 - `confere-citacoes`, `custo-de-agentes`, `itens-numerados`, `marcas`, `moldes` e
   `texto-em-comum`: precisam do `texto_comum.py`, do `extrator`, na pasta irmã ou na mesma
   pasta.
+- `copia-para-projeto`, `copias-estragadas`, `documentos` (o `teste_linhas_longas.py`),
+  `extrator`, `historico-de-arquivo`, `itens-numerados` e `moldes`: a entrada que não serve
+  sai com código 2, e não mais com 1, que fica para o problema achado; o
+  `historico-de-arquivo` escreve o `ERRO` na saída padrão, como as outras peças.
+- `copia-para-projeto`: lê os arquivos pelo `le_texto` do módulo comum e precisa do
+  `extrator_comum.py`, do `extrator`, na pasta irmã ou na mesma pasta.
 - `extrator`: o leitor de molde do módulo comum confere o molde inteiro — o tipo, o valor
   fixo e a lista de valores, o tamanho, a forma do texto, os limites, os itens, os campos
   obrigatórios, o `allOf` e o `if`, com `$ref` para a raiz e para `$defs` — e diz o caminho
@@ -87,6 +93,10 @@ prateleira segue o [Versionamento Semântico](https://semver.org/lang/pt-BR/spec
 
 ### Corrigido
 
+- `copia-para-projeto` e `documentos`: o script de referência que não existe, no
+  `copia-para-projeto`, e o limite que não é um inteiro de 1 para cima, no
+  `teste_linhas_longas.py`, dão `ERRO`, com código 2; antes, o erro do Python, ou nenhum
+  erro com o limite abaixo de 1.
 - `historico-de-arquivo`: duas ferramentas com o mesmo nome na configuração são erro, que
   diz o nome; antes, a última valia.
 - `itens-numerados` e `moldes`: a transcrição, ou a análise, que não se lê em UTF-8 dá o

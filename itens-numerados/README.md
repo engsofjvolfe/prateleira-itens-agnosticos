@@ -32,8 +32,8 @@ No fim, uma linha por documento, com quantos itens, grupos e problemas, e uma li
 saída é gravada assim mesmo, com os problemas. Com `ERRO` (uma expressão que não compila,
 que diz o campo dela; uma informação que falta, um campo que o molde não conhece, uma faixa
 fora das páginas, um grupo de tamanho zero, um padrão em que a marca se confunde com o
-texto; a transcrição que falta ou que não se lê em UTF-8, que diz o arquivo), nada é
-gravado.
+texto; a transcrição que falta ou que não se lê em UTF-8, que diz o arquivo), sai com
+código 2 e nada é gravado.
 
 ## O que confere
 

@@ -34,7 +34,7 @@ compila e erro que diz o campo dela.
 Uso:
     python3 -I itens.py <configuracao do extrator.json> <itens.json> <saida.json>
 Sai com codigo 1 se houver problema em algum documento; a saida e gravada assim mesmo,
-com os problemas.
+com os problemas. Com uma entrada que nao serve, sai com codigo 2, e nada e gravado.
 """
 
 import argparse
@@ -239,7 +239,7 @@ def main(argv=None):
     except (ErroDeDados, ValueError) as e:  # ValueError: a faixa ou o numero que nao servem
         print(f"ERRO: {e}")
         print("Nada foi gravado.")
-        return 1
+        return 2
     a.saida.parent.mkdir(parents=True, exist_ok=True)
     a.saida.write_text(json.dumps({"versao_schema": 1, "documentos": saida}, ensure_ascii=False, indent=2) + "\n",
                        encoding="utf-8")

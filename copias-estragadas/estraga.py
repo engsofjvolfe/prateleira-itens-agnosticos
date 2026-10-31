@@ -19,7 +19,8 @@ repetir; duas pastas com o mesmo nome sao erro. A peca original nunca e mudada. 
 lista ou nas opcoes, nada roda.
 
 Mostra uma linha por estrago (pego, nao pego ou o erro) e, no fim, quantos foram pegos.
-Sai com codigo 0 so quando todos sao pegos.
+Sai com codigo 0 quando todos sao pegos, 1 quando algum nao e, e 2 quando a lista, uma
+opcao ou a pasta de trabalho, que precisa ser nova ou vazia, nao serve.
 
 Uso:
     python3 -I estraga.py <peca> <teste.py> <lista.json> <pasta de trabalho nova>
@@ -93,10 +94,10 @@ def main(argv=None):
             raise ErroDeDados(f"--irma: mais de uma pasta com o nome {', '.join(mesmos)}")
     except ErroDeDados as e:
         print(f"ERRO: {e}")
-        return 1
+        return 2
     if a.trabalho.exists() and any(a.trabalho.iterdir()):
         print(f"ERRO: a pasta de trabalho precisa estar vazia: {a.trabalho}")
-        return 1
+        return 2
     pegos = 0
     for estrago in estragos:
         pego, texto = roda(estrago, a, a.trabalho)

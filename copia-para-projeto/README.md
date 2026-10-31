@@ -5,9 +5,10 @@ dia. Cada arquivo vai para o destino dado. O arquivo com a mesma extensão de um
 projeto, o script de referência, recebe na frente o cabeçalho de comentário dele, como a
 linha da licença; os outros, como os moldes em JSON, vão como estão.
 
-Usa só a biblioteca padrão do Python e o `grava_ou_confere.py`, do
+Usa só a biblioteca padrão do Python, o `grava_ou_confere.py`, do
 [grava-ou-confere](../grava-ou-confere/README.md), que grava cada cópia ou confere que ela
-está em dia. Na prateleira, ele é achado na pasta irmã `grava-ou-confere/`.
+está em dia, e o `extrator_comum.py`, do [extrator](../extrator/README.md), que lê os
+arquivos em UTF-8. Na prateleira, eles são achados nas pastas irmãs.
 
 ## Como rodar
 
@@ -19,7 +20,9 @@ está em dia. Na prateleira, ele é achado na pasta irmã `grava-ou-confere/`.
 - `--conferir`: não grava nada; diz, para cada arquivo, se a cópia do projeto é a da peça,
   com o cabeçalho, e sai com código 1 se alguma não é.
 
-Arquivo da peça que não existe, ou par sem destino, é `ERRO`, e nada é gravado.
+O sinal de comentário vazio, o par sem destino e o arquivo da peça ou o script de
+referência que não existe ou não se lê em UTF-8 são `ERRO`, que sai com código 2, e nada é
+gravado.
 
 ## Testes
 

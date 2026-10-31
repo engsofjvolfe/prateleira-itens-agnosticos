@@ -44,10 +44,10 @@ def ler(a):
 
 
 def erro(e):
-    """Mostra o erro de uma entrada e que nada foi gravado; devolve o codigo de saida."""
+    """Mostra o erro de uma entrada e que nada foi gravado; devolve o codigo de saida da entrada que nao serve, 2."""
     print(f"ERRO: {e}")
     print("Nada foi gravado.")
-    return 1
+    return 2
 
 
 def gravar(caminho, texto):

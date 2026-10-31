@@ -11,7 +11,7 @@ transcricoes.py, desta pasta.
 A configuracao (--config), lida pelo molde dela com o extrator_comum.py, do extrator, que fica na pasta irma, da o
 padrao do nome e a codificacao das transcricoes, os nomes dos campos dos eventos, as ferramentas e, da saida, os nomes
 dos arquivos, os rotulos, as marcas e a codificacao. Tudo e lido e montado antes de a pasta de saida ser criada: com
-erro, ela nao e criada. So biblioteca padrao.
+erro, que sai com codigo 2, ela nao e criada. So biblioteca padrao.
 """
 import argparse
 import csv
@@ -179,13 +179,16 @@ def main(argumentos=None):
         arquivos = arquivos_da_saida(lista, ilegiveis, pasta, cfg["saida"])
         args.saida.mkdir(parents=True)
     except ErroDeDados as erro:
-        sys.exit(f"ERRO: {erro}")
+        print(f"ERRO: {erro}")
+        return 2
     except FileExistsError:
-        sys.exit(f"ERRO: a pasta de saída já existe: {args.saida}")
+        print(f"ERRO: a pasta de saída já existe: {args.saida}")
+        return 2
     for nome, conteudo in arquivos.items():
         (args.saida / nome).write_bytes(conteudo)
     print(f"{len(lista)} achados e {len(ilegiveis)} linhas que não se leram, em {args.saida}")
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

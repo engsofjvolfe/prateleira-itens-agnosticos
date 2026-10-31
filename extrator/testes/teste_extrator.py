@@ -16,7 +16,8 @@ Os testes conferem regras que valem para qualquer texto, nunca uma frase pronta:
     que os dois vizinhos tem;
   - os titulos seguem o modelo, e o numero impresso, lido de volta, e o da numeracao;
   - as trocas e as correcoes dao o que a regra delas diz e sao contadas no resumo;
-  - todo erro para tudo, sem gravar nada, e a mensagem diz o dado que o causou;
+  - todo erro sai com codigo 2 e para tudo, sem gravar nada, e a mensagem diz o dado que o
+    causou;
   - duas rodadas dao a mesma saida.
 O que o extrator_comum da para as pecas lerem os proprios dados tem o teste dele, o
 teste_extrator_comum.py. Precisa do Poppler e do Tesseract com o idioma "eng". Uso:
@@ -651,13 +652,13 @@ todo = [l for _, ls in paginas(lida(s, "saida/pagina.md", cod), PADRAO_A) for l 
 confere_conteudo(todo, [("texto", MENU_HTML[1])] + ESPERADO_HTML + [("texto", RODAPE_HTML[1])], PADRAO_A,
                  "HTML sem 'conteudo': o documento inteiro conta, sem as etiquetas ignoradas")
 
-# ---------- erros: param tudo, sem gravar nada, e dizem o dado que os causou ----------
+# ---------- erros: saem com 2 e param tudo, sem gravar nada, e dizem o dado que os causou ----------
 
 
 def erro(pasta, documentos, dado, descricao, **kw):
     cod, out = roda(pasta, documentos, **kw)
-    confere(cod == 1 and out.startswith("ERRO") and dado in out and not (pasta / "saida").exists(),
-            f"{descricao} é erro, sem gravar nada, e a mensagem diz {dado!r}: {out}")
+    confere(cod == 2 and out.startswith("ERRO") and dado in out and not (pasta / "saida").exists(),
+            f"{descricao} é erro, que sai com 2, sem gravar nada, e a mensagem diz {dado!r}: {out}")
 
 
 def caso(nome):
@@ -761,8 +762,8 @@ if confere(cod == 0 and len(base) == TOTAL_PDF, f"correções: o extrator falhou
             ({"pagina": TOTAL_PDF + 4, "de": "a", "para": "b"}, str(TOTAL_PDF + 4), "correção para página que não há"),
             ({"pagina": 1, "de": CORR[0]["de"], "para": "b", "vezes": 99}, "99", "correção com outro número de vezes")):
         cod, out = roda(c, [dict(DOC_PDF, correcoes=[corr])], extra=["--substituir"])
-        confere(cod == 1 and dado in out and lida(c, "saida/manual.md", 0) == corrigida,
-                f"{descricao} é erro, sem gravar nada, e a mensagem diz {dado!r}: {out}")
+        confere(cod == 2 and dado in out and lida(c, "saida/manual.md", 0) == corrigida,
+                f"{descricao} é erro, que sai com 2, sem gravar nada, e a mensagem diz {dado!r}: {out}")
     cod, out = roda(c, [dict(DOC_PDF, correcoes=CORR)], extra=["--substituir"])
     confere(cod == 0 and lida(c, "saida/manual.md", cod) == corrigida,
             "extrair de novo aplica as mesmas correções e dá o mesmo texto")
@@ -776,17 +777,18 @@ velha = PADRAO_A["titulo_pagina"].format(rotulo=palavra(string.ascii_letters), a
 existente = grava(g, "saida/manual.md", cabeca + velha.encode("utf-8"))
 antes = existente.read_bytes()
 cod, out = roda(g, [DOC_PDF])
-confere(cod == 1 and existente.read_bytes() == antes, "transcrição que existe não é gravada por cima sem pedir")
+confere(cod == 2 and existente.read_bytes() == antes,
+        "transcrição que existe não é gravada por cima sem pedir: erro, que sai com 2")
 cod, out = roda(g, [DOC_PDF], extra=["--substituir"])
 confere(cod == 0 and existente.read_bytes() == cabeca + (nova / "saida/manual.md").read_bytes(),
         "com --substituir, o que vem antes do primeiro título fica e o resto é o que sai numa transcrição nova")
 grava(g, "saida/sem-titulo.md", frase().encode("utf-8"))
 cod, out = roda(g, [dict(DOC_HTML, saida="saida/sem-titulo.md")], extra=["--substituir"])
-confere(cod == 1, "transcrição sem título de página não é gravada por cima")
+confere(cod == 2, "transcrição sem título de página não é gravada por cima: erro, que sai com 2")
 cod, out = roda(g, [DOC_PDF, DOC_HTML], extra=["--substituir", "--so", "fontes/pagina.html"])
 confere(cod == 0 and "pagina.md" in out and "manual.md" not in out, "--so escolhe o documento")
 cod, out = roda(g, [DOC_PDF], extra=["--so", "fontes/nao-esta.pdf"])
-confere(cod == 1 and "nao-esta.pdf" in out, "--so com documento fora da lista é erro")
+confere(cod == 2 and "nao-esta.pdf" in out, "--so com documento fora da lista é erro, que sai com 2")
 
 for f in FALHAS:
     print("FALHA:", f)

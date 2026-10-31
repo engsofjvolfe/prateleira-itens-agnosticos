@@ -37,19 +37,16 @@ Sem problema conhecido: as listagens são ordenadas e o sorteio dos testes tem s
 
 ## Preparo para o novo
 
-3. **Código de saída da entrada que não serve.** A regra é sair com 2 quando a
-   configuração ou um argumento não serve, mas `copia-para-projeto/copia.py`,
-   `copias-estragadas/estraga.py`, `documentos/teste_linhas_longas.py`,
-   `extrator/extrator.py`, `historico-de-arquivo/historico_de_arquivo.py`,
-   `itens-numerados/itens.py` e `moldes/entrada.py` saem com 1. Correção: 2 nesses casos,
-   com o teste de cada um conferindo.
+Sem problema conhecido: o desconhecido dá erro claro, que diz o que e onde, e a entrada que
+não serve sai com código 2.
 
 ## Testes
 
 Toda peça com código tem teste com dados inventados e uma lista de estragos que o teste
 pega inteira, menos esta:
 
-4. **`documentos` fora da forma de uma peça.** Os testes ficam na pasta da peça, sem
+3. **`documentos` fora da forma de uma peça.** Os testes ficam na pasta da peça, sem
    `testes/` nem o README deles; o teste dos links usa dados fixos, não sorteados, e confere
    as linhas de saída como frases prontas; e o `teste_linhas_longas.py` não tem teste nem
-   estragos. Correção: a forma de uma peça, com o teste conferindo regras.
+   estragos, nem quem confira os códigos de saída dele. Correção: a forma de uma peça, com o
+   teste conferindo regras.

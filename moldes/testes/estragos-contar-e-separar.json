@@ -64,8 +64,14 @@
   {
    "nome": "erro-sai-zero",
    "arquivo": "entrada.py",
-   "de": "return 1",
+   "de": "return 2",
    "para": "return 0"
+  },
+  {
+   "nome": "erro-sai-com-1",
+   "arquivo": "entrada.py",
+   "de": "return 2",
+   "para": "return 1"
   },
   {
    "nome": "erro-nao-diz-o-que-houve",

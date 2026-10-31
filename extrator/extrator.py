@@ -40,7 +40,7 @@ o OCR: le_documento(..., pular_ocr=True) e paginas_escritas, que da a pagina pul
 Os caminhos dos documentos sao a partir de --raiz (padrao: a pasta atual). A transcricao
 que ja existe nao e gravada por cima, a nao ser com --substituir; nesse caso, o que vem
 antes do primeiro titulo de pagina (o registro de onde ela veio, por exemplo) fica como
-esta. Com qualquer erro, em qualquer documento, nada e gravado.
+esta. Com qualquer erro, em qualquer documento, sai com codigo 2 e nada e gravado.
 
 Uso:
     python3 -I extrator.py <configuracao.json> <documentos.json>
@@ -378,7 +378,7 @@ def main(argv=None):
     except ErroDeDados as e:
         print(f"ERRO: {e}")
         print("Nada foi gravado.")
-        return 1
+        return 2
     for saida, texto, resumo in prontos:
         saida.parent.mkdir(parents=True, exist_ok=True)
         saida.write_text(texto, encoding="utf-8")

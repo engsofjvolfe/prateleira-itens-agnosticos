@@ -32,9 +32,9 @@ O teste confere o que o script faz, nunca uma frase pronta:
 - a configuração com campo desconhecido, sem um dos campos que o script lê, com uma
   codificação que não existe (a das transcrições, numa pasta sem transcrição nenhuma), com
   dois arquivos da saída de mesmo nome ou com ferramentas de mesmo nome, e a pasta das
-  transcrições que não existe dão erro e não criam a pasta de saída; o erro das
-  ferramentas de mesmo nome diz o nome de cada uma; a pasta de saída que já existe dá erro
-  e fica como estava;
+  transcrições que não existe dão erro, que sai com código 2, e não criam a pasta de saída;
+  o erro das ferramentas de mesmo nome diz o nome de cada uma; a pasta de saída que já
+  existe dá erro, que sai com código 2, e fica como estava;
 - duas rodadas dão o mesmo.
 
 Diz `0 falha(s)` quando passa; senão, uma linha `FALHA` para cada conferência que não

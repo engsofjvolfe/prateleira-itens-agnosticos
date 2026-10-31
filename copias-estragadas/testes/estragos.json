@@ -80,6 +80,24 @@
    "para": "        if False:\n"
   },
   {
+   "nome": "erro-sai-com-1",
+   "arquivo": "estraga.py",
+   "de": "        print(f\"ERRO: {e}\")\n        return 2\n",
+   "para": "        print(f\"ERRO: {e}\")\n        return 1\n"
+  },
+  {
+   "nome": "pasta-cheia-aceita",
+   "arquivo": "estraga.py",
+   "de": "    if a.trabalho.exists() and any(a.trabalho.iterdir()):\n",
+   "para": "    if False:\n"
+  },
+  {
+   "nome": "pasta-cheia-sai-com-1",
+   "arquivo": "estraga.py",
+   "de": "precisa estar vazia: {a.trabalho}\")\n        return 2\n",
+   "para": "precisa estar vazia: {a.trabalho}\")\n        return 1\n"
+  },
+  {
    "nome": "codigo-sempre-zero",
    "arquivo": "estraga.py",
    "de": "return 0 if pegos == len(estragos) else 1",

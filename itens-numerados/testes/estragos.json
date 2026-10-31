@@ -134,6 +134,12 @@
    "para": "\"grupo\": { \"type\": \"integer\" }"
   },
   {
+   "nome": "itens-erro-sai-com-1",
+   "arquivo": "itens.py",
+   "de": "        print(\"Nada foi gravado.\")\n        return 2\n",
+   "para": "        print(\"Nada foi gravado.\")\n        return 1\n"
+  },
+  {
    "nome": "itens-transcricao-sem-o-leitor-comum",
    "arquivo": "itens.py",
    "de": "paginas_da_transcricao(le_texto(raiz / doc[\"transcricao\"]), padrao[\"titulo_pagina\"])",

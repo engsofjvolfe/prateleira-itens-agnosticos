@@ -6,7 +6,8 @@ pegos; a peca original nao muda; com --so, so rodam os estragos que batem com al
 filtro, na ordem da lista, e o filtro sem o sinal ou que nao bate com nenhum e erro; os
 argumentos de --antes chegam ao teste; cada pasta de --irma fica ao lado da copia, sem a
 pasta testes/, e duas com o mesmo nome sao erro; lista com campo desconhecido ou que falta
-e erro; com erro, nada roda; duas rodadas dao a mesma saida. Uso:
+e pasta de trabalho que nao esta vazia sao erro; com erro, que sai com codigo 2, nada roda;
+duas rodadas dao a mesma saida. Uso:
     python3 -I teste_estraga.py <pasta do estraga.py> <pasta de trabalho nova>
 Precisa do extrator_comum.py, do extrator, na pasta irma "extrator" ou na mesma pasta.
 """
@@ -107,7 +108,7 @@ def contagem(saida):
 
 
 def nada_rodou(cod, saida, trabalho):
-    return cod == 1 and saida.startswith("ERRO") and not trabalho.exists()
+    return cod == 2 and saida.startswith("ERRO") and not trabalho.exists()
 
 
 antes = {p: p.read_bytes() for p in PECA_INVENTADA.rglob("*") if p.is_file()}
@@ -159,6 +160,12 @@ for descricao, estragos, extra in (("campo desconhecido no estrago", [dict(QUEBR
                                     {})):
     cod, out, trabalho = roda(nome(), estragos, **extra)
     confere(nada_rodou(cod, out, trabalho), f"{descricao} é erro, sem rodar nada: {out}")
+CHEIA, DENTRO = nome(), f"{nome()}.txt"  # uma pasta de trabalho que ja tem um arquivo
+(TRABALHO / f"t-{CHEIA}").mkdir()
+(TRABALHO / f"t-{CHEIA}" / DENTRO).write_text(TEXTO, encoding="utf-8")
+cod, out, trabalho = roda(CHEIA, [QUEBRA])
+confere(cod == 2 and out.startswith("ERRO") and [p.name for p in trabalho.iterdir()] == [DENTRO],
+        f"a pasta de trabalho que não está vazia é erro, sem rodar nada: {out}")
 
 for f in FALHAS:
     print("FALHA:", f)

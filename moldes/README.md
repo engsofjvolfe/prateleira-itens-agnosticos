@@ -38,7 +38,7 @@ tipos, os grupos (depois de `g`), os caminhos, as marcas (depois de `m`) e o des
 
 Na leitura pelos moldes, o campo que o molde não conhece, o que falta e o valor de outro
 tipo ou fora da forma são erro, que diz o caminho do valor. Cada erro que o script acha na
-entrada dá uma linha `ERRO`, que diz o que está errado; ele sai com código 1 e nada é
+entrada dá uma linha `ERRO`, que diz o que está errado; ele sai com código 2 e nada é
 gravado.
 
 ## A forma das análises

@@ -20,9 +20,10 @@ O teste confere regras que valem para qualquer documento, nunca uma lista pronta
 - os grupos, com vários tamanhos e também com um sumário que começa depois dos primeiros
   itens: cada item fica num grupo só, na ordem, e cada grupo começa onde deve, com o
   número de entradas certo e as páginas do primeiro e do último item;
-- todo erro para tudo, sem gravar nada; a expressão que não compila, de uma forma do corpo,
-  de uma do sumário ou a do número sozinho, dá o erro que diz o campo dela; a transcrição
-  que não se lê em UTF-8 dá o erro que diz o arquivo; duas rodadas dão a mesma saída.
+- todo erro sai com código 2 e para tudo, sem gravar nada; a expressão que não compila, de
+  uma forma do corpo, de uma do sumário ou a do número sozinho, dá o erro que diz o campo
+  dela; a transcrição que não se lê em UTF-8 dá o erro que diz o arquivo; duas rodadas dão
+  a mesma saída.
 
 Precisa do `extrator_comum.py` e do `texto_comum.py`, do extrator, na pasta irmã
 `extrator/` ou na mesma pasta.

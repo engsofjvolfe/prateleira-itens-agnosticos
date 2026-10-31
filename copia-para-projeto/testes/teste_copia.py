@@ -4,9 +4,11 @@ comentario de tamanho sorteado e um sinal de comentario inventado. Conferem regr
 uma frase pronta: a copia do arquivo de codigo e o cabecalho do script de referencia mais
 o arquivo da peca, e a dos outros e o arquivo da peca; o destino e o dado; com
 --conferir, nada e gravado, as copias em dia passam e a copia mudada e acusada, pelo nome;
-sem cabecalho no script de referencia, a copia e o arquivo como esta; arquivo da peca que
-nao existe e par sem destino sao erro, sem gravar nada; duas rodadas dao o mesmo. Uso:
+sem cabecalho no script de referencia, a copia e o arquivo como esta; o arquivo da peca ou
+o script de referencia que nao existe, o par sem destino e o sinal de comentario vazio sao
+erro, que sai com codigo 2, sem gravar nada; duas rodadas dao o mesmo. Uso:
     python3 -I teste_copia.py <pasta do copia.py> <pasta de trabalho nova>
+Precisa do grava_ou_confere.py e do extrator_comum.py, nas pastas irmas da peca.
 """
 import random
 import string
@@ -46,9 +48,9 @@ DESTINOS = {f"prog{EXT}": f"codigo/prog{EXT}", f"sub/outro{EXT}": f"codigo/outro
 PARES = [f"{o}={d}" for o, d in DESTINOS.items()]
 
 
-def roda(*args, referencia=REFERENCIA, projeto=PROJETO):
+def roda(*args, referencia=REFERENCIA, projeto=PROJETO, sinal=SINAL):
     r = subprocess.run([sys.executable, "-I", str(PECA_COPIA / "copia.py"), str(PECA), str(projeto), str(referencia),
-                        *args, "--comentario", SINAL], capture_output=True, text=True)
+                        *args, "--comentario", sinal], capture_output=True, text=True)
     return r.returncode, r.stdout + r.stderr
 
 
@@ -84,11 +86,15 @@ cod, out = roda(*PARES, referencia=SEM_CABECA, projeto=outro)
 confere(cod == 0 and all((outro / d).read_text(encoding="utf-8") == ARQUIVOS[o] for o, d in DESTINOS.items()),
         f"sem cabeçalho no script de referência, a cópia é o arquivo como está: {out}")
 
-for descricao, pares in (("arquivo da peça que não existe", PARES + [f"nao-existe{EXT}=codigo/x{EXT}"]),
-                         ("par sem destino", PARES + [f"prog{EXT}"])):
-    vazio = TRABALHO / f"projeto-{len(descricao)}"
-    cod, out = roda(*pares, projeto=vazio)
-    confere(cod == 1 and out.startswith("ERRO") and not vazio.exists(), f"{descricao} é erro, sem gravar nada: {out}")
+ERROS = [("arquivo da peça que não existe", PARES + [f"nao-existe{EXT}=codigo/x{EXT}"], {}),
+         ("par sem destino", PARES + [f"prog{EXT}"], {}),
+         ("script de referência que não existe", PARES, {"referencia": PROJETO / "codigo" / f"nao-existe{EXT}"}),
+         ("sinal de comentário vazio", PARES, {"sinal": ""})]
+for numero, (descricao, pares, opcoes) in enumerate(ERROS):
+    vazio = TRABALHO / f"projeto-com-erro-{numero}"
+    cod, out = roda(*pares, projeto=vazio, **opcoes)
+    confere(cod == 2 and out.startswith("ERRO") and not vazio.exists(),
+            f"{descricao} é erro, que sai com 2, sem gravar nada: {out}")
 
 for f in FALHAS:
     print("FALHA:", f)

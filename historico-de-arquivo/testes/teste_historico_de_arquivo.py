@@ -22,8 +22,9 @@ verdade. Os testes conferem o que o script faz, nunca uma frase pronta:
     nao quebram nada;
   - a configuracao com campo desconhecido, sem um dos campos que o script le, com uma codificacao que nao existe (a das
     transcricoes, numa pasta sem transcricao nenhuma), com dois arquivos da saida de mesmo nome ou com ferramentas de
-    mesmo nome, e a pasta das transcricoes que nao existe dao erro e nao criam a pasta de saida; o erro das ferramentas
-    de mesmo nome diz o nome de cada uma; a pasta de saida que ja existe da erro e fica como estava;
+    mesmo nome, e a pasta das transcricoes que nao existe dao erro, que sai com codigo 2, e nao criam a pasta de
+    saida; o erro das ferramentas de mesmo nome diz o nome de cada uma; a pasta de saida que ja existe da erro, que
+    sai com codigo 2, e fica como estava;
   - duas rodadas dao o mesmo.
 Uso:
     python3 -I teste_historico_de_arquivo.py <pasta de historico_de_arquivo.py> <pasta de trabalho nova> [--semente N]
@@ -363,18 +364,19 @@ for numero, (caso, (dados, transcricoes)) in enumerate(ERROS.items()):
     configuracao.write_text(json.dumps(dados, ensure_ascii=False), encoding="utf-8")
     RODADAS[caso] = rodar("--config", configuracao, "--transcricoes", transcricoes, "--arquivo", PEDIDO,
                           "--saida", saida)
-    confere(RODADAS[caso].returncode != 0 and not saida.exists(), f"{caso} dá erro e não cria a pasta de saída")
-MENSAGEM = RODADAS[MESMO_NOME_DE_FERRAMENTA].stderr
+    confere(RODADAS[caso].returncode == 2 and not saida.exists(), f"{caso} dá erro, que sai com 2, e não cria a pasta "
+                                                                   f"de saída")
+MENSAGEM = RODADAS[MESMO_NOME_DE_FERRAMENTA].stdout
 confere(all(nome in MENSAGEM for nome in REPETIDAS),
         f"o erro das {MESMO_NOME_DE_FERRAMENTA} diz cada nome: {MENSAGEM}")
 SEM_PASTA = TRABALHO / "saida-sem-pasta"
 confere(rodar("--config", CONFIGURACAO, "--transcricoes", TRABALHO / "nao-existe", "--arquivo", PEDIDO,
-              "--saida", SEM_PASTA).returncode != 0 and not SEM_PASTA.exists(),
-        "pasta das transcrições que não existe dá erro e não cria a pasta de saída")
+              "--saida", SEM_PASTA).returncode == 2 and not SEM_PASTA.exists(),
+        "pasta das transcrições que não existe dá erro, que sai com 2, e não cria a pasta de saída")
 ANTES = arquivos_de(DE_NOVO)
 confere(rodar("--config", CONFIGURACAO, "--transcricoes", PASTA, "--arquivo", PEDIDO,
-              "--saida", DE_NOVO).returncode != 0 and arquivos_de(DE_NOVO) == ANTES,
-        "pasta de saída que já existe dá erro e fica como estava")
+              "--saida", DE_NOVO).returncode == 2 and arquivos_de(DE_NOVO) == ANTES,
+        "pasta de saída que já existe dá erro, que sai com 2, e fica como estava")
 
 for f in FALHAS:
     print("FALHA:", f)

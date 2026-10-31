@@ -260,6 +260,12 @@
    "para": "if False:"
   },
   {
+   "nome": "erro-sai-com-1",
+   "arquivo": "extrator.py",
+   "de": "        print(\"Nada foi gravado.\")\n        return 2\n",
+   "para": "        print(\"Nada foi gravado.\")\n        return 1\n"
+  },
+  {
    "nome": "pdf-estreita-fora",
    "arquivo": "leitor_pdf.py",
    "de": "min(x1, caixa[2]) - max(x0, caixa[0]) > PRECISAO or inteira",

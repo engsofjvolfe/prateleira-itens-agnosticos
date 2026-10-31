@@ -26,10 +26,11 @@ O teste recebe a pasta da cópia, os argumentos de `--antes` e uma pasta de trab
 nessa ordem.
 
 No fim, uma linha por estrago, que diz se ele foi pego e a última linha do teste, e quantos
-foram pegos. Sai com código 0 só quando todos são pegos. O estrago cujo texto não aparece
-uma vez só no arquivo é `ERRO`. São `ERRO`, e nada roda: a lista com campo desconhecido, ou
-sem um campo; o `--so` sem o `=`, ou que não bate com nenhum estrago; e duas pastas de
-`--irma` com o mesmo nome.
+foram pegos. Sai com código 0 quando todos são pegos e 1 quando algum não é. O estrago cujo
+texto não aparece uma vez só no arquivo é `ERRO`. São `ERRO`, que sai com código 2, e nada
+roda: a lista com campo desconhecido, ou sem um campo; o `--so` sem o `=`, ou que não bate
+com nenhum estrago; duas pastas de `--irma` com o mesmo nome; e a pasta de trabalho que não
+está vazia.
 
 ## A lista (`estragos.json`)
 

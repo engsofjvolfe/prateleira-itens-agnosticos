@@ -51,8 +51,8 @@ Na pasta de saída, com os nomes, os rótulos, as marcas e a codificação da co
 - a lista das linhas que não se leram: a transcrição e a linha de cada uma, fora da
   codificação ou que não é um objeto JSON. A linha em branco não conta.
 
-Na tela, quantos achados e quantas linhas que não se leram. Dão erro: a pasta das
-transcrições que não existe, a pasta de saída que já existe, a configuração com campo que
+Na tela, quantos achados e quantas linhas que não se leram; sai com código 0. Dão `ERRO`,
+que sai com código 2: a pasta das transcrições que não existe, a pasta de saída que já existe, a configuração com campo que
 o molde não conhece ou sem um campo que o script lê, a codificação que não existe, dois
 arquivos da saída com o mesmo nome e duas ferramentas com o mesmo nome, com o erro dizendo
 o nome.
