@@ -37,7 +37,7 @@ from pathlib import Path
 PASTA = Path(__file__).resolve().parent
 for pasta in (PASTA.parent.parent / "extrator", PASTA.parent / "extrator"):  # a ultima posta e a primeira lida
     sys.path.insert(0, str(pasta))
-from extrator_comum import ErroDeDados, le_conferido, preenche  # noqa: E402
+from extrator_comum import ErroDeDados, le_conferido, preenche, repetidos  # noqa: E402
 
 MOLDE = PASTA / "esquemas" / "protocolo.schema.json"
 EVENTOS = ("antes", "fim")  # os eventos que os ganchos tratam, pelo nome no molde
@@ -48,9 +48,9 @@ TEXTO = "texto"  # o campo do modelo de resposta que recebe o texto do gancho, e
 
 def sem_repetir(itens, onde):
     """Os itens, quando nenhum se repete; erro que diz onde e quais, senao."""
-    repetidos = sorted({x for x in itens if itens.count(x) > 1})
-    if repetidos:
-        raise ErroDeDados(f"{onde}: repetido(s): {repetidos}")
+    mesmos = repetidos(itens)
+    if mesmos:
+        raise ErroDeDados(f"{onde}: repetido(s): {mesmos}")
     return itens
 
 

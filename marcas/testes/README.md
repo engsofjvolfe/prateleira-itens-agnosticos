@@ -31,10 +31,12 @@ Ele confere regras, nunca uma frase pronta:
 - com um nível só, a unidade é a região;
 - níveis e esperado que não servem dão `ErroDeMarcas`, que diz o que está errado.
 
-Diz `0 falha(s)` quando passa; senão, uma linha `FALHA` para cada conferência que não
-passou, e sai com código 1.
+Precisa do `extrator_comum.py`, do extrator, na pasta irmã `extrator/` da peça ou na
+própria pasta da peça. Diz `0 falha(s)` quando passa; senão, uma linha `FALHA` para cada
+conferência que não passou, e sai com código 1.
 
 As cópias estragadas da peça estão em `estragos.json`, nesta pasta, para o
-[`estraga.py`](../../copias-estragadas/README.md), rodado desta pasta:
+[`estraga.py`](../../copias-estragadas/README.md), rodado desta pasta, com a pasta do
+extrator ao lado da cópia:
 
-    python3 -I ../../copias-estragadas/estraga.py .. teste_marcas.py estragos.json <pasta de trabalho nova>
+    python3 -I ../../copias-estragadas/estraga.py .. teste_marcas.py estragos.json <pasta de trabalho nova> --irma ../../extrator

@@ -25,7 +25,7 @@
     {"nome": "arquivo-sempre-tem", "arquivo": "cancela.py", "de": "return texto in le_texto(caminho if caminho.is_absolute() else raiz / caminho)", "para": "return True"},
     {"nome": "fonte-pela-pasta-do-terminal", "arquivo": "cancela.py", "de": "le_texto(caminho if caminho.is_absolute() else raiz / caminho)", "para": "le_texto(caminho)"},
     {"nome": "sem-documentacao", "arquivo": "cancela.py", "de": "if DOCUMENTADA not in valor:", "para": "if True:"},
-    {"nome": "nome-repetido", "arquivo": "cancela.py", "de": "if repetidos:", "para": "if False:"},
+    {"nome": "nome-repetido", "arquivo": "cancela.py", "de": "if mesmos:", "para": "if False:"},
     {"nome": "parte-de-qualquer-nome", "arquivo": "cancela.py", "de": "if not PARTE.fullmatch(f\"<<{nome}>>\"):", "para": "if False:"},
     {"nome": "lista-sem-molde", "arquivo": "cancela.py", "de": "valor = le_conferido(caminho, evento.MOLDES / \"regras.schema.json\")", "para": "valor = __import__(\"json\").loads(Path(caminho).read_text(encoding=\"utf-8\"))"},
     {"nome": "versao-da-lista-ignorada", "arquivo": "esquemas/regras.schema.json", "de": "\"versao_schema\": { \"const\": 1 },", "para": "\"versao_schema\": true,"}

@@ -21,11 +21,20 @@ dela, a de um nivel do meio antes da primeira regiao de dentro dele) podem ser a
 recebem codigos.
 
 Os avisos (Aviso) saem em ordem de arquivo e linha; CASOS da o tipo de cada caso, FALTA ou
-ERRO. Niveis ou esperado que nao servem dao ErroDeMarcas, que diz o que esta errado.
+ERRO. Niveis ou esperado que nao servem dao ErroDeMarcas, que diz o que esta errado. O nivel
+e o codigo repetidos sao achados pelo extrator_comum.py, do extrator, na pasta irma
+"extrator" ou na mesma pasta.
 """
 import bisect
 import collections
+import sys
 import unicodedata
+from pathlib import Path
+
+PASTA = Path(__file__).resolve().parent
+for pasta in (PASTA.parent / "extrator", PASTA):  # na prateleira, o extrator fica na pasta irma
+    sys.path.insert(0, str(pasta))
+from extrator_comum import repetidos  # noqa: E402
 
 ABRE, FECHA = "<!--", "-->"  # o comeco e o fim de um comentario HTML
 INICIO_DO_FIM = ABRE.index(FECHA[:2])  # o fim pode usar os hifens do comeco: <!--> e <!---> sao comentarios vazios
@@ -79,9 +88,9 @@ def conferidos(niveis):
     if ruins:
         raise ErroDeMarcas(f"nível {NAO_SE_ESCREVE}: {ruins!r}")
     todos = [nfc(n) for n in todos]
-    repetidos = sorted({n for n in todos if todos.count(n) > 1})
-    if repetidos:
-        raise ErroDeMarcas(f"nível repetido: {repetidos!r}")
+    mesmos = repetidos(todos)
+    if mesmos:
+        raise ErroDeMarcas(f"nível repetido: {mesmos!r}")
     return Niveis(todos[:-1], todos[-1])
 
 
@@ -207,9 +216,9 @@ def conferidos_os_codigos(codigos, onde, erro):
     if ruins:
         raise erro(f"{onde}: código {NAO_SE_ESCREVE}: {ruins!r}")
     codigos = [nfc(c) for c in codigos]
-    repetidos = sorted({c for c in codigos if codigos.count(c) > 1})
-    if repetidos:
-        raise erro(f"{onde}: código repetido: {repetidos!r}")
+    mesmos = repetidos(codigos)
+    if mesmos:
+        raise erro(f"{onde}: código repetido: {mesmos!r}")
     return codigos
 
 

@@ -22,7 +22,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))  # os modulos da peca, que o python -I nao poe no caminho
 import evento  # noqa: E402
-from extrator_comum import ErroDeDados, compila, le_conferido, le_texto  # noqa: E402 -- no caminho do evento.py
+from extrator_comum import (ErroDeDados, compila, le_conferido, le_texto,  # noqa: E402 -- no caminho do evento.py
+                            repetidos)
 
 DOCUMENTADA = "documentada"  # a chave que a regra pode ter a mais
 CHAVES_DA_DOCUMENTADA = ("arquivo", "texto")
@@ -56,10 +57,9 @@ def le_regras(caminho):
     partes = le_partes(valor["partes"], f"{caminho}: partes")
     regras = [dict(regra, forma=aberta(regra["forma"], partes, f"{caminho}: regras/{k}/forma"))
               for k, regra in enumerate(valor["regras"])]
-    nomes = [r["nome"] for r in regras]
-    repetidos = sorted({nome for nome in nomes if nomes.count(nome) > 1})
-    if repetidos:
-        raise ErroDeDados(f"{caminho}: nome de regra repetido: {repetidos}")
+    mesmos = repetidos([r["nome"] for r in regras])
+    if mesmos:
+        raise ErroDeDados(f"{caminho}: nome de regra repetido: {mesmos}")
     return regras
 
 

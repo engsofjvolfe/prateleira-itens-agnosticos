@@ -7,7 +7,9 @@ ligação apareça na leitura. Num material de Direito, por exemplo, cada seçã
 levaria escondido o código de cada artigo de lei que ela explica, e a peça diria qual
 artigo falta, qual está na seção errada e qual não existe.
 
-Usa só a biblioteca padrão do Python. Não roda sozinha: o programa que a usa importa o
+Usa só a biblioteca padrão do Python e o `extrator_comum.py`, do
+[extrator](../extrator/README.md), que acha o nível e o código repetidos; ele é achado na
+pasta irmã `extrator/` ou na mesma pasta. Não roda sozinha: o programa que a usa importa o
 `marcas.py`.
 
 ## As marcas

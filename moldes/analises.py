@@ -26,12 +26,21 @@ hash sao os primeiros digitos do SHA-1 do texto do trecho em NFC. Se o texto mud
 muda, e a mudanca aparece em toda decisao guardada pelo id. O id se monta por id_do_trecho,
 e um id, ou o comeco dele (a aula; a aula e o slide; a aula, o slide e a posicao), se le por
 le_codigo, que le o que id_do_trecho escreve.
+
+O nome de campo repetido e o id repetido sao achados pelo extrator_comum.py, do extrator, na
+pasta irma "extrator" ou na mesma pasta.
 """
 import collections
 import hashlib
 import re
+import sys
 import unicodedata
 from pathlib import Path
+
+PASTA = Path(__file__).resolve().parent
+for pasta in (PASTA.parent / "extrator", PASTA):  # na prateleira, o extrator fica na pasta irma
+    sys.path.insert(0, str(pasta))
+from extrator_comum import repetidos  # noqa: E402
 
 PAPEIS = ("tipo", "grupo", "caminho", "destino")  # o que um campo pode fazer, como o molde da forma declara
 PAPEIS_EM_LISTA = ("tipo", "grupo", "caminho")  # os papeis que pedem um valor em lista
@@ -161,8 +170,7 @@ def erros_da_forma(forma):
     passar e o molde nao ve, cada um numa frase: nome de campo repetido; papel em mais de um
     campo, em nenhum, ou num campo cujo valor nao e lista quando o papel pede lista."""
     campos = forma["campos"]
-    nomes = [c["nome"] for c in campos]
-    erros = [f"o campo {n!r} aparece mais de uma vez" for n in sorted({n for n in nomes if nomes.count(n) > 1})]
+    erros = [f"o campo {n!r} aparece mais de uma vez" for n in repetidos([c["nome"] for c in campos])]
     donos = {p: [] for p in PAPEIS}
     for c in campos:
         papel = c.get("papel")
@@ -272,8 +280,7 @@ def ler_analises(pasta, forma):
     for aula in aulas:
         lidos, notas[aula] = ler_analise(arquivos[aula], forma)
         trechos += lidos
-    contagem = collections.Counter(t["id"] for t in trechos)
-    repetidos = sorted(i for i, n in contagem.items() if n > 1)
-    if repetidos:
-        raise ErroDeForma(f"ids repetidos: {repetidos}")
+    mesmos = repetidos([t["id"] for t in trechos])
+    if mesmos:
+        raise ErroDeForma(f"ids repetidos: {mesmos}")
     return trechos, notas, aulas

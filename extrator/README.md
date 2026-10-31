@@ -126,6 +126,7 @@ dele). O que as outras peças usam:
 | `le_texto(arquivo)` | o texto de um arquivo em UTF-8, com `ErroDeDados` que diz o arquivo quando ele falta ou não se lê |
 | `campo(dados, "a/b", tipo)` | o valor no caminho, do tipo pedido (um tipo ou uma tupla), com `ErroDeDados` que diz o caminho quando ele falta ou é de outro tipo; um booleano só vale quando o tipo pedido é `bool` |
 | `expressao(dados, "a/b")` | a expressão regular do campo, compilada, com `ErroDeDados` que diz o caminho quando não compila |
+| `repetidos(valores)` | os valores que aparecem mais de uma vez na lista, cada um uma vez, em ordem; nenhum quando nada se repete |
 | `paginas_da_transcricao(texto, modelo)` | as páginas de uma transcrição pelo modelo do título de página (`{rotulo}` e `{arquivo}`), cada uma com as linhas numeradas |
 | `preenche(modelo, campo=valor)` | o modelo com cada `{campo}` trocado; campo sem valor é `ErroDeDados` |
 

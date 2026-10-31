@@ -57,7 +57,7 @@ from pathlib import Path
 PASTA = Path(__file__).resolve().parent
 sys.path.insert(0, str(PASTA))
 from extrator_comum import (MOLDES, ErroDeDados, como_padrao, confere_padrao, le_configuracao,  # noqa: E402
-                            le_conferido, paginas_das_faixas, preenche)
+                            le_conferido, paginas_das_faixas, preenche, repetidos)
 
 NOME_DE_LEITOR = re.compile(r"^[a-z0-9_]+$")
 
@@ -344,9 +344,9 @@ def prepara(config, documentos, raiz, so, substituir):
     faltam = sorted(set(so) - {d["arquivo"] for d in documentos} - {d["saida"] for d in documentos})
     if faltam:
         raise ErroDeDados(f"--so com documento que não está na lista: {faltam}")
-    saidas = [d["saida"] for d in escolhidos]
-    if len(saidas) != len(set(saidas)):
-        raise ErroDeDados(f"duas transcrições no mesmo arquivo: {sorted({s for s in saidas if saidas.count(s) > 1})}")
+    mesmas = repetidos([d["saida"] for d in escolhidos])
+    if mesmas:
+        raise ErroDeDados(f"duas transcrições no mesmo arquivo: {mesmas}")
     prontos = []
     for doc in escolhidos:
         try:

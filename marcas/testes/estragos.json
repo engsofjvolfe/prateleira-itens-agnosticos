@@ -214,7 +214,7 @@
   {
    "nome": "nivel-repetido-passa",
    "arquivo": "marcas.py",
-   "de": "    if repetidos:\n        raise ErroDeMarcas(f\"nível repetido",
+   "de": "    if mesmos:\n        raise ErroDeMarcas(f\"nível repetido",
    "para": "    if False:\n        raise ErroDeMarcas(f\"nível repetido"
   },
   {
@@ -274,7 +274,7 @@
   {
    "nome": "codigo-repetido-passa",
    "arquivo": "marcas.py",
-   "de": "    if repetidos:\n        raise erro(f\"{onde}: código repetido",
+   "de": "    if mesmos:\n        raise erro(f\"{onde}: código repetido",
    "para": "    if False:\n        raise erro(f\"{onde}: código repetido"
   },
   {

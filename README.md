@@ -47,7 +47,7 @@ prateleira) ou na própria pasta (numa cópia fora da prateleira).
 
 | Módulo comum | Da peça | Peças que o usam |
 | --- | --- | --- |
-| `extrator_comum.py`: ler um texto em UTF-8, ler JSON pelo molde, pegar um campo com o tipo pedido, compilar uma expressão, dividir uma transcrição em páginas | [extrator](extrator/README.md#o-módulo-comum) | confere-citacoes, confere-forma, copias-estragadas, custo-de-agentes, historico-de-arquivo, itens-numerados, moldes, ganchos/busca-por-palavra, ganchos/chamadas-permitidas, ganchos/destino-da-limpeza, ganchos/protocolo, ganchos/regras-de-codigo |
+| `extrator_comum.py`: ler um texto em UTF-8, ler JSON pelo molde, pegar um campo com o tipo pedido, achar os valores repetidos de uma lista, compilar uma expressão, dividir uma transcrição em páginas | [extrator](extrator/README.md#o-módulo-comum) | confere-citacoes, confere-forma, copias-estragadas, custo-de-agentes, historico-de-arquivo, itens-numerados, marcas, moldes, ganchos/busca-por-palavra, ganchos/chamadas-permitidas, ganchos/destino-da-limpeza, ganchos/protocolo, ganchos/regras-de-codigo |
 | `transcricoes.py`: ler as transcrições de sessão, um evento por linha | [historico-de-arquivo](historico-de-arquivo/README.md) | historico-de-arquivo, custo-de-agentes |
 | `grava_ou_confere.py`: gravar um documento gerado ou conferir que está em dia | [grava-ou-confere](grava-ou-confere/README.md) | copia-para-projeto |
 | `leitura_do_terminal.py`: ler um comando de terminal como o shell lê | [ganchos/leitura-do-terminal](ganchos/leitura-do-terminal/README.md) | ganchos/regras-de-codigo, ganchos/busca-por-palavra |

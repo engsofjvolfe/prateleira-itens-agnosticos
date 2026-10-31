@@ -28,11 +28,18 @@ As regras:
   - o trecho de depois da ultima aula que fica vai para as perguntas das aulas ate a ultima
     que tratam das entradas em que ele ficou.
 As aulas saem na ordem dada; as entradas, as partes, os lugares e os trechos, na ordem em
-que aparecem nos lugares.
+que aparecem nos lugares. A aula repetida e achada pelo extrator_comum.py, do extrator, na
+pasta irma "extrator" ou na mesma pasta.
 """
 import collections
+import sys
+from pathlib import Path
 
-from analises import unicos
+PASTA = Path(__file__).resolve().parent
+for pasta in (PASTA.parent / "extrator", PASTA):  # na prateleira, o extrator fica na pasta irma
+    sys.path.insert(0, str(pasta))
+from analises import unicos  # noqa: E402
+from extrator_comum import repetidos  # noqa: E402
 
 Lugar = collections.namedtuple("Lugar", "trecho aula entrada parte direto")
 Limite = collections.namedtuple(
@@ -66,7 +73,7 @@ def erros_das_entradas(lugares, unidade_de, aulas, ultima, partes_para_tratar, d
     erros = []
     if type(partes_para_tratar) is not int or partes_para_tratar < 1:
         erros.append(f"o número de partes para tratar deve ser um inteiro de 1 para cima: {partes_para_tratar!r}")
-    repetidas = unicos(a for a in aulas if aulas.count(a) > 1)
+    repetidas = repetidos(aulas)
     if repetidas:
         erros.append(f"aula(s) repetida(s) na ordem das aulas: {repetidas}")
     if ultima not in aulas:

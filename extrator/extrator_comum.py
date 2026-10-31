@@ -2,15 +2,17 @@
 O que o extrator, os leitores dele e as outras pecas da prateleira fazem do mesmo jeito,
 num lugar so: ler um texto em UTF-8, ler um arquivo de dados JSON e conferir os dados contra
 o molde deles (JSON Schema), que antes e conferido contra o molde dos moldes (o que o leitor
-de molde entende), pegar um campo dos dados com o tipo pedido, compilar a expressao regular
-de um campo, ler a configuracao do extrator contra o molde dela, conferir o padrao,
-preencher um modelo do padrao, reconhecer o titulo de pagina que o modelo faz, dividir uma
-transcricao em paginas, juntar os pedacos de uma linha com destaques, tirar de uma linha as
-marcas de destaque e os escapes e expandir faixas de paginas.
+de molde entende), pegar um campo dos dados com o tipo pedido, achar os valores repetidos de
+uma lista, compilar a expressao regular de um campo, ler a configuracao do extrator contra o
+molde dela, conferir o padrao, preencher um modelo do padrao, reconhecer o titulo de pagina
+que o modelo faz, dividir uma transcricao em paginas, juntar os pedacos de uma linha com
+destaques, tirar de uma linha as marcas de destaque e os escapes e expandir faixas de
+paginas.
 """
 
 import json
 import re
+from collections import Counter
 from pathlib import Path
 
 CAMPO = re.compile(r"\{(\w+)\}")
@@ -249,6 +251,12 @@ def expressao(dados, caminho):
     return compila(campo(dados, caminho, str), f"o campo {caminho}")
 
 
+def repetidos(valores):
+    """Os valores que aparecem mais de uma vez na lista, cada um uma vez, em ordem; nenhum
+    quando nada se repete."""
+    return sorted(valor for valor, vezes in Counter(valores).items() if vezes > 1)
+
+
 def le_configuracao(caminho):
     """A configuracao do extrator, conferida contra o molde dela, para o extrator e para toda
     peca que a usa."""
@@ -377,7 +385,7 @@ def paginas_das_faixas(faixas, total):
         if not 1 <= de <= ate <= total:
             raise ValueError(f"a faixa {de}-{ate} não cabe nas páginas 1 a {total} do arquivo")
         paginas += range(de, ate + 1)
-    repetidas = sorted({n for n in paginas if paginas.count(n) > 1})
+    repetidas = repetidos(paginas)
     if repetidas:
         raise ValueError(f"página(s) em mais de uma faixa: {repetidas}")
     return sorted(paginas)

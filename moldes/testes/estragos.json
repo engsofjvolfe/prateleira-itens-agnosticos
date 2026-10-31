@@ -202,7 +202,7 @@
   {
    "nome": "ids-repetidos-passam",
    "arquivo": "analises.py",
-   "de": "if repetidos:",
+   "de": "if mesmos:",
    "para": "if False:"
   },
   {
@@ -226,7 +226,7 @@
   {
    "nome": "campo-repetido-passa",
    "arquivo": "analises.py",
-   "de": "sorted({n for n in nomes if nomes.count(n) > 1})",
+   "de": "repetidos([c[\"nome\"] for c in campos])",
    "para": "[]"
   },
   {
@@ -418,7 +418,7 @@
   {
    "nome": "cabecalho-repetido-passa",
    "arquivo": "tabela.py",
-   "de": "if not colunas or len(set(colunas)) != len(colunas):",
+   "de": "if not colunas or repetidos(colunas):",
    "para": "if False:"
   },
   {

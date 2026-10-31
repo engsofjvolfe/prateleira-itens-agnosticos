@@ -35,7 +35,7 @@ from pathlib import Path
 PASTA = Path(__file__).resolve().parent
 for pasta in (PASTA.parent / "extrator", PASTA):  # na prateleira, o extrator fica na pasta irma
     sys.path.insert(0, str(pasta))
-from extrator_comum import ErroDeDados, le_conferido  # noqa: E402
+from extrator_comum import ErroDeDados, le_conferido, repetidos  # noqa: E402
 
 MOLDE = PASTA / "esquemas" / "estragos.schema.json"  # o molde da lista
 SINAL = "="  # entre o campo e o valor, em --so
@@ -74,12 +74,6 @@ def escolhidos(estragos, filtros):
     return [e for e in estragos if not pares or any(e.get(c) == v for c, v in pares)]
 
 
-def nomes_repetidos(pastas):
-    """Os nomes que mais de uma das pastas tem, em ordem."""
-    nomes = [p.name for p in pastas]
-    return sorted({n for n in nomes if nomes.count(n) > 1})
-
-
 def main(argv=None):
     p = argparse.ArgumentParser(description="Prova que o teste de uma peça pega os defeitos de uma lista.")
     p.add_argument("peca", type=Path)
@@ -94,9 +88,9 @@ def main(argv=None):
     a = p.parse_args(argv)
     try:
         estragos = escolhidos(le_conferido(a.lista, MOLDE)["estragos"], a.so)
-        repetidos = nomes_repetidos(a.irma)
-        if repetidos:
-            raise ErroDeDados(f"--irma: mais de uma pasta com o nome {', '.join(repetidos)}")
+        mesmos = repetidos([irma.name for irma in a.irma])
+        if mesmos:
+            raise ErroDeDados(f"--irma: mais de uma pasta com o nome {', '.join(mesmos)}")
     except ErroDeDados as e:
         print(f"ERRO: {e}")
         return 1

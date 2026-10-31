@@ -14,6 +14,10 @@ prateleira segue o [Versionamento Semântico](https://semver.org/lang/pt-BR/spec
   e o teste do módulo comum, com a lista de estragos dele.
 - `extrator`: no módulo comum, a função `le_texto`, que lê um texto em UTF-8 com o erro que
   diz o arquivo, e a `conferido`, que confere contra um molde dados já lidos.
+- `extrator`: no módulo comum, a função `repetidos`, que dá os valores que aparecem mais de
+  uma vez numa lista; o próprio `extrator`, o `copias-estragadas`, o `historico-de-arquivo`,
+  o `marcas`, o `moldes`, o `ganchos/chamadas-permitidas` e o `ganchos/protocolo`, que
+  achavam os repetidos cada um por conta própria, passam a usá-la.
 - `ganchos/leitura-do-terminal`: a função `depois_do_comando`, que acha nas palavras de um
   comando simples um comando de uma ou mais palavras, como `git grep`, também com outras
   palavras no meio, e a `comandos_achados`, que dá cada vez que um comando, ou um de dentro
@@ -48,6 +52,8 @@ prateleira segue o [Versionamento Semântico](https://semver.org/lang/pt-BR/spec
   diz o caminho do campo.
 - `itens-numerados`: a expressão do número sozinho e a de cada forma se compilam pelo
   módulo comum, e a que não compila é erro que diz o campo dela.
+- `marcas` e as peças comuns do `moldes` (`analises.py`, `limite.py` e `tabela.py`):
+  precisam do `extrator_comum.py`, do `extrator`, na pasta irmã ou na mesma pasta.
 - `moldes`: o molde da forma e o das regras pegam o campo que falta, o valor de outro tipo
   e o texto ou a lista vazios, com o caminho do valor; a forma e as regras conferem à mão
   só o que o molde não vê, e a entrada errada deixa de ser pega pelo `KeyError` e pelo

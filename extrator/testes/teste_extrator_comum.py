@@ -1,6 +1,6 @@
 """Testes do que o extrator_comum.py da para as pecas lerem os proprios dados: o leitor de
-molde (fora_do_molde, confere_molde, conferido e le_conferido), le_texto, campo e expressao.
-Nao precisa de PDF.
+molde (fora_do_molde, confere_molde, conferido e le_conferido), le_texto, campo, expressao e
+repetidos. Nao precisa de PDF.
 
 Os nomes dos campos e os valores sao sorteados, com semente fixa (o sorteio e o mesmo em toda
 rodada; outra semente vem com --semente), e cada molde e inventado aqui. Os testes conferem
@@ -31,6 +31,8 @@ regras, nunca uma frase pronta:
     le em UTF-8 e erro, que diz o arquivo;
   - campo da o valor no caminho com o tipo pedido e da erro, dizendo o caminho, quando ele
     falta ou e de outro tipo; expressao compila o campo ou da erro, dizendo o caminho;
+  - repetidos da cada valor que aparece mais de uma vez na lista, uma vez so, em ordem,
+    qualquer que seja a ordem da lista, e nada quando nada se repete;
   - duas conferencias dao o mesmo.
 Uso:
     python3 -I teste_extrator_comum.py <pasta do extrator> <pasta de trabalho nova> [--semente N]
@@ -43,7 +45,7 @@ import string
 import sys
 from pathlib import Path
 
-LEITOR = argparse.ArgumentParser(description="Testes do leitor de molde, de campo e de expressao.")
+LEITOR = argparse.ArgumentParser(description="Testes do leitor de molde, de campo, de expressao e dos repetidos.")
 LEITOR.add_argument("peca", type=Path, help="a pasta do extrator")
 LEITOR.add_argument("trabalho", type=Path, help="uma pasta de trabalho nova")
 LEITOR.add_argument("--semente", type=int, default=7, help="a semente do sorteio")
@@ -269,6 +271,23 @@ confere(extrator_comum.expressao(DADOS, TEXTO).search(f"{OUTRO} {VALOR}").group(
 for caminho, descricao in ((RUIM, "expressão que não compila"), (f"{BASE}/{NUMERO}", "expressão que não é texto")):
     mensagem = erro_de(extrator_comum.expressao, DADOS, caminho)
     confere(mensagem is not None and caminho in mensagem, f"{descricao} é erro, e a mensagem diz o caminho: {mensagem}")
+
+# ---- repetidos ----
+
+VEZES = [1, 2, 3] + [SORTE.randint(1, 3) for _ in range(SORTE.randint(1, 4))]  # ao menos um valor de cada jeito
+VALORES = {nome(): vezes for vezes in VEZES}  # quantas vezes cada valor sorteado entra na lista
+ESPERADOS = sorted(valor for valor, vezes in VALORES.items() if vezes > 1)
+RESTO = [valor for valor, vezes in VALORES.items() for _ in range(vezes - (vezes > 1))]
+SORTE.shuffle(RESTO)
+LISTA = sorted(ESPERADOS, reverse=True) + RESTO  # cada repetido aparece primeiro fora da ordem
+ACHADOS = extrator_comum.repetidos(LISTA)
+confere(ACHADOS == ESPERADOS,
+        f"repetidos dá cada valor que aparece mais de uma vez, uma vez só, em ordem: {ACHADOS}")
+confere(extrator_comum.repetidos(LISTA[::-1]) == ACHADOS, "a ordem da lista não muda o que repetidos dá")
+confere(extrator_comum.repetidos([N + 1, N, N + 2, N + 1, N]) == [N, N + 1],
+        "repetidos dá os números em ordem de valor")
+for lista, descricao in ((list(VALORES), "sem nada que se repita"), ([], "vazia")):
+    confere(extrator_comum.repetidos(lista) == [], f"repetidos não dá nada na lista {descricao}")
 
 for f in FALHAS:
     print("FALHA:", f)

@@ -21,7 +21,7 @@
   {"nome": "resumo-repetido-aceito", "arquivo": "esquemas/protocolo.schema.json",
    "de": "\"uniqueItems\": true, ", "para": ""},
   {"nome": "repetido-nunca-acusado", "arquivo": "protocolo.py",
-   "de": "    if repetidos:\n        raise ErroDeDados(f\"{onde}: repetido(s): {repetidos}\")\n", "para": ""},
+   "de": "    if mesmos:\n        raise ErroDeDados(f\"{onde}: repetido(s): {mesmos}\")\n", "para": ""},
   {"nome": "sem-campo-de-caminho-aceito", "arquivo": "esquemas/protocolo.schema.json",
    "de": "\"campos_caminho\": { \"type\": \"array\", \"minItems\": 1, ", "para": "\"campos_caminho\": { \"type\": \"array\", "},
   {"nome": "minimo-da-leitura-ignorado", "arquivo": "esquemas/protocolo.schema.json",

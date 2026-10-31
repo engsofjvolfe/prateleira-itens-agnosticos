@@ -44,10 +44,10 @@ As cópias estragadas do extrator estão em `estragos.json`, nesta pasta, para o
     python3 -I teste_extrator_comum.py <pasta do extrator> <pasta de trabalho nova> [--semente N]
 
 Testa o que o `extrator_comum.py` dá para as peças lerem os próprios dados: o leitor de
-molde (`fora_do_molde`, `confere_molde`, `conferido` e `le_conferido`), `le_texto`, `campo`
-e `expressao`. Não precisa de PDF. Os nomes dos campos e os valores são sorteados, sempre
-iguais, porque a semente é fixa (outra vem com `--semente`), e cada molde é inventado no
-teste. O teste confere regras, nunca uma frase pronta:
+molde (`fora_do_molde`, `confere_molde`, `conferido` e `le_conferido`), `le_texto`, `campo`,
+`expressao` e `repetidos`. Não precisa de PDF. Os nomes dos campos e os valores são
+sorteados, sempre iguais, porque a semente é fixa (outra vem com `--semente`), e cada molde
+é inventado no teste. O teste confere regras, nunca uma frase pronta:
 
 - cada palavra do molde que o leitor confere aceita o valor que a segue e acusa o que não a
   segue, no caminho do valor, e só nele: `type` (um ou uma lista; o booleano não é número,
@@ -75,6 +75,8 @@ teste. O teste confere regras, nunca uma frase pronta:
   se lê em UTF-8 é erro, que diz o arquivo;
 - `campo` dá o valor no caminho com o tipo pedido e dá erro, dizendo o caminho, quando ele
   falta ou é de outro tipo; `expressao` compila o campo ou dá erro, dizendo o caminho;
+- `repetidos` dá cada valor que aparece mais de uma vez na lista, uma vez só, em ordem,
+  qualquer que seja a ordem da lista, e nada quando nada se repete;
 - duas conferências dão o mesmo.
 
 Diz `0 falha(s)` quando passa; senão, uma linha `FALHA` para cada conferência que não

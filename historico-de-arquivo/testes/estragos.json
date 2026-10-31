@@ -73,7 +73,7 @@
   {"nome": "codificacao-sem-conferir", "arquivo": "historico_de_arquivo.py",
    "de": "            codecs.lookup(codificacao)\n", "para": "            pass\n"},
   {"nome": "nomes-repetidos-aceitos", "arquivo": "historico_de_arquivo.py",
-   "de": "    if repetidos:\n", "para": "    if False:\n"},
+   "de": "    if mesmos:\n", "para": "    if False:\n"},
   {"nome": "pasta-das-transcricoes-sem-conferir", "arquivo": "historico_de_arquivo.py",
    "de": "        if not args.transcricoes.is_dir():\n", "para": "        if False:\n"},
   {"nome": "saida-existente-aceita", "arquivo": "historico_de_arquivo.py",

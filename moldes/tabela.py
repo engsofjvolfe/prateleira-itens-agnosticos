@@ -5,8 +5,16 @@ contam, e os espacos das pontas de cada valor saem; aspas sao texto como outro q
 linha com menos colunas que o cabecalho tem vazias as que faltam, no fim: um editor que
 tira os espacos do fim da linha tira tambem as tabulacoes das colunas vazias do fim. A
 leitura do arquivo fica com o programa que importa o modulo: aqui chega o texto, com o nome
-que as mensagens de erro usam.
+que as mensagens de erro usam. A coluna repetida e achada pelo extrator_comum.py, do
+extrator, na pasta irma "extrator" ou na mesma pasta.
 """
+import sys
+from pathlib import Path
+
+PASTA = Path(__file__).resolve().parent
+for pasta in (PASTA.parent / "extrator", PASTA):  # na prateleira, o extrator fica na pasta irma
+    sys.path.insert(0, str(pasta))
+from extrator_comum import repetidos  # noqa: E402
 
 SEPARADOR = "\t"  # o que separa uma coluna da seguinte
 
@@ -22,7 +30,7 @@ def ler(texto, cabecalho, nome):
     linha, quando a primeira linha nao e o cabecalho dado ou uma linha tem mais colunas que
     ele. Cabecalho vazio ou com coluna repetida e erro de uso (ValueError)."""
     colunas = list(cabecalho)
-    if not colunas or len(set(colunas)) != len(colunas):
+    if not colunas or repetidos(colunas):
         raise ValueError(f"cabeçalho vazio ou com coluna repetida: {colunas}")
     linhas = texto.splitlines()
     if not linhas or [c.strip() for c in linhas[0].split(SEPARADOR)] != colunas:

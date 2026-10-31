@@ -24,7 +24,7 @@ from pathlib import Path
 PASTA = Path(__file__).resolve().parent
 for lugar in (PASTA.parent / "extrator", PASTA):  # na prateleira, o extrator fica na pasta irma
     sys.path.insert(0, str(lugar))
-from extrator_comum import ErroDeDados, le_conferido  # noqa: E402
+from extrator_comum import ErroDeDados, le_conferido, repetidos  # noqa: E402
 from transcricoes import blocos, eventos  # noqa: E402
 
 MOLDE = PASTA / "esquemas" / "historico-de-arquivo.schema.json"
@@ -153,10 +153,9 @@ def arquivos_da_saida(lista, ilegiveis, pasta, saida):
     textos.append((saida["lista"], tabela(COLUNAS + DADOS, linhas, saida["rotulos"])))
     textos.append((saida["ilegiveis"], tabela(ONDE, [[da_pasta(t, pasta), n] for t, n in ilegiveis],
                                               saida["rotulos"])))
-    nomes = [nome for nome, _ in textos]
-    repetidos = sorted({nome for nome in nomes if nomes.count(nome) > 1})
-    if repetidos:
-        raise ErroDeDados(f"mais de um arquivo da saída teria o nome {', '.join(repetidos)}")
+    mesmos = repetidos([nome for nome, _ in textos])
+    if mesmos:
+        raise ErroDeDados(f"mais de um arquivo da saída teria o nome {', '.join(mesmos)}")
     return {nome: conteudo.encode(saida["codificacao"]) for nome, conteudo in textos}
 
 

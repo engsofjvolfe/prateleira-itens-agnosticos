@@ -34,7 +34,7 @@
   {
    "nome": "irmas-repetidas-aceitas",
    "arquivo": "estraga.py",
-   "de": "        if repetidos:\n",
+   "de": "        if mesmos:\n",
    "para": "        if False:\n"
   },
   {
