@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "links.schema.json",
+  "type": "object",
+  "required": ["versao_schema", "nao_publicado", "versao", "primeira"],
+  "additionalProperties": false,
+  "properties": {
+    "versao_schema": { "const": 1 },
+    "nao_publicado": { "$ref": "comum.schema.json#/$defs/linha" },
+    "versao": { "$ref": "comum.schema.json#/$defs/linha" },
+    "primeira": { "$ref": "comum.schema.json#/$defs/linha" }
+  }
+}

@@ -1,9 +1,10 @@
 """
 Confere a forma de um changelog em Markdown, a do Keep a Changelog 1.1.0, com as versoes do
 Versionamento Semantico 2.0.0. A forma do Markdown e a das versoes ficam no codigo; o que
-muda de um uso para outro vem da configuracao, so dados: o nome da secao do que nao foi
-publicado, a marca da versao retirada, os tipos de mudanca, o fim de cada item e os modelos
-dos links.
+muda de um uso para outro vem de arquivos de dados: a configuracao, com o nome da secao do
+que nao foi publicado, a marca da versao retirada, os tipos de mudanca e o fim de cada item;
+e, com --links, os modelos dos links, num arquivo proprio, para a mesma forma servir a
+qualquer repositorio, cada um so com os links dele.
 
 - o comeco: a primeira linha e o titulo, "# " e um texto; as outras, ate a primeira secao,
   sao texto livre, sem titulo;
@@ -19,19 +20,19 @@ dos links.
   ultima linha de cada item termina com o fim do item;
 - as linhas em branco: uma antes e uma depois de cada titulo, e uma antes dos links; o
   arquivo termina com uma quebra de linha, sem linha em branco no fim;
-- os links, so com os modelos deles na configuracao e quando ha versao: no fim, um por
-  secao, na ordem delas, "[<titulo da secao>]: <link>", com o link feito pelo modelo.
+- os links, so com os modelos dos links e quando ha versao: no fim, um por secao, na ordem
+  delas, "[<titulo da secao>]: <link>", com o link feito pelo modelo.
 
 Toda outra linha e erro. O changelog e o arquivo dado ou, com --indice, o texto que o indice
 do git tem dele, o que vai no proximo commit, lido pelo git, com as quebras de linha lidas
 como na leitura de um arquivo de texto. Mostra uma linha "ERRO arquivo:linha: motivo" por
 problema, em ordem de linha, e um resumo; sai com 0 sem erro, 1 com erro e 2 quando a
-configuracao, o changelog ou um argumento nao serve. Usa so a biblioteca padrao, o git (com
---indice) e o extrator_comum.py, da peca extrator, na pasta irma "extrator" ou na mesma
-pasta.
+configuracao, os links, o changelog ou um argumento nao serve. Usa so a biblioteca padrao, o
+git (com --indice) e o extrator_comum.py, da peca extrator, na pasta irma "extrator" ou na
+mesma pasta.
 
 Uso:
-    python3 -I confere_changelog.py <configuracao.json> <CHANGELOG.md> [--indice]
+    python3 -I confere_changelog.py <configuracao.json> <CHANGELOG.md> [--indice] [--links <links.json>]
 """
 
 import argparse
@@ -48,6 +49,7 @@ for pasta in (PASTA.parent / "extrator", PASTA):  # na prateleira, a peca extrat
 from extrator_comum import ErroDeDados, le_conferido, le_texto, preenche  # noqa: E402
 
 MOLDE = PASTA / "esquemas" / "confere-changelog.schema.json"
+MOLDE_DOS_LINKS = PASTA / "esquemas" / "links.schema.json"  # o do arquivo do --links
 CODIFICACAO = "utf-8"
 CAMPOS_DOS_LINKS = {"nao_publicado": ("anterior",), "versao": ("versao", "anterior"), "primeira": ("versao",)}
 # o lugar de cada modelo de link: a secao do que nao foi publicado, depois da versao mais nova; uma versao, depois da
@@ -73,29 +75,37 @@ NUMEROS = ("major", "minor", "patch")  # os grupos dos tres numeros da versao, n
 COM_PRE, SEM_PRE = 0, 1  # com os mesmos numeros, a versao com pre-lancamento vem antes da normal
 
 
-def modelo_de_link(dados, nome):
+def modelo_de_link(dados, nome, arquivo):
     """O modelo do link, que o molde ja conferiu, com o lugar de cada campo dele, e de nenhum
-    outro."""
-    modelo = dados["links"][nome]
+    outro; o erro diz o arquivo e o modelo."""
+    modelo = dados[nome]
     try:
         preenche(modelo, **{c: "" for c in CAMPOS_DOS_LINKS[nome]})  # o lugar de outro campo e erro
     except ErroDeDados as e:
-        raise ErroDeDados(f"links/{nome}: {e}") from None
+        raise ErroDeDados(f"{arquivo}: {nome}: {e}") from None
     faltam = [c for c in CAMPOS_DOS_LINKS[nome] if f"{{{c}}}" not in modelo]
     if faltam:
-        raise ErroDeDados(f"links/{nome}: o modelo não tem o lugar de {faltam}")
+        raise ErroDeDados(f"{arquivo}: {nome}: o modelo não tem o lugar de {faltam}")
     return modelo
 
 
 def le_configuracao(caminho):
     """A configuracao, lida pelo molde dela, com a forma do titulo de versao montada com a marca
-    da versao retirada e os modelos dos links conferidos."""
+    da versao retirada."""
     dados = le_conferido(caminho, MOLDE)
     conf = {nome: dados[nome] for nome in ("nao_publicado", "removida", "tipos", "fim_do_item")}
     conf["versao"] = re.compile(rf"{SECAO}\[(?P<versao>{SEMVER})\] - (?P<data>{DATA})"
                                 rf"(?: \[{re.escape(conf['removida'])}\])?", re.ASCII)
-    conf["links"] = {nome: modelo_de_link(dados, nome) for nome in CAMPOS_DOS_LINKS} if "links" in dados else None
     return conf
+
+
+def le_links(arquivo):
+    """Os modelos dos links ({nome: modelo}) do arquivo do --links, lido pelo molde dele, cada
+    um conferido; None sem o arquivo."""
+    if arquivo is None:
+        return None
+    dados = le_conferido(arquivo, MOLDE_DOS_LINKS)
+    return {nome: modelo_de_link(dados, nome, arquivo) for nome in CAMPOS_DOS_LINKS}
 
 
 def le_changelog(arquivo, indice):
@@ -306,7 +316,7 @@ class Conferencia:
         achados = list(range(self.links, len(self.linhas)))
         if self.conf["links"] is None:
             for k in achados:
-                self.erro(k, "link no fim, sem os modelos dos links na configuração")
+                self.erro(k, "link no fim, sem os modelos dos links")
             return
         esperados = links_esperados(self.conf, self.versoes)
         if achados and self.links > 0 and self.linhas[self.links - 1]:
@@ -326,9 +336,10 @@ def main(argv=None):
     p.add_argument("changelog", type=Path)
     p.add_argument("--indice", action="store_true",
                    help="confere o changelog como o índice do git o tem, o que vai no próximo commit")
+    p.add_argument("--links", type=Path, metavar="ARQUIVO", help="o arquivo de dados com os modelos dos links")
     a = p.parse_args(argv)
     try:
-        conf = le_configuracao(a.configuracao)
+        conf = dict(le_configuracao(a.configuracao), links=le_links(a.links))
         texto = le_changelog(a.changelog, a.indice)
     except ErroDeDados as e:
         print(f"ERRO: {e}")

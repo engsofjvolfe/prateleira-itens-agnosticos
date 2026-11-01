@@ -27,11 +27,13 @@ de um projeto real. Os testes conferem o que a peca faz, nunca uma frase pronta:
     link errado, a mais, que falta, fora da ordem, ou sem a linha em branco antes;
   - com --indice, o conferido e o changelog do indice do git, e nao o da pasta, com as
     quebras de linha lidas como as de um arquivo, de qualquer pasta de onde o comando roda;
-  - a configuracao fora do molde, de outra versao, sem tipo, com tipo vazio ou repetido, com
-    o fim vazio, com um nome de duas linhas, sem um modelo de link ou com um modelo sem o
-    lugar de um campo dele ou com o de outro; o changelog que nao existe e o que nao e
-    UTF-8; e, com --indice, o arquivo fora do indice, o do indice que nao e UTF-8 e o de fora
-    de um repositorio: saem com 2;
+  - a configuracao fora do molde (tambem com os links dentro dela), de outra versao, sem
+    tipo, com tipo vazio ou repetido, com o fim vazio ou com um nome de duas linhas; o
+    arquivo dos links que nao existe, fora do molde, de outra versao, sem um modelo, com um
+    modelo de duas linhas, sem o lugar de um campo dele ou com o de outro, com o erro que
+    diz o arquivo; o changelog que nao existe e o que nao e UTF-8; e, com --indice, o
+    arquivo fora do indice, o do indice que nao e UTF-8 e o de fora de um repositorio: saem
+    com 2;
   - os erros saem em ordem de linha, e a mesma entrada da a mesma saida.
 Uso:
     python3 -I teste_confere_changelog.py <pasta de confere_changelog.py> <pasta de trabalho nova> [--semente N]
@@ -181,7 +183,8 @@ def grava_json(dados):
     return caminho
 
 
-CONFIGURACAO, COM_LINKS = grava_json(CONFIG), grava_json(dict(CONFIG, links=LINKS))
+DADOS_DOS_LINKS = {"versao_schema": 1, **LINKS}  # o arquivo do --links, pelo README
+CONFIGURACAO, MODELOS = grava_json(CONFIG), grava_json(DADOS_DOS_LINKS)
 
 
 def grava(linhas, sufixo="\n", caminho=None):
@@ -190,10 +193,12 @@ def grava(linhas, sufixo="\n", caminho=None):
     return caminho
 
 
-def roda(changelog_, config=CONFIGURACAO, indice=False, pasta=TRABALHO):
-    """A peca rodada da pasta dada, com o git sem a configuracao do sistema e da conta."""
+def roda(changelog_, config=CONFIGURACAO, indice=False, pasta=TRABALHO, links=None):
+    """A peca rodada da pasta dada, com o git sem a configuracao do sistema e da conta, e com o
+    arquivo dos links, quando dado."""
     return subprocess.run([sys.executable, "-I", str(PROGRAMA), str(config), str(changelog_),
-                           *(["--indice"] if indice else [])], capture_output=True, text=True, env=GIT, cwd=pasta)
+                           *(["--indice"] if indice else []), *(["--links", str(links)] if links else [])],
+                          capture_output=True, text=True, env=GIT, cwd=pasta)
 
 
 def linhas_dos_erros(resultado, caminho):
@@ -202,26 +207,28 @@ def linhas_dos_erros(resultado, caminho):
     return [int(l[len(prefixo):].split(":", 1)[0]) for l in resultado.stdout.splitlines() if l.startswith(prefixo)]
 
 
-def passa(caso, linhas, config=CONFIGURACAO):
+def passa(caso, linhas, links=None):
     caminho = grava(linhas)
-    resultado = roda(caminho, config)
+    resultado = roda(caminho, links=links)
     confere(resultado.returncode == 0 and not linhas_dos_erros(resultado, caminho),
             f"passa: {caso}: saiu com {resultado.returncode}: {resultado.stdout[-600:]}")
 
 
-def acusa(caso, linhas, esperadas, config=CONFIGURACAO, sufixo="\n"):
+def acusa(caso, linhas, esperadas, sufixo="\n", links=None):
     """O changelog da ERRO nas linhas esperadas (contadas de 1), e so nelas."""
     caminho = grava(linhas, sufixo)
-    resultado = roda(caminho, config)
+    resultado = roda(caminho, links=links)
     achadas = sorted(set(linhas_dos_erros(resultado, caminho)))
     confere(resultado.returncode == 1 and achadas == sorted(set(esperadas)),
             f"acusa: {caso}: esperado ERRO nas linhas {sorted(set(esperadas))}, saiu com {resultado.returncode} e "
             f"ERRO nas linhas {achadas}: {resultado.stdout[-600:]}")
 
 
-def nao_serve(caso, config, caminho=None, indice=False):
-    resultado = roda(caminho or grava(BASE), config, indice)
-    confere(resultado.returncode == 2, f"não serve: {caso}: saiu com {resultado.returncode}: {resultado.stdout}")
+def nao_serve(caso, config, caminho=None, indice=False, links=None):
+    """A rodada sai com 2; com o arquivo dos links, o erro diz o arquivo."""
+    resultado = roda(caminho or grava(BASE), config, indice, links=links)
+    confere(resultado.returncode == 2 and (links is None or str(links) in resultado.stdout),
+            f"não serve: {caso}: saiu com {resultado.returncode}: {resultado.stdout}")
 
 
 # ---- o changelog na forma ----
@@ -235,9 +242,9 @@ passa("com a seção do que não foi publicado vazia", changelog(VERSOES, nao_pu
 passa("sem versão nenhuma", changelog([]))
 passa("só com a seção do que não foi publicado, vazia", changelog([], nao_publicado=False))
 COM_OS_LINKS = changelog(VERSOES, links=True, retirada=RETIRADA)
-passa("com os links", COM_OS_LINKS, COM_LINKS)
-passa("com os links de uma versão só", changelog(VERSOES[:1], links=True), COM_LINKS)
-passa("com os modelos dos links e sem versão", changelog([], links=True), COM_LINKS)
+passa("com os links", COM_OS_LINKS, links=MODELOS)
+passa("com os links de uma versão só", changelog(VERSOES[:1], links=True), links=MODELOS)
+passa("com os modelos dos links e sem versão", changelog([], links=True), links=MODELOS)
 
 # ---- o pré-lançamento e os metadados de construção ----
 
@@ -331,20 +338,20 @@ acusa("a continuação fora de um item", com(S[0] + 2, CONTINUACAO + frase(), ""
 # ---- os links ----
 
 PRIMEIRO_LINK = len(COM_OS_LINKS) - len(VERSOES) - 1  # o indice do link da secao do que nao foi publicado
-acusa("os links sem os modelos deles na configuração", COM_OS_LINKS,
-      range(PRIMEIRO_LINK + 1, len(COM_OS_LINKS) + 1))
+acusa("os links sem os modelos deles", COM_OS_LINKS, range(PRIMEIRO_LINK + 1, len(COM_OS_LINKS) + 1))
 ERRADO = SORTE.randrange(PRIMEIRO_LINK, len(COM_OS_LINKS))
 acusa("o link com o endereço errado",
-      COM_OS_LINKS[:ERRADO] + [COM_OS_LINKS[ERRADO] + palavra()] + COM_OS_LINKS[ERRADO + 1:], [ERRADO + 1], COM_LINKS)
-acusa("o link a mais", COM_OS_LINKS + [f"[{palavra()}]: {SITIO}"], [len(COM_OS_LINKS) + 1], COM_LINKS)
-acusa("falta o último link", COM_OS_LINKS[:-1], [len(COM_OS_LINKS) - 1], COM_LINKS)
+      COM_OS_LINKS[:ERRADO] + [COM_OS_LINKS[ERRADO] + palavra()] + COM_OS_LINKS[ERRADO + 1:], [ERRADO + 1],
+      links=MODELOS)
+acusa("o link a mais", COM_OS_LINKS + [f"[{palavra()}]: {SITIO}"], [len(COM_OS_LINKS) + 1], links=MODELOS)
+acusa("falta o último link", COM_OS_LINKS[:-1], [len(COM_OS_LINKS) - 1], links=MODELOS)
 acusa("os links fora da ordem", COM_OS_LINKS[:-2] + [COM_OS_LINKS[-1], COM_OS_LINKS[-2]],
-      [len(COM_OS_LINKS) - 1, len(COM_OS_LINKS)], COM_LINKS)
+      [len(COM_OS_LINKS) - 1, len(COM_OS_LINKS)], links=MODELOS)
 acusa("falta a linha em branco antes dos links",
-      COM_OS_LINKS[:PRIMEIRO_LINK - 1] + COM_OS_LINKS[PRIMEIRO_LINK:], [PRIMEIRO_LINK], COM_LINKS)
-acusa("faltam os links", BASE, [len(BASE)], COM_LINKS)
+      COM_OS_LINKS[:PRIMEIRO_LINK - 1] + COM_OS_LINKS[PRIMEIRO_LINK:], [PRIMEIRO_LINK], links=MODELOS)
+acusa("faltam os links", BASE, [len(BASE)], links=MODELOS)
 SEM_VERSAO = changelog([])
-acusa("o link sem versão", SEM_VERSAO + ["", f"[{NAO_PUBLICADO}]: {SITIO}"], [len(SEM_VERSAO) + 2], COM_LINKS)
+acusa("o link sem versão", SEM_VERSAO + ["", f"[{NAO_PUBLICADO}]: {SITIO}"], [len(SEM_VERSAO) + 2], links=MODELOS)
 
 # ---- o índice do git ----
 
@@ -401,13 +408,20 @@ for caso, dados in {
     "um tipo repetido": dict(CONFIG, tipos=TIPOS + TIPOS[:1]),
     "o fim do item vazio": dict(CONFIG, fim_do_item=""),
     "um nome de duas linhas": dict(CONFIG, nao_publicado=f"{palavra()}\n{palavra()}"),
-    "um modelo de link que falta": dict(CONFIG, links={c: v for c, v in LINKS.items() if c != "primeira"}),
-    "o modelo de link sem o lugar da versão anterior": dict(CONFIG, links=dict(LINKS, versao=f"{SITIO}/{{versao}}")),
-    "o modelo de link sem o lugar da versão": dict(CONFIG, links=dict(LINKS, primeira=SITIO)),
-    "o modelo de link com o lugar de outro campo": dict(CONFIG, links=dict(
-        LINKS, nao_publicado=f"{SITIO}/{{anterior}}/{{{palavra()}}}")),
+    "os links dentro dela": dict(CONFIG, links=LINKS),
 }.items():
     nao_serve(f"a configuração com {caso}", grava_json(dados))
+nao_serve("o arquivo dos links que não existe", CONFIGURACAO, links=TRABALHO / f"{palavra()}.json")
+for caso, dados in {
+    "um campo desconhecido": dict(DADOS_DOS_LINKS, outro=1),
+    "outra versão": dict(DADOS_DOS_LINKS, versao_schema=DADOS_DOS_LINKS["versao_schema"] + 1),
+    "um modelo que falta": {c: v for c, v in DADOS_DOS_LINKS.items() if c != "primeira"},
+    "um modelo de duas linhas": dict(DADOS_DOS_LINKS, versao=f"{SITIO}/{{anterior}}\n{{versao}}"),
+    "o modelo sem o lugar da versão anterior": dict(DADOS_DOS_LINKS, versao=f"{SITIO}/{{versao}}"),
+    "o modelo sem o lugar da versão": dict(DADOS_DOS_LINKS, primeira=SITIO),
+    "o modelo com o lugar de outro campo": dict(DADOS_DOS_LINKS, nao_publicado=f"{SITIO}/{{anterior}}/{{{palavra()}}}"),
+}.items():
+    nao_serve(f"o arquivo dos links com {caso}", CONFIGURACAO, links=grava_json(dados))
 nao_serve("o changelog que não existe", CONFIGURACAO, TRABALHO / "nao-existe.md")
 NAO_UTF8 = TRABALHO / "nao-utf8.md"
 NAO_UTF8.write_bytes(b"# t\xff\n")

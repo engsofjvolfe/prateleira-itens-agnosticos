@@ -38,11 +38,12 @@ O teste confere o que a peça faz, nunca uma frase pronta:
 - com `--indice`, o conferido é o changelog do índice do git, e não o da pasta, rodado de
   qualquer pasta; as quebras de linha do Windows se leem como as de um arquivo, com e sem
   `--indice`;
-- saem com 2 a configuração fora do molde, de outra versão, sem tipo, com tipo vazio ou
-  repetido, com o fim vazio, com um nome de duas linhas, sem um modelo de link ou com um
-  modelo sem o lugar de um campo dele ou com o de outro; o changelog que não existe e o que
-  não é UTF-8; e, com `--indice`, o arquivo fora do índice, o do índice que não é UTF-8 e o
-  de fora de um repositório;
+- saem com 2 a configuração fora do molde (também com os links dentro dela), de outra
+  versão, sem tipo, com tipo vazio ou repetido, com o fim vazio ou com um nome de duas
+  linhas; o arquivo dos links que não existe, fora do molde, de outra versão, sem um modelo,
+  com um modelo de duas linhas, sem o lugar de um campo dele ou com o de outro, com o erro
+  que diz o arquivo; o changelog que não existe e o que não é UTF-8; e, com `--indice`, o
+  arquivo fora do índice, o do índice que não é UTF-8 e o de fora de um repositório;
 - os erros saem em ordem de linha, e a mesma entrada dá a mesma saída.
 
 O teste precisa do git, que ele roda sem a configuração do sistema e da conta e sem subir da

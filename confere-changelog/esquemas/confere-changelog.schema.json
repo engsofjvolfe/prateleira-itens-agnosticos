@@ -9,16 +9,6 @@
     "nao_publicado": { "$ref": "comum.schema.json#/$defs/linha" },
     "removida": { "$ref": "comum.schema.json#/$defs/linha" },
     "tipos": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "$ref": "comum.schema.json#/$defs/linha" } },
-    "fim_do_item": { "$ref": "comum.schema.json#/$defs/linha" },
-    "links": {
-      "type": "object",
-      "required": ["nao_publicado", "versao", "primeira"],
-      "additionalProperties": false,
-      "properties": {
-        "nao_publicado": { "$ref": "comum.schema.json#/$defs/linha" },
-        "versao": { "$ref": "comum.schema.json#/$defs/linha" },
-        "primeira": { "$ref": "comum.schema.json#/$defs/linha" }
-      }
-    }
+    "fim_do_item": { "$ref": "comum.schema.json#/$defs/linha" }
   }
 }

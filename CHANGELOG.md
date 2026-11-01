@@ -14,7 +14,8 @@ prateleira segue o [Versionamento Semântico](https://semver.org/lang/pt-BR/spec
   metadados de construção, pela expressão que a especificação dá, na ordem da precedência
   dela; o do arquivo ou, com `--indice`, o do índice do git, o que vai no commit, para o
   gancho do git antes do commit; a configuração da peça traz a forma em português do Brasil
-  do changelog desta prateleira; e o teste, com a lista de estragos dele.
+  do changelog desta prateleira, e os modelos dos links de cada versão vêm de um arquivo
+  próprio, dado no `--links`; e o teste, com a lista de estragos dele.
 - `confere-forma`: o `marcas-de-ia.json`, com as marcas que uma ferramenta de IA deixa num
   texto (o caractere invisível ou o espaço especial, e o resto de citação), para qualquer
   projeto dar ao conferidor ao lado dos padrões dele.

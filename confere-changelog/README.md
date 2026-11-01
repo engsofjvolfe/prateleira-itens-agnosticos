@@ -7,26 +7,30 @@ o `CHANGELOG.md` de um repositório seguir, daqui a um ano como hoje, a mesma fo
 como gancho do git, antes do commit, vale em todo commit, qualquer que seja o programa que o
 faz.
 
-A forma do Markdown e a das versões ficam no código. O que muda de um uso para outro vem da
-configuração, só dados: o nome da seção do que não foi publicado, a marca da versão
-retirada, os tipos de mudança, o fim de cada item e os modelos dos links.
+A forma do Markdown e a das versões ficam no código. O que muda de um uso para outro vem de
+arquivos de dados: a configuração, com o nome da seção do que não foi publicado, a marca da
+versão retirada, os tipos de mudança e o fim de cada item; e, com `--links`, os modelos dos
+links, num arquivo próprio. Assim a mesma configuração serve a qualquer repositório, cada um
+só com os links dele.
 
 Usa só a biblioteca padrão do Python, o git (com `--indice`) e o `extrator_comum.py`, do
-[extrator](../extrator/README.md), que lê a configuração pelo molde dela e o changelog em
-UTF-8. Na prateleira, ele é achado na pasta irmã `extrator/`; numa cópia fora da prateleira,
-na mesma pasta do script.
+[extrator](../extrator/README.md), que lê a configuração e os links pelo molde de cada um, e
+o changelog em UTF-8. Na prateleira, ele é achado na pasta irmã `extrator/`; numa cópia fora
+da prateleira, na mesma pasta do script.
 
 ## Como rodar
 
-    python3 -I <prateleira>/confere-changelog/confere_changelog.py <configuração.json> <CHANGELOG.md> [--indice]
+    python3 -I <prateleira>/confere-changelog/confere_changelog.py <configuração.json> <CHANGELOG.md> [--indice] [--links <links.json>]
 
 - `--indice`: confere o changelog como o índice do git o tem, o que vai no próximo commit, e
   não o da pasta. O git o lê da pasta do arquivo, e as quebras de linha se leem como na
   leitura de um arquivo de texto.
+- `--links`: o arquivo com os modelos dos [links](#os-links) de cada versão; sem ele, o
+  changelog não tem links.
 
 Mostra uma linha `ERRO arquivo:linha: motivo` por problema, em ordem de linha, e um resumo
-com quantos erros houve. Sai com código 0 sem erro, 1 com erro e 2 quando a configuração, o
-changelog ou um argumento não serve; então nada é conferido. O changelog não serve quando
+com quantos erros houve. Sai com código 0 sem erro, 1 com erro e 2 quando a configuração, os
+links, o changelog ou um argumento não serve; então nada é conferido. O changelog não serve quando
 não existe ou não se lê em UTF-8 e, com `--indice`, quando o índice do git não o tem.
 
 ## O que se confere
@@ -39,7 +43,7 @@ não existe ou não se lê em UTF-8 e, com `--indice`, quando o índice do git n
 | **Tipos de mudança** | `### <tipo>`: só os da lista, na ordem dela, sem repetir; cada tipo com um item ou mais, e cada versão com um tipo ou mais; a seção do que não foi publicado pode estar vazia |
 | **Itens** | `- ` e o texto, com a continuação em linhas que começam por dois espaços; a última linha de cada item termina com o `fim_do_item` |
 | **Linhas em branco** | uma antes e uma depois de cada título, e uma antes dos links; o arquivo termina com uma quebra de linha, sem linha em branco no fim |
-| **Links** | só com os modelos na configuração e quando há versão: no fim, um por seção, na ordem delas, `[<título da seção>]: <link>`, com o link feito pelo modelo |
+| **Links** | só com os modelos do `--links` e quando há versão: no fim, um por seção, na ordem delas, `[<título da seção>]: <link>`, com o link feito pelo modelo |
 
 Toda outra linha é erro.
 
@@ -61,7 +65,7 @@ algarismos do ASCII, como a especificação pede. A precedência é a do item 11
 
 O molde está em `esquemas/confere-changelog.schema.json`, com a regra de linha do
 [molde comum](../extrator/README.md#o-molde-comum) do extrator. A `configuracao.json` desta
-pasta é a forma em português do Brasil, sem links, como a do changelog desta prateleira.
+pasta é a forma em português do Brasil, como a do changelog desta prateleira.
 
 | Campo | O que é |
 | --- | --- |
@@ -70,18 +74,24 @@ pasta é a forma em português do Brasil, sem links, como a do changelog desta p
 | `removida` | a marca da versão retirada, como `REMOVIDO` |
 | `tipos` | os tipos de mudança, na ordem em que vêm numa seção |
 | `fim_do_item` | o texto com que termina cada item, como `.` |
-| `links` | opcional: os modelos dos links, explicados abaixo |
 
-Cada texto da configuração tem uma linha só, com alguma letra. Os três modelos dos links:
+Cada texto da configuração tem uma linha só, com alguma letra. É `ERRO`, com código 2: campo
+que o molde não conhece, campo que falta, de outro tipo, vazio ou de mais de uma linha, e
+nenhum tipo ou tipo repetido.
+
+## Os links
+
+O arquivo do `--links` é só dados, com o molde em `esquemas/links.schema.json`: o
+`versao_schema`, 1, e os três modelos dos links, cada um numa linha só, com alguma letra:
 
 - `nao_publicado`: o link da seção do que não foi publicado, com `{anterior}`, a versão mais
   nova;
 - `versao`: o link de uma versão, com `{versao}` e `{anterior}`, a versão logo abaixo dela;
 - `primeira`: o link da versão mais velha, com `{versao}`.
 
-É `ERRO`, com código 2: campo que o molde não conhece, campo que falta, de outro tipo, vazio
-ou de mais de uma linha, nenhum tipo ou tipo repetido, e o modelo de link sem o lugar de um
-campo dele ou com o de outro.
+Um repositório guarda nos dados dele só os links dele e dá também a configuração desta
+pasta, quando ela lhe serve. É `ERRO`, com código 2, que diz o arquivo: o arquivo que não
+existe ou que sai do molde, e o modelo sem o lugar de um campo dele ou com o de outro.
 
 ## Como ligar como gancho do git
 
@@ -95,9 +105,10 @@ prateleira:
     exec python3 -I <prateleira>/confere-changelog/confere_changelog.py \
         <prateleira>/confere-changelog/configuracao.json CHANGELOG.md --indice
 
-O git roda o gancho na pasta principal do repositório, e por isso o `CHANGELOG.md` dela é o
-conferido. A pasta `.git/hooks` não vai no commit: cada cópia do repositório põe o gancho de
-novo.
+Com os links de cada versão, o comando ganha o `--links`, com o arquivo deles nos dados do
+repositório. O git roda o gancho na pasta principal do repositório, e por isso o
+`CHANGELOG.md` dela é o conferido. A pasta `.git/hooks` não vai no commit: cada cópia do
+repositório põe o gancho de novo.
 
 ## Testes
 
