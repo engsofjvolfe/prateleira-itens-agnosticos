@@ -9,6 +9,12 @@ prateleira segue o [Versionamento Semântico](https://semver.org/lang/pt-BR/spec
 
 ### Adicionado
 
+- `confere-changelog`: confere a forma de um changelog, a do Keep a Changelog 1.1.0, com as
+  versões do Versionamento Semântico 2.0.0 inteiro, também com o pré-lançamento e os
+  metadados de construção, pela expressão que a especificação dá, na ordem da precedência
+  dela; o do arquivo ou, com `--indice`, o do índice do git, o que vai no commit, para o
+  gancho do git antes do commit; a configuração da peça traz a forma em português do Brasil
+  do changelog desta prateleira; e o teste, com a lista de estragos dele.
 - `confere-forma`: o `marcas-de-ia.json`, com as marcas que uma ferramenta de IA deixa num
   texto (o caractere invisível ou o espaço especial, e o resto de citação), para qualquer
   projeto dar ao conferidor ao lado dos padrões dele.

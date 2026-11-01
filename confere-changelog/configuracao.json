@@ -1,0 +1,7 @@
+{
+  "versao_schema": 1,
+  "nao_publicado": "Não publicado",
+  "removida": "REMOVIDO",
+  "tipos": ["Adicionado", "Modificado", "Obsoleto", "Removido", "Corrigido", "Segurança"],
+  "fim_do_item": "."
+}

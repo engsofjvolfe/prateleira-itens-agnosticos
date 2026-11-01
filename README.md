@@ -15,6 +15,7 @@ pega os defeitos. Nos comandos dos READMEs, `<prateleira>` é a pasta onde a pra
 
 | Peça | O que faz |
 | --- | --- |
+| [confere-changelog/](confere-changelog/README.md) | conferir a forma de um changelog, a do Keep a Changelog, com as versões do Versionamento Semântico inteiro, também a do índice do git, como gancho antes do commit (com testes) |
 | [confere-citacoes/](confere-citacoes/README.md) | conferir que cada trecho citado num texto Markdown está, letra por letra, na transcrição da fonte e nas páginas citadas, com os pedaços na ordem da fonte e cada supressão no lugar de alguma coisa (com testes) |
 | [confere-forma/](confere-forma/README.md) | conferir a forma de documentos Markdown contra uma descrição dela: abertura, seções, divisores, fecho, padrões proibidos, nomes em itálico e tamanho; e as marcas que uma ferramenta de IA deixa num texto, para qualquer projeto (com testes) |
 | [copia-para-projeto/](copia-para-projeto/README.md) | levar os arquivos de uma peça para um projeto, com o cabeçalho dos scripts dele, e conferir que as cópias estão em dia (com testes) |
@@ -50,7 +51,7 @@ prateleira) ou na própria pasta (numa cópia fora da prateleira).
 
 | Módulo comum | Da peça | Peças que o usam |
 | --- | --- | --- |
-| `extrator_comum.py`: ler um texto em UTF-8, ler JSON pelo molde, pegar um campo com o tipo pedido, achar os valores repetidos de uma lista, compilar uma expressão, conferir que uma codificação existe, dividir uma transcrição em páginas | [extrator](extrator/README.md#o-módulo-comum) | confere-citacoes, confere-forma, copia-para-projeto, copias-estragadas, custo-de-agentes, dicionario-das-duvidas, divergencias, documentos, glossario, historico-de-arquivo, itens-numerados, marcas, moldes, ganchos/busca-por-palavra, ganchos/chamadas-permitidas, ganchos/destino-da-limpeza, ganchos/leitura-completa, ganchos/leitura-do-terminal, ganchos/protocolo, ganchos/regras-de-codigo |
+| `extrator_comum.py`: ler um texto em UTF-8, ler JSON pelo molde, pegar um campo com o tipo pedido, achar os valores repetidos de uma lista, compilar uma expressão, conferir que uma codificação existe, dividir uma transcrição em páginas | [extrator](extrator/README.md#o-módulo-comum) | confere-changelog, confere-citacoes, confere-forma, copia-para-projeto, copias-estragadas, custo-de-agentes, dicionario-das-duvidas, divergencias, documentos, glossario, historico-de-arquivo, itens-numerados, marcas, moldes, ganchos/busca-por-palavra, ganchos/chamadas-permitidas, ganchos/destino-da-limpeza, ganchos/leitura-completa, ganchos/leitura-do-terminal, ganchos/protocolo, ganchos/regras-de-codigo |
 | `texto_comum.py`: passar um texto para a forma Unicode NFC e juntar os espaços | [extrator](extrator/README.md#o-módulo-de-texto) | confere-citacoes, custo-de-agentes, divergencias, extrator, glossario, itens-numerados, marcas, moldes, texto-em-comum |
 | `markdown_comum.py`: ler um texto Markdown como o GitHub o lê: as linhas fora dos blocos de código, o texto sem o código, a âncora de um título, os títulos com a linha, o nível e a âncora de cada um, e os marcadores | [documentos](documentos/README.md#o-módulo-de-markdown) | dicionario-das-duvidas, documentos, glossario |
 | `transcricoes.py`: ler as transcrições de sessão, um evento por linha | [historico-de-arquivo](historico-de-arquivo/README.md) | historico-de-arquivo, custo-de-agentes |
@@ -64,6 +65,8 @@ E os encadeamentos, em que uma peça grava o arquivo que a próxima lê:
 - Documentos + configuração do extrator → `extrator/extrator.py` → transcrições, página por
   página → `confere-citacoes` (como fontes) e `itens-numerados/itens.py`.
 - Textos Markdown → `confere-forma` (a forma) e `confere-citacoes` (as citações).
+- O `CHANGELOG.md` de um repositório, o do índice do git → `confere-changelog`, antes de
+  cada commit, pelo gancho do git.
 - A lista das divergências + o cabeçalho → `divergencias/divergencias.py` → o documento das
   divergências → `confere-citacoes` (a citação da fonte de cada forma).
 - Um dicionário das dúvidas + a forma dos códigos → `dicionario-das-duvidas/confere_dicionario.py`
