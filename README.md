@@ -16,7 +16,7 @@ pega os defeitos. Nos comandos dos READMEs, `<prateleira>` é a pasta onde a pra
 | Peça | O que faz |
 | --- | --- |
 | [confere-citacoes/](confere-citacoes/README.md) | conferir que cada trecho citado num texto Markdown está, letra por letra, na transcrição da fonte e nas páginas citadas, com os pedaços na ordem da fonte e cada supressão no lugar de alguma coisa (com testes) |
-| [confere-forma/](confere-forma/README.md) | conferir a forma de documentos Markdown contra uma descrição dela: abertura, seções, divisores, fecho, padrões proibidos, nomes em itálico e tamanho (com testes) |
+| [confere-forma/](confere-forma/README.md) | conferir a forma de documentos Markdown contra uma descrição dela: abertura, seções, divisores, fecho, padrões proibidos, nomes em itálico e tamanho; e as marcas que uma ferramenta de IA deixa num texto, para qualquer projeto (com testes) |
 | [copia-para-projeto/](copia-para-projeto/README.md) | levar os arquivos de uma peça para um projeto, com o cabeçalho dos scripts dele, e conferir que as cópias estão em dia (com testes) |
 | [copias-estragadas/](copias-estragadas/README.md) | provar que o teste de uma peça pega os defeitos dela, rodando-o contra cópias estragadas (com testes) |
 | [custo-de-agentes/](custo-de-agentes/README.md) | mostrar o uso de tokens de cada transcrição de sessão, como as dos agentes de um programa de IA (com testes) |

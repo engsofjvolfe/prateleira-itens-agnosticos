@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "proibidos.schema.json",
+  "type": "object",
+  "required": ["versao_schema", "proibidos"],
+  "additionalProperties": false,
+  "properties": {
+    "versao_schema": { "const": 1 },
+    "proibidos": { "type": "array", "items": { "$ref": "#/$defs/proibido" } }
+  },
+  "$defs": {
+    "proibido": {
+      "type": "object",
+      "required": ["nome", "padrao"],
+      "additionalProperties": false,
+      "properties": {
+        "nome": { "$ref": "comum.schema.json#/$defs/linha" },
+        "padrao": { "$ref": "confere-forma.schema.json#/$defs/expressao" },
+        "exceto": { "$ref": "confere-forma.schema.json#/$defs/expressao" }
+      }
+    }
+  }
+}

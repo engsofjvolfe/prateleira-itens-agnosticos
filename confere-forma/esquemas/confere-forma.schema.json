@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "confere-forma.schema.json",
   "type": "object",
-  "required": ["versao_schema", "abertura", "secao", "titulos", "divisor", "fecho", "proibidos", "italico", "palavras"],
+  "required": ["versao_schema", "abertura", "secao", "titulos", "divisor", "fecho", "italico", "palavras"],
   "additionalProperties": false,
   "properties": {
     "versao_schema": { "const": 1 },
@@ -19,7 +19,6 @@
         "continua": { "$ref": "#/$defs/expressao" }
       }
     },
-    "proibidos": { "type": "array", "items": { "$ref": "#/$defs/proibido" } },
     "italico": {
       "type": "object",
       "required": ["nomes", "marcas", "fora_de"],
@@ -52,16 +51,6 @@
       "properties": {
         "igual": { "type": "string" },
         "padrao": { "$ref": "#/$defs/expressao" }
-      }
-    },
-    "proibido": {
-      "type": "object",
-      "required": ["nome", "padrao"],
-      "additionalProperties": false,
-      "properties": {
-        "nome": { "$ref": "#/$defs/texto" },
-        "padrao": { "$ref": "#/$defs/expressao" },
-        "exceto": { "$ref": "#/$defs/expressao" }
       }
     }
   }

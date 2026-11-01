@@ -1,0 +1,7 @@
+{
+  "versao_schema": 1,
+  "proibidos": [
+    {"nome": "caractere invisível ou espaço especial", "padrao": "[\\u00A0\\u00AD\\u034F\\u061C\\u115F\\u1160\\u17B4\\u17B5\\u180E\\u2000-\\u200F\\u2028-\\u202F\\u205F-\\u206F\\u3000\\u3164\\uFE00-\\uFE0F\\uFEFF\\uFFA0\\U000E0000-\\U000E007F]"},
+    {"nome": "resto de citação de ferramenta de IA", "padrao": "(?i)\\[cite|oaicite|contentReference|\\u3010|\\u2020|utm_source="}
+  ]
+}

@@ -1,5 +1,6 @@
 """
-Confere a forma de documentos Markdown contra uma descricao dela, dada na configuracao:
+Confere a forma de documentos Markdown contra uma descricao dela, dada na configuracao e nos
+arquivos de padroes proibidos:
 
 - abertura: as linhas com texto antes do primeiro divisor ou da primeira secao, uma para
   cada item, na ordem; cada item e um texto "igual" ou uma expressao "padrao";
@@ -11,6 +12,9 @@ Confere a forma de documentos Markdown contra uma descricao dela, dada na config
   casam com "continua", e ele e a ultima coisa da secao; linha que casa com "continua"
   fora de um bloco de fecho e erro;
 - proibidos: cada linha que casa com o "padrao" de uma regra, e nao com o "exceto" dela;
+  as regras vem de arquivos de dados proprios, cada um dado com --proibidos e conferido
+  contra o molde dele, como o marcas-de-ia.json desta pasta; as de todos se somam, e duas
+  com o mesmo nome sao erro;
 - italico: cada nome da lista so aparece dentro de italico, nas linhas que nao casam com
   "fora_de"; italico e o trecho entre duas marcas iguais da lista, coladas ao texto, e a
   marca dobrada (negrito) nao conta;
@@ -23,7 +27,7 @@ argumento nao serve. Usa so a biblioteca padrao e o extrator_comum.py, da peca e
 pasta irma "extrator" ou na mesma pasta.
 
 Uso:
-    python3 -I confere_forma.py <configuracao.json> <texto.md>...
+    python3 -I confere_forma.py <configuracao.json> <texto.md>... [--proibidos <arquivo.json>]...
 """
 
 import argparse
@@ -34,9 +38,10 @@ from pathlib import Path
 PASTA = Path(__file__).resolve().parent
 for pasta in (PASTA.parent / "extrator", PASTA):  # na prateleira, a peca extrator fica na pasta irma
     sys.path.insert(0, str(pasta))
-from extrator_comum import ErroDeDados, expressao, le_conferido, le_texto  # noqa: E402
+from extrator_comum import ErroDeDados, compila, expressao, le_conferido, le_texto, repetidos  # noqa: E402
 
 MOLDE = PASTA / "esquemas" / "confere-forma.schema.json"
+MOLDE_DOS_PROIBIDOS = PASTA / "esquemas" / "proibidos.schema.json"  # o de cada arquivo do --proibidos
 PALAVRA = re.compile(r"\w+")  # o que se conta como palavra
 
 
@@ -61,11 +66,29 @@ def le_configuracao(caminho):
         raise ErroDeDados("a expressão secao não tem o grupo titulo")
     conf.update(titulos=dados["titulos"], nomes=dados["italico"]["nomes"], marcas=dados["italico"]["marcas"],
                 minimo=dados["palavras"]["minimo"], maximo=dados["palavras"]["maximo"])
-    conf["proibidos"] = [(regra["nome"], expressao(regra, "padrao"),
-                          expressao(regra, "exceto") if "exceto" in regra else None) for regra in dados["proibidos"]]
     if conf["minimo"] > conf["maximo"]:
         raise ErroDeDados("o mínimo de palavras é maior que o máximo")
     return conf
+
+
+def regras_proibidas(caminhos):
+    """[(nome, padrao, exceto)] das regras dos arquivos de padroes proibidos, na ordem dos
+    arquivos e, em cada um, na da lista, com as expressoes compiladas (exceto e None na regra
+    sem ele); cada arquivo e conferido contra o molde dele, e o erro diz o arquivo e a regra.
+    Duas regras com o mesmo nome, no mesmo arquivo ou em dois, sao erro."""
+    regras, lugares = [], []
+    for caminho in caminhos:
+        for k, regra in enumerate(le_conferido(caminho, MOLDE_DOS_PROIBIDOS)["proibidos"]):
+            onde = f"{caminho}: /proibidos/{k}"
+            exceto = compila(regra["exceto"], f"{onde}/exceto") if "exceto" in regra else None
+            regras.append((regra["nome"], compila(regra["padrao"], f"{onde}/padrao"), exceto))
+            lugares.append(onde)
+    nomes = [nome for nome, _, _ in regras]
+    mesmos = [f"{nome!r} em {', '.join(lugar for n, lugar in zip(nomes, lugares) if n == nome)}"
+              for nome in repetidos(nomes)]
+    if mesmos:
+        raise ErroDeDados(f"padrão proibido com o mesmo nome em mais de uma regra: {'; '.join(mesmos)}")
+    return regras
 
 
 def casa(item, linha):
@@ -182,13 +205,15 @@ def main(argv=None):
     p = argparse.ArgumentParser(description="Confere a forma de documentos Markdown contra uma descrição dela.")
     p.add_argument("configuracao", type=Path)
     p.add_argument("textos", type=Path, nargs="+")
+    p.add_argument("--proibidos", type=Path, action="append", default=[], metavar="ARQUIVO",
+                   help="um arquivo de dados com padrões proibidos; pode se repetir")
     a = p.parse_args(argv)
     faltam = [str(t) for t in a.textos if not t.is_file()]
     if faltam:
         print(f"ERRO: não existe(m): {faltam}")
         return 2
     try:
-        conf = le_configuracao(a.configuracao)
+        conf = dict(le_configuracao(a.configuracao), proibidos=regras_proibidas(a.proibidos))
         resultados = [(t, confere_texto(t, conf)) for t in a.textos]
     except ErroDeDados as e:
         print(f"ERRO: {e}")

@@ -9,6 +9,9 @@ prateleira segue o [Versionamento Semântico](https://semver.org/lang/pt-BR/spec
 
 ### Adicionado
 
+- `confere-forma`: o `marcas-de-ia.json`, com as marcas que uma ferramenta de IA deixa num
+  texto (o caractere invisível ou o espaço especial, e o resto de citação), para qualquer
+  projeto dar ao conferidor ao lado dos padrões dele.
 - `dicionario-das-duvidas`: confere os códigos dos títulos de um dicionário das dúvidas (só
   códigos entre as marcas, cada um com as partes na forma dada, nenhum o começo de outro, em
   ordem natural), com a forma dos códigos na configuração; e o teste, com a lista de
@@ -48,8 +51,8 @@ prateleira segue o [Versionamento Semântico](https://semver.org/lang/pt-BR/spec
   várias peças pedem do mesmo jeito (`linha`, um texto de uma linha só com alguma letra, e
   `texto`, um texto com alguma letra), e, no leitor de molde, o `$ref` para um molde comum
   pelo nome, como `comum.schema.json#/$defs/linha`, achado na pasta do molde que o aponta
-  ou na pasta dos moldes. O `divergencias`, também nos rótulos do comando, e o `glossario` o
-  usam.
+  ou na pasta dos moldes. O `confere-forma`, nos arquivos de padrões proibidos, o
+  `divergencias`, também nos rótulos do comando, e o `glossario` o usam.
 - `ganchos/leitura-do-terminal`: a função `depois_do_comando`, que acha nas palavras de um
   comando simples um comando de uma ou mais palavras, como `git grep`, também com outras
   palavras no meio, e a `comandos_achados`, que dá cada vez que um comando, ou um de dentro
@@ -80,6 +83,9 @@ prateleira segue o [Versionamento Semântico](https://semver.org/lang/pt-BR/spec
 - `confere-citacoes`, `custo-de-agentes`, `itens-numerados`, `marcas`, `moldes` e
   `texto-em-comum`: precisam do `texto_comum.py`, do `extrator`, na pasta irmã ou na mesma
   pasta.
+- `confere-forma`: os padrões proibidos saem da configuração e vêm de arquivos de dados
+  próprios, com o molde `esquemas/proibidos.schema.json`, dados pelo `--proibidos`, que pode
+  se repetir; as regras de todos se somam, e duas com o mesmo nome são erro.
 - `copia-para-projeto`, `copias-estragadas`, `documentos` (o `linhas_longas.py`),
   `extrator`, `historico-de-arquivo`, `itens-numerados` e `moldes`: a entrada que não serve
   sai com código 2, e não mais com 1, que fica para o problema achado; o
