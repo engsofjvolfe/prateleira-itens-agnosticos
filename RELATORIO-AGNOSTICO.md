@@ -50,6 +50,13 @@ Sem problema conhecido: as listagens são ordenadas e o sorteio dos testes tem s
    `read_text` direto: o que não se lê em UTF-8 dá o erro do Python, e não a mensagem de
    falta. Correção: o documento gravado que não se lê em UTF-8 é diferente do texto e sai
    com a mensagem de falta e o código 1.
+5. **O comando de busca só de espaços aceito pela configuração.** Em
+   `ganchos/busca-por-palavra/esquemas/busca-por-palavra.schema.json:20`, o `comando` de uma
+   busca só precisa ser um texto não vazio: o que só tem espaços passa pelo molde, vira uma
+   lista sem palavras e, em todo comando de terminal, quebra o gancho com o erro do Python,
+   em `ganchos/leitura-do-terminal/leitura_do_terminal.py:227`, e não com o `ERRO` da
+   configuração. Correção: o `comando` pela regra de linha do molde comum, como os comandos
+   do `leitura-completa`.
 
 ## Testes
 

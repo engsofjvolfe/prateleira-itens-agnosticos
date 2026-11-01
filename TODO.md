@@ -10,6 +10,8 @@ entra no [CHANGELOG.md](CHANGELOG.md), na seção `Não publicado`. O
    3 do relatório).
 4. O documento gravado que não se lê em UTF-8 como falta no `grava-ou-confere` (item 4 do
    relatório).
-5. Quando houver um repositório remoto, pôr no fim do changelog o link de cada versão, com
+5. O comando de busca só de espaços como erro da configuração no `busca-por-palavra` (item 5
+   do relatório).
+6. Quando houver um repositório remoto, pôr no fim do changelog o link de cada versão, com
    os modelos dos links numa configuração do
    [confere-changelog](confere-changelog/README.md) própria do repositório.
