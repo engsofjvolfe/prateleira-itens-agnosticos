@@ -40,6 +40,7 @@ Os arquivos soltos:
 | --- | --- |
 | `README.md` | este arquivo |
 | `CHANGELOG.md` | o que mudou em cada versão |
+| `links-do-changelog.json` | os modelos do link de cada versão no fim do changelog, que o gancho do git dá ao [confere-changelog](confere-changelog/README.md#os-links) |
 | `TODO.md` | o que falta fazer |
 | `RELATORIO-AGNOSTICO.md` | cada peça conferida contra as regras da prateleira |
 | `.gitignore` | o que a prateleira não guarda: o cache do Python e as anotações de sessão dos ganchos |

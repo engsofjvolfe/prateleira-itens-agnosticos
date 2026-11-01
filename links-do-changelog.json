@@ -1,0 +1,6 @@
+{
+  "versao_schema": 1,
+  "nao_publicado": "https://github.com/engsofjvolfe/prateleira-itens-agnosticos/compare/v{anterior}...HEAD",
+  "versao": "https://github.com/engsofjvolfe/prateleira-itens-agnosticos/compare/v{anterior}...v{versao}",
+  "primeira": "https://github.com/engsofjvolfe/prateleira-itens-agnosticos/releases/tag/v{versao}"
+}

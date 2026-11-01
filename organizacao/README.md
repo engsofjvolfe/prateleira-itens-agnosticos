@@ -57,6 +57,7 @@ alguma ainda quebra.
     prateleira/
       README.md                    o índice das peças, como elas se ligam e as versões
       CHANGELOG.md                 o que mudou em cada versão
+      links-do-changelog.json      os modelos do link de cada versão no fim do changelog
       TODO.md                      o que falta fazer
       RELATORIO-AGNOSTICO.md       cada peça contra as regras
       .gitignore                   o cache do Python e as anotações de sessão dos ganchos

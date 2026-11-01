@@ -12,6 +12,3 @@ entra no [CHANGELOG.md](CHANGELOG.md), na seção `Não publicado`. O
    relatório).
 5. O comando de busca só de espaços como erro da configuração no `busca-por-palavra` (item 5
    do relatório).
-6. Quando houver um repositório remoto, pôr no fim do changelog o link de cada versão, com
-   os modelos dos [links](confere-changelog/README.md#os-links) num arquivo próprio do
-   repositório, dado ao `confere-changelog` no `--links`.

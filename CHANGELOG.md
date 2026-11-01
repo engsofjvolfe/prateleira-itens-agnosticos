@@ -84,6 +84,8 @@ prateleira segue o [Versionamento Semântico](https://semver.org/lang/pt-BR/spec
   gerado, que não pode estar vazio, confere que o arquivo dele não é uma das entradas nem uma
   pasta e monta o texto, com o cabeçalho e os blocos; e o teste dele, com a lista de
   estragos. O `divergencias` e o `glossario` o usam.
+- O link de cada versão no fim deste changelog, com os modelos em `links-do-changelog.json`,
+  que o gancho do git dá ao `confere-changelog`.
 
 ### Modificado
 
@@ -191,3 +193,6 @@ prateleira segue o [Versionamento Semântico](https://semver.org/lang/pt-BR/spec
 - O teste de cada peça com código, com a lista de estragos que ele pega.
 - O README, com o índice das peças e a regra das versões; a organização (`organizacao/`); o
   relatório das peças contra as regras; este changelog e a lista do que falta.
+
+[Não publicado]: https://github.com/engsofjvolfe/prateleira-itens-agnosticos/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/engsofjvolfe/prateleira-itens-agnosticos/releases/tag/v0.1.0
