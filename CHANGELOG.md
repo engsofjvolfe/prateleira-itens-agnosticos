@@ -53,6 +53,12 @@ prateleira segue o [Versionamento Semântico](https://semver.org/lang/pt-BR/spec
   pelo nome, como `comum.schema.json#/$defs/linha`, achado na pasta do molde que o aponta
   ou na pasta dos moldes. O `confere-forma`, nos arquivos de padrões proibidos, o
   `divergencias`, também nos rótulos do comando, e o `glossario` o usam.
+- `ganchos/leitura-completa`: o gancho que faz todo documento se ler inteiro. Ele barra o
+  comando de terminal que corta um documento, as ferramentas de busca e as que resumem, e a
+  leitura que não começa na primeira linha, não continua na seguinte à última lida nem
+  repete o último pedaço; e trava o fim da resposta com arquivo lido só em parte. Cada
+  arquivo lido em parte tem a sua anotação, gravada de uma vez; e o teste, com a lista de
+  estragos dele.
 - `ganchos/leitura-do-terminal`: a função `depois_do_comando`, que acha nas palavras de um
   comando simples um comando de uma ou mais palavras, como `git grep`, também com outras
   palavras no meio, e a `comandos_achados`, que dá cada vez que um comando, ou um de dentro

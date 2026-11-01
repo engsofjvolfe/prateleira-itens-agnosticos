@@ -1,0 +1,6 @@
+{
+  "versao_schema": 1,
+  "estado": "estado",
+  "comandos": ["grep", "egrep", "fgrep", "rg", "ag", "ack", "git grep", "head", "tail", "sed", "awk", "gawk", "cut",
+               "jq"]
+}

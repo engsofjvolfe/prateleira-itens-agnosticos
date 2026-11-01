@@ -14,8 +14,9 @@ do outro. Comando com aspa, crase ou substituição sem fechar é ilegível.
 Usa só a biblioteca padrão do Python e o `extrator_comum.py`, do
 [extrator](../../extrator/README.md), que lê a configuração pelo molde dela; ele é achado
 onde a prateleira o põe. Não se roda: o `leitura_do_terminal.py` é importado. Os ganchos
-[regras-de-codigo](../regras-de-codigo/README.md) e
-[busca-por-palavra](../busca-por-palavra/README.md) a usam, da pasta irmã, e recebem a
+[regras-de-codigo](../regras-de-codigo/README.md),
+[busca-por-palavra](../busca-por-palavra/README.md) e
+[leitura-completa](../leitura-completa/README.md) a usam, da pasta irmã, e recebem a
 configuração dela no `--terminal`.
 
 ## O que dá

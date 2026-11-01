@@ -12,6 +12,7 @@ Usa só a biblioteca padrão do Python e o `extrator_comum.py`, do
 pastas acima (na prateleira) ou na pasta irmã (numa cópia de teste). Não se roda: os ganchos
 [busca-por-palavra](../busca-por-palavra/README.md),
 [destino-da-limpeza](../destino-da-limpeza/README.md),
+[leitura-completa](../leitura-completa/README.md),
 [regras-de-codigo](../regras-de-codigo/README.md) e
 [chamadas-permitidas](../chamadas-permitidas/README.md) importam o `protocolo.py`, da pasta
 irmã.

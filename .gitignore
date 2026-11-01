@@ -4,3 +4,5 @@ __pycache__/
 ganchos/regras-de-codigo/estado/
 # a anotação de cada sessão do gancho do destino da limpeza, apagada ao fim de cada resposta
 ganchos/destino-da-limpeza/estado/
+# as anotações de cada sessão do gancho da leitura completa, apagadas na volta da trava do fim
+ganchos/leitura-completa/estado/

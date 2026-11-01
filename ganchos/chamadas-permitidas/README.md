@@ -114,6 +114,10 @@ isso estas ainda dependem de a documentação ser seguida:
 - escrever nos arquivos da própria cancela: a lista das regras, a configuração do programa e
   a cópia da peça.
 
+O segundo, o gancho [leitura-completa](../leitura-completa/README.md) fecha para todo
+arquivo de texto: ele só deixa ler do começo, em pedaços seguidos, e trava o fim da resposta
+com arquivo lido só em parte.
+
 O caminho para fechar: a busca vira a chave que abre a porta. A leitura passa pela cancela,
 e um arquivo só se lê inteiro, quando a documentação manda, ou no lugar que uma busca
 permitida abriu. Um gancho que roda depois de cada busca permitida lê o que ela devolveu e

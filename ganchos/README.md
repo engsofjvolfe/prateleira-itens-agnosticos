@@ -8,7 +8,7 @@ dele — vem do protocolo, num arquivo do projeto.
 **[protocolo/](protocolo/README.md)** — lê o protocolo dos ganchos de um programa, de um
 arquivo do projeto: os eventos, as chaves do evento, a forma de cada resposta e as
 ferramentas, com os campos de cada uma; lê o evento, monta a resposta e dá o arquivo da
-anotação de cada sessão; não se roda (com testes).
+anotação de cada sessão, ou de cada chave dela; não se roda (com testes).
 
 **[regras-de-codigo/](regras-de-codigo/README.md)** — gancho que entrega as regras de código
 antes da primeira escrita de código ou de dados de cada tarefa, bloqueia o comando de
@@ -19,6 +19,12 @@ sem a conferência desses arquivos; textos e planilhas ficam de fora (com testes
 para achar ou decidir o que ler ou mudar, no terminal e nas ferramentas de busca, menos a
 dos padrões livres, como a lista dos títulos de um texto, e, no terminal, a dos códigos
 exatos no arquivo que se dá a ele (com testes).
+
+**[leitura-completa/](leitura-completa/README.md)** — gancho que faz todo documento se ler
+inteiro: barra o comando de terminal que corta um documento, as ferramentas de busca e as
+que resumem, e a leitura que não começa na primeira linha, não continua na seguinte à última
+lida nem repete o último pedaço; e trava o fim da resposta com arquivo lido só em parte (com
+testes).
 
 **[leitura-do-terminal/](leitura-do-terminal/README.md)** — lê um comando de terminal como
 o shell lê, com os prefixos do shell na configuração dela, para os ganchos que precisam
