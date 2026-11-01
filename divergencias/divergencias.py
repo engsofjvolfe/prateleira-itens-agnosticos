@@ -6,8 +6,9 @@ a fonte que a da.
 A lista e um JSON com o molde esquemas/divergencias.schema.json: o "versao_schema" e as
 "divergencias", cada uma com o "fato", a forma "ensinada" e as "outras", uma ou mais; cada
 forma com o que ela "diz" e a "fonte". O fato e o que a forma diz sao uma linha so, com
-alguma letra; a fonte pode ter mais de uma linha, como uma citacao em bloco. Campo que o
-molde nao conhece, ou que falta, e erro.
+alguma letra, e a fonte, um texto com alguma letra, que pode ter mais de uma linha, como uma
+citacao em bloco: as regras "linha" e "texto" do molde comum do extrator. Campo que o molde
+nao conhece, ou que falta, e erro.
 
 O documento e o cabecalho dado (o titulo e a abertura, por exemplo), sem os espacos e as
 quebras do fim, e, para cada divergencia, na ordem da lista: o titulo de segundo nivel com o
@@ -27,10 +28,10 @@ Mostra uma linha ERRO por problema, com a lista e o caminho do valor nela, e um 
 com codigo 0 com o documento gravado ou em dia; 1 com problema na lista, ou com o documento
 que nao esta em dia; e 2, sem nada gravado, quando a lista ou o cabecalho nao se leem em
 UTF-8, a lista nao e JSON ou sai do molde, o cabecalho esta vazio, um rotulo nao e uma linha
-so com alguma letra (a regra "linha" do molde), ou o documento e um dos arquivos de entrada
-ou nao e um arquivo. Precisa do extrator_comum.py e do texto_comum.py, do extrator, e do
-grava_ou_confere.py e do documento_gerado.py, do grava-ou-confere, nas pastas irmas ou na
-mesma pasta.
+so com alguma letra (o molde esquemas/rotulos.schema.json), ou o documento e um dos
+arquivos de entrada ou nao e um arquivo. Precisa do extrator_comum.py e do texto_comum.py,
+do extrator, e do grava_ou_confere.py e do documento_gerado.py, do grava-ou-confere, nas
+pastas irmas ou na mesma pasta.
 
 Uso:
     python3 -I divergencias.py <divergencias.json> <cabecalho.md> <documento.md>
@@ -45,12 +46,12 @@ PASTA = Path(__file__).resolve().parent
 for pasta in (PASTA.parent / "grava-ou-confere", PASTA.parent / "extrator", PASTA):  # na prateleira, as pastas irmas
     sys.path.insert(0, str(pasta))
 from documento_gerado import confere_destino, em_blocos, le_cabecalho  # noqa: E402
-from extrator_comum import ErroDeDados, expressao, le_conferido, le_json  # noqa: E402
+from extrator_comum import ErroDeDados, conferido, le_conferido  # noqa: E402
 from grava_ou_confere import grava_ou_confere, opcao_conferir  # noqa: E402
 from texto_comum import espacos_juntos, nfc  # noqa: E402
 
 MOLDE = PASTA / "esquemas" / "divergencias.schema.json"  # o molde da lista
-LINHA = "$defs/linha/pattern"  # no molde, a regra de uma linha so com alguma letra, que tambem vale para os rotulos
+ROTULOS = PASTA / "esquemas" / "rotulos.schema.json"  # o molde dos rotulos que vem no comando
 TITULO = "## "  # o comeco do titulo de cada fato no documento
 
 
@@ -100,10 +101,7 @@ def documento(cabecalho, divergencias, ensinada, outra):
 def entrada(a):
     """(divergencias, cabecalho): a lista, conferida pelo molde, e o cabecalho; ErroDeDados quando um rotulo, o
     documento, o cabecalho ou a lista nao servem."""
-    linha = expressao(le_json(MOLDE), LINHA)
-    for opcao, rotulo in (("--ensinada", a.ensinada), ("--outra", a.outra)):
-        if not linha.search(rotulo):
-            raise ErroDeDados(f"{opcao}: o rótulo precisa ser uma linha só, com alguma letra: {rotulo!r}")
+    conferido({"ensinada": a.ensinada, "outra": a.outra}, ROTULOS, "os rótulos do comando")
     confere_destino(a.documento, (a.lista, a.cabecalho))
     cabecalho = le_cabecalho(a.cabecalho)
     return le_conferido(a.lista, MOLDE)["divergencias"], cabecalho

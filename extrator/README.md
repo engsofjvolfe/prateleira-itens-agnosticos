@@ -30,8 +30,9 @@ quantas correções; e sai com código 0.
 ## A configuração
 
 Os moldes estão em `esquemas/`: `extrator.schema.json` para a configuração e
-`extracao.schema.json` para a lista de documentos. Lá está também o molde dos moldes,
-`molde.schema.json`, do [módulo comum](#o-módulo-comum).
+`extracao.schema.json` para a lista de documentos. Lá estão também o molde dos moldes,
+`molde.schema.json`, do [módulo comum](#o-módulo-comum), e o
+[molde comum](#o-molde-comum), `comum.schema.json`.
 
 `padrao` diz a forma da transcrição:
 
@@ -141,14 +142,31 @@ palavra pede é `ErroDeDados`, que diz o lugar no molde. Ele confere `type`, `co
 `enum`, `minLength` e `maxLength` (em letras), `pattern`, `minimum` e `maximum`,
 `minItems`, `maxItems`, `uniqueItems` e `items`, `required`, `properties`,
 `additionalProperties`, `minProperties` e `maxProperties`, `allOf`, `if`, `then` e `else`;
-o `$ref` vai à raiz (`#`) ou a um molde de `$defs` (`#/$defs/nome`). As anotações
-(`$schema`, `$id`, `$comment`, `title`, `description`, `default` e `examples`) não
-conferem nada. Duas diferenças do JSON Schema: o `pattern` é a expressão regular do
-Python, buscada no texto, e o inteiro é o número escrito sem ponto, como o Python o lê
-(`1.0` não é inteiro). O tipo que o leitor não conhece, a referência para o que o molde não
-tem ou que volta a ela mesma e a forma que não compila também são `ErroDeDados`. Uma
-palavra nova é uma linha no molde dos moldes e o código que a confere, com o caso dela no
-teste.
+o `$ref` vai à raiz (`#`), a um molde de `$defs` (`#/$defs/nome`) ou, com o nome de um
+molde comum antes do `#` (`comum.schema.json#/$defs/nome`), a um molde de `$defs` dele (ver
+[O molde comum](#o-molde-comum)). As anotações (`$schema`, `$id`, `$comment`, `title`,
+`description`, `default` e `examples`) não conferem nada. Duas diferenças do JSON Schema: o
+`pattern` é a expressão regular do Python, buscada no texto, e o inteiro é o número escrito
+sem ponto, como o Python o lê (`1.0` não é inteiro). O tipo que o leitor não conhece, a
+referência para o que o molde não tem ou que volta a ela mesma, também passando por um molde
+comum, o molde comum que falta ou que sai do molde dos moldes e a forma que não compila
+também são `ErroDeDados`. Uma palavra nova é uma linha no molde dos moldes e o código que a
+confere, com o caso dela no teste.
+
+## O molde comum
+
+O que os moldes de várias peças pedem do mesmo jeito fica num molde comum, só com `$defs`,
+e cada molde o aponta pelo `$ref`, sem repetir a regra. O molde comum se acha pelo nome, só
+de letras minúsculas, números e hífen, com `.schema.json` no fim: primeiro na pasta do molde
+que o aponta e, senão, em `esquemas/`, aqui. Dentro dele, `#` é ele mesmo. Ele é conferido
+contra o molde dos moldes, como qualquer molde.
+
+O `esquemas/comum.schema.json` traz:
+
+| Definição | O que pede |
+| --- | --- |
+| `linha` | um texto de uma linha só, com alguma letra |
+| `texto` | um texto com alguma letra, que pode ter mais de uma linha |
 
 ## O módulo de texto
 

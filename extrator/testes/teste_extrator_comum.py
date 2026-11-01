@@ -13,16 +13,19 @@ regras, nunca uma frase pronta:
     maxItems, uniqueItems (tambem com objetos), items, required, properties,
     additionalProperties (falso ou um molde), minProperties, maxProperties, allOf, if, then e
     else, o molde falso e o $ref (para $defs, para a raiz, com escape no nome, ao lado de
-    outra palavra, e um molde que se repete dentro dos dados); as anotacoes nao conferem
+    outra palavra, um molde que se repete dentro dos dados e um molde comum, da pasta do
+    molde ou, senao, da pasta dos moldes, que vira a raiz das referencias de dentro dele,
+    tambem as definicoes do molde comum da pasta dos moldes); as anotacoes nao conferem
     nada;
   - cada palavra do molde dos moldes tem um caso aqui, e cada molde do extrator, o proprio
     molde dos moldes tambem, segue o molde dos moldes;
   - todos os erros saem, nao so o primeiro; o valor do tipo errado da um erro so;
   - o molde fora do molde dos moldes (uma palavra que o leitor nao conhece, outro dialeto,
     um valor que nao e da forma que a palavra pede, uma referencia que nao vai a raiz nem a
-    $defs) e erro, que diz o lugar no molde; o tipo desconhecido, tambem depois de um tipo
-    certo, a referencia para o que o molde nao tem ou que volta a ela mesma e a forma que
-    nao compila sao erro, que diz o que;
+    $defs, ou que nomeia um molde de outra pasta) e erro, que diz o lugar no molde; o tipo
+    desconhecido, tambem depois de um tipo certo, a referencia para o que o molde nao tem ou
+    que volta a ela mesma, tambem passando por um molde comum, o molde comum que falta ou que
+    sai do molde dos moldes e a forma que nao compila sao erro, que diz o que;
   - le_conferido da os dados do arquivo que segue o molde e, senao, erro com o arquivo, o
     molde e o caminho de cada valor fora; o arquivo que falta ou que nao e JSON e erro; o
     molde fora do molde dos moldes e erro, com o arquivo dele e o lugar; conferido faz o
@@ -97,6 +100,7 @@ A, B, C, D = nome(), nome(), nome(), nome()
 TEXTO, OUTRO = nome(), nome()
 LETRA = next(c for c in LETRAS if c != TEXTO[0])  # um texto so dela nunca tem TEXTO
 N = SORTE.randint(2, 5)
+COMUM = "".join(SORTE.choice(string.ascii_lowercase) for _ in range(8))  # um nome com as letras do nome de um molde
 
 # (descricao, molde, [(dados, caminhos dos erros)])
 CASOS = [
@@ -153,6 +157,11 @@ CASOS = [
     ("$ref que se repete nos dados", {"type": "object", "additionalProperties": False,
                                       "properties": {A: {"type": "array", "items": {"$ref": "#"}}}},
      [({A: [{A: []}, {}]}, []), ({A: [{A: [{B: N}]}]}, [f"/{A}/0/{A}/0/{B}"])]),
+    ("$ref para a linha do molde comum", {"properties": {A: {"$ref": "comum.schema.json#/$defs/linha"}}},
+     [({A: f" {TEXTO} {OUTRO}"}, []), ({A: f"{TEXTO}\n{OUTRO}"}, [f"/{A}"]), ({A: f"{TEXTO}\n"}, [f"/{A}"]),
+      ({A: " \t "}, [f"/{A}"]), ({A: N}, [f"/{A}"])]),
+    ("$ref para o texto do molde comum", {"properties": {A: {"$ref": "comum.schema.json#/$defs/texto"}}},
+     [({A: f"\n{TEXTO}\n{OUTRO}\n"}, []), ({A: " \n "}, [f"/{A}"]), ({A: ""}, [f"/{A}"])]),
     ("todos os erros", {"items": {"properties": {A: {"type": "string"}}, "required": [B]}},
      [([{A: N}, {B: N}, {A: TEXTO}], [f"/0/{A}", f"/0/{B}", f"/2/{B}"])]),
     ("o tipo errado dá um erro só", {"type": "string", "minLength": N + 1, "pattern": TEXTO, "enum": [TEXTO]},
@@ -191,6 +200,7 @@ MOLDES_ERRADOS = [  # (descricao, molde, o que o erro diz: fora do molde dos mol
     ("uma referência para fora dele", {"$defs": {A: True}, "$ref": f"{TEXTO}.json#/$defs/{A}"}, "/$ref"),
     ("uma referência que não é caminho", {"$ref": f"#{TEXTO}"}, "/$ref"),
     ("uma referência que não vai a $defs", {"properties": {A: True}, "$ref": f"#/properties/{A}"}, "/$ref"),
+    ("uma referência para um molde de outra pasta", {"$ref": f"../{COMUM}.schema.json#/$defs/{A}"}, "/$ref"),
     ("um tipo desconhecido", {"type": TEXTO}, TEXTO),
     ("um tipo desconhecido depois de um certo", {"type": ["array", TEXTO]}, TEXTO),
     ("uma referência para o que ele não tem", {"$defs": {}, "$ref": f"#/$defs/{TEXTO}"}, TEXTO),
@@ -239,6 +249,43 @@ confere(extrator_comum.conferido(CERTOS, MOLDE, DOS_DADOS) == CERTOS, "conferido
 mensagem = erro_de(extrator_comum.conferido, {A: TEXTO, C: N}, MOLDE, DOS_DADOS)
 confere(mensagem is not None and all(p in mensagem for p in (DOS_DADOS, MOLDE.name, f"/{A}", f"/{C}")),
         f"conferido: erro que diz o nome dos dados, o molde e o caminho de cada valor fora: {mensagem}")
+
+# ---- o molde comum ----
+
+ARQUIVO = f"{COMUM}.schema.json"
+grava(ARQUIVO, {"$defs": {D: {"$ref": f"#/$defs/{C}"}, C: {"type": "integer", "minimum": 0}}})
+grava("comum.schema.json", {"$defs": {"linha": {"type": "integer"}}})  # na pasta do molde, vale antes do da dos moldes
+COM_COMUM = [  # (descricao, molde, [(dados, caminhos dos erros)]), com os moldes comuns na pasta de trabalho
+    ("$ref para um molde comum, que vira a raiz dentro dele", {"properties": {A: {"$ref": f"{ARQUIVO}#/$defs/{D}"}}},
+     [({A: N}, []), ({A: -N}, [f"/{A}"]), ({A: TEXTO}, [f"/{A}"])]),
+    ("o mesmo nome de $defs no molde e no molde comum",
+     {"$defs": {D: {"$ref": f"{ARQUIVO}#/$defs/{D}"}}, "properties": {A: {"$ref": f"#/$defs/{D}"}}},
+     [({A: N}, []), ({A: TEXTO}, [f"/{A}"])]),
+    ("o molde comum da pasta do molde antes do da pasta dos moldes",
+     {"properties": {A: {"$ref": "comum.schema.json#/$defs/linha"}}}, [({A: N}, []), ({A: TEXTO}, [f"/{A}"])]),
+]
+for descricao, molde, exemplos in COM_COMUM:
+    for dados, esperados in exemplos:
+        achados = sorted(onde for onde, _ in extrator_comum.fora_do_molde(dados, molde, pasta=TRABALHO))
+        confere(achados == sorted(esperados), f"{descricao}: {dados!r}: os erros em {achados}, e não em {esperados}")
+DO_ARQUIVO = grava(f"{nome()}.schema.json", {"properties": {A: {"$ref": f"{ARQUIVO}#/$defs/{D}"}}})
+confere(extrator_comum.le_conferido(grava("com-comum.json", {A: N}), DO_ARQUIVO) == {A: N},
+        "le_conferido acha o molde comum na pasta do molde")
+mensagem = erro_de(extrator_comum.le_conferido, grava("com-comum-errado.json", {A: TEXTO}), DO_ARQUIVO)
+confere(mensagem is not None and f"/{A}" in mensagem, f"le_conferido confere pelo molde comum: {mensagem}")
+RUIM, CICLO = f"{COMUM}-ruim.schema.json", f"{COMUM}-ciclo.schema.json"
+grava(RUIM, {"$defs": {D: {"oneOf": [True]}}})
+grava(CICLO, {"$defs": {D: {"$ref": f"{CICLO}#/$defs/{D}"}}})
+COMUNS_ERRADOS = [  # (descricao, referencia, o que o erro diz)
+    ("um molde comum que falta", f"{COMUM}-falta.schema.json#/$defs/{D}", f"{COMUM}-falta.schema.json"),
+    ("um molde comum fora do molde dos moldes", f"{RUIM}#/$defs/{D}", f"/$defs/{D}/oneOf"),
+    ("uma definição que o molde comum não tem", f"{ARQUIVO}#/$defs/{TEXTO}", TEXTO),
+    ("uma referência que volta a ela mesma pelo molde comum", f"{CICLO}#/$defs/{D}", CICLO),
+]
+for descricao, referencia, diz in COMUNS_ERRADOS:
+    mensagem = erro_de(lambda: extrator_comum.fora_do_molde({A: N}, {"properties": {A: {"$ref": referencia}}},
+                                                            pasta=TRABALHO))
+    confere(mensagem is not None and diz in mensagem, f"{descricao} é erro, que diz {diz!r}: {mensagem}")
 
 # ---- le_texto ----
 

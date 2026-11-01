@@ -32,7 +32,8 @@ dados.
 
 ## A lista
 
-O molde está em `esquemas/divergencias.schema.json`:
+O molde está em `esquemas/divergencias.schema.json`, com as regras de linha e de texto do
+[molde comum](../extrator/README.md#o-molde-comum) do extrator:
 
 | Campo | O que é |
 | --- | --- |
@@ -88,8 +89,8 @@ quantas divergências e quantos erros.
 A entrada que não serve, que sai como `ERRO: <motivo>`: a lista ou o cabeçalho que não se
 leem em UTF-8; a lista que não é JSON ou que sai do molde (campo que ele não conhece, campo
 que falta, valor fora da forma); o cabeçalho vazio; o rótulo que falta, ou que não é uma
-linha só com alguma letra, pela regra `linha` do molde; e o documento que é a lista, o
-cabeçalho ou uma pasta.
+linha só com alguma letra, pelo molde `esquemas/rotulos.schema.json`, que aponta a regra de
+linha do molde comum; e o documento que é a lista, o cabeçalho ou uma pasta.
 
 ## Testes
 

@@ -1,0 +1,8 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "comum.schema.json",
+  "$defs": {
+    "linha": { "type": "string", "pattern": "^[^\\n\\r]*\\S[^\\n\\r]*(?![\\s\\S])" },
+    "texto": { "type": "string", "pattern": "\\S" }
+  }
+}

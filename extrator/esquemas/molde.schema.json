@@ -8,7 +8,7 @@
     "$id": { "type": "string" },
     "$defs": { "type": "object", "additionalProperties": { "$ref": "#" } },
     "$comment": { "type": "string" },
-    "$ref": { "type": "string", "pattern": "^#(/\\$defs/[^/]+)?$" },
+    "$ref": { "type": "string", "pattern": "^([a-z0-9-]+\\.schema\\.json)?#(/\\$defs/[^/]+)?$" },
     "title": { "type": "string" },
     "description": { "type": "string" },
     "default": true,

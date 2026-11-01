@@ -9,19 +9,13 @@
     "divergencias": { "type": "array", "items": { "$ref": "#/$defs/divergencia" } }
   },
   "$defs": {
-    "linha": {
-      "description": "uma linha só, com alguma letra",
-      "type": "string",
-      "pattern": "^[^\\n\\r]*\\S[^\\n\\r]*(?![\\s\\S])"
-    },
-    "texto": { "type": "string", "pattern": "\\S" },
     "forma": {
       "type": "object",
       "required": ["diz", "fonte"],
       "additionalProperties": false,
       "properties": {
-        "diz": { "$ref": "#/$defs/linha" },
-        "fonte": { "$ref": "#/$defs/texto" }
+        "diz": { "$ref": "comum.schema.json#/$defs/linha" },
+        "fonte": { "$ref": "comum.schema.json#/$defs/texto" }
       }
     },
     "divergencia": {
@@ -29,7 +23,7 @@
       "required": ["fato", "ensinada", "outras"],
       "additionalProperties": false,
       "properties": {
-        "fato": { "$ref": "#/$defs/linha" },
+        "fato": { "$ref": "comum.schema.json#/$defs/linha" },
         "ensinada": { "$ref": "#/$defs/forma" },
         "outras": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/forma" } }
       }

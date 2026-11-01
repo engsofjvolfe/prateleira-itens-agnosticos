@@ -13,12 +13,16 @@ destaque e os escapes e expandir faixas de paginas.
 import codecs
 import json
 import re
-from collections import Counter
+from collections import Counter, namedtuple
 from pathlib import Path
 
 CAMPO = re.compile(r"\{(\w+)\}")
-MOLDES = Path(__file__).resolve().parent / "esquemas"  # o molde de cada entrada do extrator, com o nome dela
+MOLDES = Path(__file__).resolve().parent / "esquemas"  # o molde de cada entrada do extrator, e os moldes comuns
 MOLDE_DOS_MOLDES = MOLDES / "molde.schema.json"  # as palavras do JSON Schema que o leitor entende, e o valor de cada
+
+# o molde de onde partem as referencias de "#", o arquivo dele (None quando ele nao vem de um molde comum) e a pasta
+# em que se acha, antes da pasta dos moldes, o molde comum que uma referencia nomeia
+Raiz = namedtuple("Raiz", "molde arquivo pasta")
 
 # O tipo do Python de cada tipo do JSON Schema.
 TIPOS = {"object": dict, "array": list, "string": str, "integer": int, "number": (int, float), "boolean": bool,
@@ -94,15 +98,25 @@ def compila(texto, onde):
 
 
 def referido(referencia, raiz):
-    """O molde para que a referencia aponta: a raiz ("#") ou um molde de $defs ("#/$defs/nome",
-    com "~1" no lugar de "/" e "~0" no de "~" no nome), como o molde dos moldes ja conferiu."""
-    alvo = raiz
-    for parte in referencia.split("/")[1:]:
+    """(molde, raiz dele) para que a referencia aponta, na forma que o molde dos moldes ja conferiu: na raiz dada, a
+    propria raiz ("#") ou um molde de $defs ("#/$defs/nome", com "~1" no lugar de "/" e "~0" no de "~" no nome); com
+    o nome de um molde comum antes do "#" ("comum.schema.json#/$defs/nome"), o desse arquivo, achado na pasta da raiz
+    ou, senao, na pasta dos moldes, e conferido contra o molde dos moldes; ele passa a ser a raiz das referencias de
+    dentro dele."""
+    arquivo, _, fragmento = referencia.partition("#")
+    if arquivo:
+        pastas = [p for p in (raiz.pasta, MOLDES) if p is not None]
+        caminho = next((p / arquivo for p in pastas if (p / arquivo).is_file()), pastas[-1] / arquivo)
+        comum = le_json(caminho)
+        confere_molde(comum)
+        raiz = Raiz(comum, caminho.resolve(), caminho.parent)
+    alvo = raiz.molde
+    for parte in fragmento.split("/")[1:]:
         parte = parte.replace("~1", "/").replace("~0", "~")
         if parte not in alvo:
             raise ErroDeDados(f"o molde aponta para o que ele não tem: {referencia!r}")
         alvo = alvo[parte]
-    return alvo
+    return alvo, raiz
 
 
 def fora_do_texto(dados, molde, onde):
@@ -162,31 +176,35 @@ def confere_molde(molde):
     """Erro (ErroDeDados) que diz cada lugar do molde fora do molde dos moldes: uma palavra
     que o leitor nao entende, ou o valor dela que nao e da forma que ela pede."""
     dos_moldes = le_json(MOLDE_DOS_MOLDES)
-    erros = fora_do_molde(molde, dos_moldes, dos_moldes)
+    erros = fora_do_molde(molde, dos_moldes, Raiz(dos_moldes, MOLDE_DOS_MOLDES, MOLDES))
     if erros:
         raise ErroDeDados(f"o molde sai do que o leitor entende ({MOLDE_DOS_MOLDES.name}): {junta(erros)}")
 
 
-def fora_do_molde(dados, molde, raiz=None, onde="", seguidas=frozenset()):
+def fora_do_molde(dados, molde, raiz=None, onde="", seguidas=frozenset(), pasta=None):
     """[(caminho, motivo)] de cada valor dos dados fora do molde (JSON Schema), com o caminho
     dentro dos dados ("/a/0/b"; "" e a raiz). Antes, o molde e conferido contra o molde dos
     moldes, que diz as palavras que o leitor confere e as que nao conferem: o que o leitor
     nao confere nunca passa calado. O pattern e a expressao regular do Python, buscada no
-    texto; o $ref vai a raiz ("#") ou a um molde de $defs. O tipo que o leitor nao conhece, a
-    referencia para o que o molde nao tem ou que volta a ela mesma sem passar a um valor de
-    dentro e a forma que nao compila sao erro (ErroDeDados). raiz e seguidas sao da
-    conferencia de dentro: o molde inteiro, ja conferido, e as referencias ja seguidas no
-    mesmo valor."""
+    texto; o $ref vai a raiz ("#"), a um molde de $defs ou, com o nome de um molde comum antes
+    do "#", a um molde de $defs dele (referido), achado na pasta dada ou na pasta dos moldes.
+    O tipo que o leitor nao conhece, a referencia para o que o molde nao tem ou que volta a
+    ela mesma sem passar a um valor de dentro, o molde comum que falta ou que sai do molde dos
+    moldes e a forma que nao compila sao erro (ErroDeDados). raiz e seguidas sao da
+    conferencia de dentro: a raiz das referencias (Raiz), ja conferida, e as referencias ja
+    seguidas no mesmo valor, cada uma com o arquivo da raiz dela."""
     if raiz is None:
         confere_molde(molde)
-        raiz = molde
+        raiz = Raiz(molde, None, pasta)
     if isinstance(molde, bool):
         return [] if molde else [(onde, "o molde não aceita valor aqui")]
     erros = []
     if "$ref" in molde:
-        if molde["$ref"] in seguidas:
+        alvo, outra = referido(molde["$ref"], raiz)
+        chave = (outra.arquivo, molde["$ref"].partition("#")[2])
+        if chave in seguidas:
             raise ErroDeDados(f"a referência do molde volta a ela mesma: {molde['$ref']!r}")
-        erros += fora_do_molde(dados, referido(molde["$ref"], raiz), raiz, onde, seguidas | {molde["$ref"]})
+        erros += fora_do_molde(dados, alvo, outra, onde, seguidas | {chave})
     tipos = molde.get("type", list(TIPOS))
     tipos = tipos if isinstance(tipos, list) else [tipos]
     if not any([do_tipo(dados, t) for t in tipos]):  # todos, para que o tipo desconhecido nunca passe
@@ -215,10 +233,11 @@ def conferido(dados, molde, nome):
     """Os dados, conferidos contra o molde (o arquivo do JSON Schema) pelo fora_do_molde:
     erro (ErroDeDados) que diz o nome dos dados e cada valor fora do molde, com o caminho
     dentro deles -- um nome escrito errado, um campo que falta ou um valor de outro tipo nao
-    passam em silencio. O erro do proprio molde diz o arquivo dele."""
+    passam em silencio. O molde comum que ele nomeia se acha na pasta dele ou na pasta dos
+    moldes. O erro do proprio molde diz o arquivo dele."""
     regras = le_json(molde)
     try:
-        erros = fora_do_molde(dados, regras)
+        erros = fora_do_molde(dados, regras, pasta=Path(molde).parent)
     except ErroDeDados as e:
         raise ErroDeDados(f"{molde}: {e}")
     if erros:

@@ -58,16 +58,19 @@ e cada molde é inventado no teste. O teste confere regras, nunca uma frase pron
   aceito), `minItems`, `maxItems`, `uniqueItems` (também com objetos), `items`, `required`,
   `properties`, `additionalProperties` (falso ou um molde), `minProperties`,
   `maxProperties`, `allOf`, `if`, `then` e `else`, o molde falso e o `$ref` (para `$defs`,
-  para a raiz, com escape no nome, ao lado de outra palavra, e um molde que se repete
-  dentro dos dados); as anotações não conferem nada;
+  para a raiz, com escape no nome, ao lado de outra palavra, um molde que se repete dentro
+  dos dados e um molde comum, da pasta do molde ou, senão, da pasta dos moldes, que vira a
+  raiz das referências de dentro dele, também as definições do molde comum da pasta dos
+  moldes); as anotações não conferem nada;
 - cada palavra do molde dos moldes tem um caso aqui, e cada molde do extrator, o próprio
   molde dos moldes também, segue o molde dos moldes;
 - todos os erros saem, não só o primeiro; o valor do tipo errado dá um erro só;
 - o molde fora do molde dos moldes (uma palavra que o leitor não conhece, outro dialeto, um
   valor que não é da forma que a palavra pede, uma referência que não vai à raiz nem a
-  `$defs`) é erro, que diz o lugar no molde; o tipo desconhecido, também depois de um tipo
-  certo, a referência para o que o molde não tem ou que volta a ela mesma e a forma que não
-  compila são erro, que diz o quê;
+  `$defs`, ou que nomeia um molde de outra pasta) é erro, que diz o lugar no molde; o tipo
+  desconhecido, também depois de um tipo certo, a referência para o que o molde não tem ou
+  que volta a ela mesma, também passando por um molde comum, o molde comum que falta ou que
+  sai do molde dos moldes e a forma que não compila são erro, que diz o quê;
 - `le_conferido` dá os dados do arquivo que segue o molde e, senão, erro com o arquivo, o
   molde e o caminho de cada valor fora; o arquivo que falta ou que não é JSON é erro; o
   molde fora do molde dos moldes é erro, com o arquivo dele e o lugar; `conferido` faz o

@@ -44,6 +44,11 @@ prateleira segue o [Versionamento Semântico](https://semver.org/lang/pt-BR/spec
   num espaço só; e o teste dele, com a lista de estragos. O leitor de marcação do
   `extrator`, o `confere-citacoes`, o `custo-de-agentes`, o `itens-numerados`, o `marcas`, o
   `moldes` e o `texto-em-comum`, que faziam isso cada um por conta própria, passam a usá-lo.
+- `extrator`: o molde comum, `esquemas/comum.schema.json`, com as regras que os moldes de
+  várias peças pedem do mesmo jeito (`linha`, um texto de uma linha só com alguma letra, e
+  `texto`, um texto com alguma letra), e, no leitor de molde, o `$ref` para um molde comum
+  pelo nome, como `comum.schema.json#/$defs/linha`, achado na pasta do molde que o aponta
+  ou na pasta dos moldes. O `divergencias` o usa, também nos rótulos do comando.
 - `ganchos/leitura-do-terminal`: a função `depois_do_comando`, que acha nas palavras de um
   comando simples um comando de uma ou mais palavras, como `git grep`, também com outras
   palavras no meio, e a `comandos_achados`, que dá cada vez que um comando, ou um de dentro
