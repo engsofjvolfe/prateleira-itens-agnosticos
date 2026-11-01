@@ -25,6 +25,7 @@ pega os defeitos. Nos comandos dos READMEs, `<prateleira>` é a pasta onde a pra
 | [documentos/](documentos/README.md) | conferir os links internos dos documentos de um repositório git e as linhas que passam de um limite de caracteres; e o módulo comum que lê um texto Markdown como o GitHub o lê (com testes) |
 | [extrator/](extrator/README.md) | tirar por programa o texto de documentos (PDF, HTML, XML, JSON) e gravar a transcrição de cada um, página por página; o módulo comum que lê dados JSON pelo molde; e o módulo de texto comum, que passa um texto para a forma NFC e junta os espaços (com testes) |
 | [ganchos/](ganchos/README.md) | ganchos para o programa em que a IA trabalha: as regras de código no começo e no fim de cada tarefa que escreve código ou dados; a barreira à busca por palavra; o arquivo que só cresce para onde a limpeza leva o que tira; a cancela e o registro das chamadas de ferramenta; a leitura do comando de terminal que dois deles usam; e a leitura do protocolo de cada programa, que todos usam (com testes) |
+| [glossario/](glossario/README.md) | gravar o glossário de um projeto, ou conferir que o gravado está em dia: os termos de uma lista, com a definição e a fonte, e os que os documentos marcam com `<dfn>`, com o link para o lugar da marca, em ordem alfabética (com testes) |
 | [grava-ou-confere/](grava-ou-confere/README.md) | gravar um documento que um script gera a partir de dados, ou conferir que o gravado está em dia; e o módulo que lê o cabeçalho, confere o arquivo e monta o texto desse documento (com testes) |
 | [historico-de-arquivo/](historico-de-arquivo/README.md) | tirar das transcrições das sessões cada leitura e cada gravação de um arquivo, na ordem do tempo; e ler as transcrições, um evento por linha, para qualquer peça que as filtre (com testes) |
 | [itens-numerados/](itens-numerados/README.md) | listar os itens numerados de uma transcrição, conferir a numeração e dividir o sumário em grupos de tópicos (com testes) |
@@ -49,12 +50,12 @@ prateleira) ou na própria pasta (numa cópia fora da prateleira).
 
 | Módulo comum | Da peça | Peças que o usam |
 | --- | --- | --- |
-| `extrator_comum.py`: ler um texto em UTF-8, ler JSON pelo molde, pegar um campo com o tipo pedido, achar os valores repetidos de uma lista, compilar uma expressão, conferir que uma codificação existe, dividir uma transcrição em páginas | [extrator](extrator/README.md#o-módulo-comum) | confere-citacoes, confere-forma, copia-para-projeto, copias-estragadas, custo-de-agentes, dicionario-das-duvidas, divergencias, documentos, historico-de-arquivo, itens-numerados, marcas, moldes, ganchos/busca-por-palavra, ganchos/chamadas-permitidas, ganchos/destino-da-limpeza, ganchos/leitura-do-terminal, ganchos/protocolo, ganchos/regras-de-codigo |
-| `texto_comum.py`: passar um texto para a forma Unicode NFC e juntar os espaços | [extrator](extrator/README.md#o-módulo-de-texto) | confere-citacoes, custo-de-agentes, divergencias, extrator, itens-numerados, marcas, moldes, texto-em-comum |
-| `markdown_comum.py`: ler um texto Markdown como o GitHub o lê: as linhas fora dos blocos de código, o texto sem o código, a âncora de um título, os títulos com a linha, o nível e a âncora de cada um, e os marcadores | [documentos](documentos/README.md#o-módulo-de-markdown) | dicionario-das-duvidas, documentos |
+| `extrator_comum.py`: ler um texto em UTF-8, ler JSON pelo molde, pegar um campo com o tipo pedido, achar os valores repetidos de uma lista, compilar uma expressão, conferir que uma codificação existe, dividir uma transcrição em páginas | [extrator](extrator/README.md#o-módulo-comum) | confere-citacoes, confere-forma, copia-para-projeto, copias-estragadas, custo-de-agentes, dicionario-das-duvidas, divergencias, documentos, glossario, historico-de-arquivo, itens-numerados, marcas, moldes, ganchos/busca-por-palavra, ganchos/chamadas-permitidas, ganchos/destino-da-limpeza, ganchos/leitura-do-terminal, ganchos/protocolo, ganchos/regras-de-codigo |
+| `texto_comum.py`: passar um texto para a forma Unicode NFC e juntar os espaços | [extrator](extrator/README.md#o-módulo-de-texto) | confere-citacoes, custo-de-agentes, divergencias, extrator, glossario, itens-numerados, marcas, moldes, texto-em-comum |
+| `markdown_comum.py`: ler um texto Markdown como o GitHub o lê: as linhas fora dos blocos de código, o texto sem o código, a âncora de um título, os títulos com a linha, o nível e a âncora de cada um, e os marcadores | [documentos](documentos/README.md#o-módulo-de-markdown) | dicionario-das-duvidas, documentos, glossario |
 | `transcricoes.py`: ler as transcrições de sessão, um evento por linha | [historico-de-arquivo](historico-de-arquivo/README.md) | historico-de-arquivo, custo-de-agentes |
-| `grava_ou_confere.py`: gravar um documento gerado ou conferir que está em dia | [grava-ou-confere](grava-ou-confere/README.md) | copia-para-projeto, divergencias |
-| `documento_gerado.py`: ler o cabeçalho de um documento gerado, conferir que o arquivo dele não é uma entrada nem uma pasta e montar o texto, com o cabeçalho e os blocos | [grava-ou-confere](grava-ou-confere/README.md#o-documento-gerado) | divergencias |
+| `grava_ou_confere.py`: gravar um documento gerado ou conferir que está em dia | [grava-ou-confere](grava-ou-confere/README.md) | copia-para-projeto, divergencias, glossario |
+| `documento_gerado.py`: ler o cabeçalho de um documento gerado, conferir que o arquivo dele não é uma entrada nem uma pasta e montar o texto, com o cabeçalho e os blocos | [grava-ou-confere](grava-ou-confere/README.md#o-documento-gerado) | divergencias, glossario |
 | `leitura_do_terminal.py`: ler um comando de terminal como o shell lê, com os prefixos do shell da configuração dela | [ganchos/leitura-do-terminal](ganchos/leitura-do-terminal/README.md) | ganchos/regras-de-codigo, ganchos/busca-por-palavra |
 | `protocolo.py`: ler o protocolo dos ganchos de um programa, ler o evento, montar a resposta e dar o arquivo da anotação de cada sessão | [ganchos/protocolo](ganchos/protocolo/README.md) | ganchos/busca-por-palavra, ganchos/chamadas-permitidas, ganchos/destino-da-limpeza, ganchos/regras-de-codigo |
 
@@ -67,6 +68,8 @@ E os encadeamentos, em que uma peça grava o arquivo que a próxima lê:
   divergências → `confere-citacoes` (a citação da fonte de cada forma).
 - Um dicionário das dúvidas + a forma dos códigos → `dicionario-das-duvidas/confere_dicionario.py`
   → os títulos fora da regra.
+- A lista das definições + o cabeçalho + os documentos com as marcas → `glossario/glossario.py`
+  → o glossário → `confere-citacoes` (a citação da fonte de cada definição).
 - Análises + a forma delas + as regras de lugar → `moldes/contar.py` e `moldes/separar.py`.
 - Transcrições de sessão → `historico-de-arquivo` (o histórico de um arquivo) e
   `custo-de-agentes` (o custo de cada uma).

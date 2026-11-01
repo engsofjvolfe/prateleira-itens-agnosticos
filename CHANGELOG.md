@@ -48,7 +48,8 @@ prateleira segue o [Versionamento Semântico](https://semver.org/lang/pt-BR/spec
   várias peças pedem do mesmo jeito (`linha`, um texto de uma linha só com alguma letra, e
   `texto`, um texto com alguma letra), e, no leitor de molde, o `$ref` para um molde comum
   pelo nome, como `comum.schema.json#/$defs/linha`, achado na pasta do molde que o aponta
-  ou na pasta dos moldes. O `divergencias` o usa, também nos rótulos do comando.
+  ou na pasta dos moldes. O `divergencias`, também nos rótulos do comando, e o `glossario` o
+  usam.
 - `ganchos/leitura-do-terminal`: a função `depois_do_comando`, que acha nas palavras de um
   comando simples um comando de uma ou mais palavras, como `git grep`, também com outras
   palavras no meio, e a `comandos_achados`, que dá cada vez que um comando, ou um de dentro
@@ -59,10 +60,14 @@ prateleira segue o [Versionamento Semântico](https://semver.org/lang/pt-BR/spec
 - `ganchos/protocolo`: a função `anotacao`, que dá o arquivo em que um gancho anota o que
   guarda de uma sessão, ou de cada chave dela, como um documento, com o nome tirado do id
   da sessão e da chave; o `destino-da-limpeza` e o `regras-de-codigo` passam a usá-la.
+- `glossario`: grava o glossário de um projeto, ou confere que o gravado está em dia: os
+  termos da lista das definições, com a definição e a fonte, e os que os documentos marcam
+  com `<dfn>`, com o link para o lugar da marca, em ordem alfabética, cada um num título; e
+  o teste, com a lista de estragos dele.
 - `grava-ou-confere`: o módulo `documento_gerado.py`, que lê o cabeçalho de um documento
   gerado, que não pode estar vazio, confere que o arquivo dele não é uma das entradas nem uma
   pasta e monta o texto, com o cabeçalho e os blocos; e o teste dele, com a lista de
-  estragos. O `divergencias` o usa.
+  estragos. O `divergencias` e o `glossario` o usam.
 
 ### Modificado
 

@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "glossario.schema.json",
+  "type": "object",
+  "required": ["versao_schema", "termos"],
+  "additionalProperties": false,
+  "properties": {
+    "versao_schema": { "const": 1 },
+    "termos": { "type": "array", "items": { "$ref": "#/$defs/termo" } }
+  },
+  "$defs": {
+    "termo": {
+      "type": "object",
+      "required": ["termo", "definicao", "fonte"],
+      "additionalProperties": false,
+      "properties": {
+        "termo": { "$ref": "comum.schema.json#/$defs/linha" },
+        "definicao": { "$ref": "comum.schema.json#/$defs/texto" },
+        "fonte": { "$ref": "comum.schema.json#/$defs/texto" }
+      }
+    }
+  }
+}
