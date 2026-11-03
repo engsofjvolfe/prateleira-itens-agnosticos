@@ -74,3 +74,7 @@ pasta da configuração. A `configuracao.json` desta pasta é a de uso geral.
 ## Testes
 
 Em [testes/](testes/README.md).
+
+---
+
+*Este documento está licenciado sob [CC BY-NC-SA 4.0](../../LICENSE-CONTENT.txt).*

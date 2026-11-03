@@ -13,25 +13,31 @@ versão retirada, os tipos de mudança e o fim de cada item; e, com `--links`, o
 links, num arquivo próprio. Assim a mesma configuração serve a qualquer repositório, cada um
 só com os links dele.
 
-Usa só a biblioteca padrão do Python, o git (com `--indice`) e o `extrator_comum.py`, do
+Usa só a biblioteca padrão do Python, o git (com `--indice`), o `extrator_comum.py`, do
 [extrator](../extrator/README.md), que lê a configuração e os links pelo molde de cada um, e
-o changelog em UTF-8. Na prateleira, ele é achado na pasta irmã `extrator/`; numa cópia fora
-da prateleira, na mesma pasta do script.
+o changelog em UTF-8, e o `rodape_comum.py`, do
+[rodape](../rodape/README.md#o-módulo-do-rodapé), que acha o rodapé no fim do changelog. Na
+prateleira, eles são achados nas pastas irmãs; numa cópia fora da prateleira, na mesma pasta
+do script.
 
 ## Como rodar
 
-    python3 -I <prateleira>/confere-changelog/confere_changelog.py <configuração.json> <CHANGELOG.md> [--indice] [--links <links.json>]
+    python3 -I <prateleira>/confere-changelog/confere_changelog.py <configuração.json> <CHANGELOG.md> [--indice] [--links <links.json>] [--rodape <modelo.md>]
 
 - `--indice`: confere o changelog como o índice do git o tem, o que vai no próximo commit, e
   não o da pasta. O git o lê da pasta do arquivo, e as quebras de linha se leem como na
   leitura de um arquivo de texto.
 - `--links`: o arquivo com os modelos dos [links](#os-links) de cada versão; sem ele, o
   changelog não tem links.
+- `--rodape`: o modelo do rodapé que o changelog tem no fim, depois dos links, como o aviso da
+  licença: o rodapé do modelo no fim, com qualquer alvo nos links, fica fora da conferência, e
+  o resto se confere como sem ele; sem o modelo, o rodapé é linha fora da forma.
 
 Mostra uma linha `ERRO arquivo:linha: motivo` por problema, em ordem de linha, e um resumo
 com quantos erros houve. Sai com código 0 sem erro, 1 com erro e 2 quando a configuração, os
-links, o changelog ou um argumento não serve; então nada é conferido. O changelog não serve quando
-não existe ou não se lê em UTF-8 e, com `--indice`, quando o índice do git não o tem.
+links, o modelo do rodapé, o changelog ou um argumento não serve; então nada é conferido. O
+changelog não serve quando não existe ou não se lê em UTF-8 e, com `--indice`, quando o índice
+do git não o tem.
 
 ## O que se confere
 
@@ -106,10 +112,15 @@ prateleira:
         <prateleira>/confere-changelog/configuracao.json CHANGELOG.md --indice
 
 Com os links de cada versão, o comando ganha o `--links`, com o arquivo deles nos dados do
-repositório. O git roda o gancho na pasta principal do repositório, e por isso o
+repositório; com o rodapé no fim do changelog, o `--rodape`, com o modelo dele. O git roda o
+gancho na pasta principal do repositório, e por isso o
 `CHANGELOG.md` dela é o conferido. A pasta `.git/hooks` não vai no commit: cada cópia do
 repositório põe o gancho de novo.
 
 ## Testes
 
 Em [testes/](testes/README.md).
+
+---
+
+*Este documento está licenciado sob [CC BY-NC-SA 4.0](../LICENSE-CONTENT.txt).*

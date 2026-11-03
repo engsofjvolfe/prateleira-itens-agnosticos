@@ -27,41 +27,45 @@ Sao problema, e nada e gravado: o termo repetido na lista, sem contar maiusculas
 Unicode e os espacos; a marca vazia; o termo marcado em mais de um lugar; e dois titulos do
 glossario com a mesma ancora, como dois termos que so diferem na pontuacao, ou um termo e um
 titulo do cabecalho. Com --conferir, nada e gravado: o glossario gravado tem de ser o que o
-script gravaria agora.
+script gravaria agora. Com --rodape, o glossario termina no rodape do modelo dado, pelo
+rodape_comum.py, da peca rodape, com cada link a partir da pasta do glossario.
 
 Mostra uma linha ERRO por problema e um resumo. Sai com 0 com o glossario gravado ou em dia;
 1 com problema, ou com o glossario que nao esta em dia; e 2, sem nada gravado, quando a
 lista, o cabecalho ou um documento nao se leem em UTF-8, a lista nao e JSON ou sai do molde,
-o cabecalho esta vazio, ou o glossario e a lista, o cabecalho ou uma pasta. O glossario dado
-entre os documentos fica de fora deles. Precisa do extrator_comum.py e do texto_comum.py, do
-extrator, do markdown_comum.py, do documentos, e do grava_ou_confere.py e do
-documento_gerado.py, do grava-ou-confere, nas pastas irmas ou na mesma pasta.
+o cabecalho esta vazio, o modelo do rodape nao serve, ou o glossario e a lista, o cabecalho,
+o modelo ou uma pasta. O glossario dado entre os documentos fica de fora deles. Precisa do
+extrator_comum.py e do texto_comum.py, do extrator, do markdown_comum.py, do documentos, do
+grava_ou_confere.py e do documento_gerado.py, do grava-ou-confere, e do rodape_comum.py, do
+rodape, nas pastas irmas ou na mesma pasta.
 
 Uso:
     python3 -I glossario.py <definicoes.json> <cabecalho.md> <glossario.md> [<documento.md>...] [--conferir]
+        [--rodape <modelo.md>]
 """
 
 import argparse
-import os
 import re
 import sys
 import unicodedata
 from pathlib import Path
 
 PASTA = Path(__file__).resolve().parent
-for pasta in (PASTA.parent / "grava-ou-confere", PASTA.parent / "documentos", PASTA.parent / "extrator", PASTA):
+for pasta in (PASTA.parent / "grava-ou-confere", PASTA.parent / "documentos", PASTA.parent / "extrator",
+              PASTA.parent / "rodape", PASTA):
     sys.path.insert(0, str(pasta))  # na prateleira, as pastas irmas
 from documento_gerado import confere_destino, em_blocos, le_cabecalho  # noqa: E402
 from extrator_comum import ErroDeDados, le_conferido, le_texto, repetidos  # noqa: E402
 from grava_ou_confere import grava_ou_confere, opcao_conferir  # noqa: E402
-from markdown_comum import QUEBRA, TAG_HTML, ancora, texto_fora_de_codigo, titulos  # noqa: E402
+from markdown_comum import (QUEBRA, TAG_HTML, ancora, caminho_relativo, link_markdown,  # noqa: E402
+                            texto_fora_de_codigo, titulos)
+from rodape_comum import com_rodape, le_modelo, opcao_rodape  # noqa: E402
 from texto_comum import espacos_juntos, nfc  # noqa: E402
 
 MOLDE = PASTA / "esquemas" / "glossario.schema.json"  # o molde da lista das definicoes
 DFN = re.compile(r"<dfn(?:\s[^>]*)?>(.*?)</dfn>", re.IGNORECASE | re.DOTALL)  # a marca de um termo definido
 TITULO = "## "  # o comeco do titulo de cada termo no glossario
 ENTRE_LUGARES = " › "  # entre o titulo do documento e o da secao, no texto do link
-ALVO_ENTRE_SINAIS = re.compile(r"[\s()]")  # o alvo de link com um destes vai entre < e >
 
 
 def comparavel(termo):
@@ -92,13 +96,13 @@ def link(documento, texto, linha, glossario):
     documento, com o titulo do documento (o de nivel 1, ou o caminho) e o da secao, como aparecem, no texto; o
     caminho e o do documento a partir da pasta do glossario."""
     lista = titulos(texto)
-    caminho = Path(os.path.relpath(Path(documento).resolve(), Path(glossario).resolve().parent)).as_posix()
+    caminho = caminho_relativo(documento, Path(glossario).resolve().parent)
     nome = next((visivel(t.texto) for t in lista if t.nivel == 1), caminho)
     acima = [t for t in lista if t.linha <= linha]
     perto = acima[-1] if acima else None
     if perto is not None and perto.nivel > 1:
         nome, caminho = f"{nome}{ENTRE_LUGARES}{visivel(perto.texto)}", f"{caminho}#{perto.ancora}"
-    return f"[{nome}](<{caminho}>)" if ALVO_ENTRE_SINAIS.search(caminho) else f"[{nome}]({caminho})"
+    return link_markdown(nome, caminho)
 
 
 def glossario(lista, termos, cabecalho, documentos, destino):
@@ -141,11 +145,13 @@ def main(argv=None):
     p.add_argument("glossario", type=Path, help="o glossário, que o script grava")
     p.add_argument("documentos", type=Path, nargs="*", help="os documentos com as marcas <dfn>")
     opcao_conferir(p, "não grava: confere que o glossário gravado é o que as entradas dão")
+    opcao_rodape(p, "o modelo do rodapé, que vai no fim do glossário")
     a = p.parse_args(argv)
     try:
-        confere_destino(a.glossario, (a.lista, a.cabecalho))
+        confere_destino(a.glossario, (a.lista, a.cabecalho, a.rodape))
         cabecalho = le_cabecalho(a.cabecalho)
         termos = le_conferido(a.lista, MOLDE)["termos"]
+        modelo = le_modelo(a.rodape)
         documentos = [(d, le_texto(d)) for d in a.documentos if d.resolve() != a.glossario.resolve()]
     except ErroDeDados as e:
         print(f"ERRO: {e}")
@@ -156,7 +162,7 @@ def main(argv=None):
     if erros:
         print(f"{n} termo(s), {len(erros)} erro(s): nada foi gravado.")
         return 1
-    return grava_ou_confere(a.glossario, texto, a.conferir,
+    return grava_ou_confere(a.glossario, com_rodape(texto, modelo, a.glossario), a.conferir,
                             falta=f"ERRO {a.glossario}: não é o glossário que as entradas dão agora.",
                             em_dia=f"{n} termo(s): o glossário está em dia.",
                             gravado=f"{n} termo(s) gravado(s) em {a.glossario}.")

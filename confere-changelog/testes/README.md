@@ -38,6 +38,10 @@ O teste confere o que a peça faz, nunca uma frase pronta:
 - com `--indice`, o conferido é o changelog do índice do git, e não o da pasta, rodado de
   qualquer pasta; as quebras de linha do Windows se leem como as de um arquivo, com e sem
   `--indice`;
+- com o modelo do rodapé, o rodapé do fim fica fora da conferência, com e sem os links e
+  também no changelog do índice; o changelog sem rodapé passa; o defeito de antes do rodapé
+  dá `ERRO` na linha dele; o rodapé fora do fim e, sem o modelo, o do fim são linhas fora da
+  forma; e o modelo que não serve sai com 2;
 - saem com 2 a configuração fora do molde (também com os links dentro dela), de outra
   versão, sem tipo, com tipo vazio ou repetido, com o fim vazio ou com um nome de duas
   linhas; o arquivo dos links que não existe, fora do molde, de outra versão, sem um modelo,
@@ -50,7 +54,12 @@ O teste precisa do git, que ele roda sem a configuração do sistema e da conta 
 pasta de trabalho, que poderia estar dentro de outro repositório. Diz `0 falha(s)` quando
 passa; senão, uma linha `FALHA` para cada conferência que não passou, e sai com código 1.
 
-As cópias estragadas da peça estão em `estragos.json`, nesta pasta, para o
-[`estraga.py`](../../copias-estragadas/README.md), com o extrator ao lado da cópia:
+O teste precisa também das pastas irmãs `extrator/`, `rodape/` e `documentos/` da peça. As
+cópias estragadas da peça estão em `estragos.json`, nesta pasta, para o
+[`estraga.py`](../../copias-estragadas/README.md), com essas três ao lado da cópia:
 
-    python3 -I ../../copias-estragadas/estraga.py .. teste_confere_changelog.py estragos.json <pasta de trabalho nova> --irma ../../extrator
+    python3 -I ../../copias-estragadas/estraga.py .. teste_confere_changelog.py estragos.json <pasta de trabalho nova> --irma ../../extrator --irma ../../rodape --irma ../../documentos
+
+---
+
+*Este documento está licenciado sob [CC BY-NC-SA 4.0](../../LICENSE-CONTENT.txt).*

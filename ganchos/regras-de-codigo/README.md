@@ -80,3 +80,7 @@ ficam na configuração da leitura do terminal.
 ## Testes
 
 Em [testes/](testes/README.md).
+
+---
+
+*Este documento está licenciado sob [CC BY-NC-SA 4.0](../../LICENSE-CONTENT.txt).*

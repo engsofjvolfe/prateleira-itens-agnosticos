@@ -45,3 +45,7 @@ As cópias estragadas de `historico_de_arquivo.py` e de `transcricoes.py` estão
 a pasta do extrator ao lado da cópia:
 
     python3 -I ../../copias-estragadas/estraga.py .. teste_historico_de_arquivo.py estragos.json <pasta de trabalho nova> --irma ../../extrator
+
+---
+
+*Este documento está licenciado sob [CC BY-NC-SA 4.0](../../LICENSE-CONTENT.txt).*

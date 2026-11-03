@@ -34,3 +34,7 @@ As cópias estragadas de `itens.py` estão em `estragos.json`, nesta pasta, para
 [`estraga.py`](../../copias-estragadas/README.md):
 
     python3 -I ../../copias-estragadas/estraga.py .. teste_itens.py estragos.json <pasta de trabalho nova> --irma ../../extrator
+
+---
+
+*Este documento está licenciado sob [CC BY-NC-SA 4.0](../../LICENSE-CONTENT.txt).*

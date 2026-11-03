@@ -30,7 +30,14 @@ os exemplos do README: o espaço sem quebra, o de largura zero, a marca de dire�
 `oaicite`, `contentReference` e `utm_source=`. O tamanho acima do máximo ou abaixo do mínimo
 dá `AVISO` e sai com 0; igual aos limites, não dá aviso.
 
-Saem com 2, sem conferir: configuração com campo desconhecido ou que falta, item da
+Com o modelo do rodapé (o divisor, um padrão proibido e um nome fora do itálico, com um link
+para um arquivo), o rodapé no fim do documento certo fica fora da conferência e das palavras;
+no documento com defeito, os `ERRO` de antes do rodapé saem nas mesmas linhas; o rodapé que não
+está no fim se confere; e, nos documentos sem rodapé, o modelo não muda nenhum `ERRO`. Sem o
+modelo, o rodapé se confere como o resto do texto.
+
+Saem com 2, sem conferir: o modelo do rodapé que falta, com o erro que diz o arquivo;
+configuração com campo desconhecido ou que falta, item da
 abertura com os dois campos ou sem nenhum, seção sem o grupo do título, expressão que não
 compila, mínimo maior que o máximo ou que não é número, marca vazia, padrões proibidos
 dentro dela, título que não é texto; arquivo de padrões proibidos com campo desconhecido, de
@@ -42,7 +49,12 @@ que diz o arquivo; texto que não existe ou que não se lê em UTF-8. Duas rodad
 Diz `0 falha(s)` quando passa; senão, uma linha `FALHA` para cada conferência que não
 passou, e sai com código 1.
 
-As cópias estragadas da peça estão em `estragos.json`, nesta pasta, para o
-[`estraga.py`](../../copias-estragadas/README.md), com o extrator como pasta irmã:
+O teste precisa das pastas irmãs `extrator/`, `rodape/` e `documentos/` da peça. As cópias
+estragadas da peça estão em `estragos.json`, nesta pasta, para o
+[`estraga.py`](../../copias-estragadas/README.md), com essas três como pastas irmãs:
 
-    python3 -I ../../copias-estragadas/estraga.py .. teste_confere_forma.py estragos.json <pasta de trabalho nova> --irma ../../extrator
+    python3 -I ../../copias-estragadas/estraga.py .. teste_confere_forma.py estragos.json <pasta de trabalho nova> --irma ../../extrator --irma ../../rodape --irma ../../documentos
+
+---
+
+*Este documento está licenciado sob [CC BY-NC-SA 4.0](../../LICENSE-CONTENT.txt).*

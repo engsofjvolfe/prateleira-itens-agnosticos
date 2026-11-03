@@ -21,22 +21,29 @@ pasta com espaço no nome. O teste confere regras, nunca uma frase pronta:
   cabeçalho;
 - com `--conferir`, nada é gravado: o glossário em dia sai com 0, e o mudado ou o que falta,
   com 1;
+- com o modelo do rodapé, numa pasta mais funda que a do glossário, o glossário termina no
+  rodapé, com o link a partir da pasta dele, e está em dia com o modelo, e não sem ele;
 - o termo repetido na lista (com outras maiúsculas, outra forma Unicode ou outros espaços),
   a marca vazia, a só com tags e espaços, o termo marcado em dois lugares e dois títulos com
   a mesma âncora (dois termos, ou um termo e o título do cabeçalho) saem com 1, com o `ERRO`
   no lugar de cada um, e nada é gravado;
 - a lista fora do molde, que não é JSON ou que não se lê em UTF-8, o cabeçalho que falta,
-  vazio ou fora do UTF-8, o documento que falta ou fora do UTF-8 e o glossário que é uma
-  entrada ou uma pasta saem com 2, sem nada gravado;
+  vazio ou fora do UTF-8, o documento que falta ou fora do UTF-8, o modelo do rodapé que
+  falta e o glossário que é uma entrada (também o modelo) ou uma pasta saem com 2, sem nada
+  gravado;
 - duas rodadas dão o mesmo.
 
 Precisa do `extrator_comum.py`, do `texto_comum.py`, do `markdown_comum.py`, do
-`grava_ou_confere.py` e do `documento_gerado.py`, nas pastas irmãs da peça. Diz
-`0 falha(s)` quando passa; senão, uma linha `FALHA` para cada conferência que não passou, e
-sai com código 1.
+`grava_ou_confere.py`, do `documento_gerado.py` e do `rodape_comum.py`, nas pastas irmãs da
+peça. Diz `0 falha(s)` quando passa; senão, uma linha `FALHA` para cada conferência que não
+passou, e sai com código 1.
 
 As cópias estragadas da peça estão em `estragos.json`, nesta pasta, para o
 [`estraga.py`](../../copias-estragadas/README.md), com as pastas do grava-ou-confere, do
-documentos e do extrator ao lado da cópia:
+documentos, do extrator e do rodape ao lado da cópia:
 
-    python3 -I ../../copias-estragadas/estraga.py .. teste_glossario.py estragos.json <pasta de trabalho nova> --irma ../../grava-ou-confere --irma ../../documentos --irma ../../extrator
+    python3 -I ../../copias-estragadas/estraga.py .. teste_glossario.py estragos.json <pasta de trabalho nova> --irma ../../grava-ou-confere --irma ../../documentos --irma ../../extrator --irma ../../rodape
+
+---
+
+*Este documento está licenciado sob [CC BY-NC-SA 4.0](../../LICENSE-CONTENT.txt).*

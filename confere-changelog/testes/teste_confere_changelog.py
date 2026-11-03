@@ -27,6 +27,10 @@ de um projeto real. Os testes conferem o que a peca faz, nunca uma frase pronta:
     link errado, a mais, que falta, fora da ordem, ou sem a linha em branco antes;
   - com --indice, o conferido e o changelog do indice do git, e nao o da pasta, com as
     quebras de linha lidas como as de um arquivo, de qualquer pasta de onde o comando roda;
+  - com o modelo do rodape, o rodape do fim fica fora da conferencia, com e sem os links e
+    tambem no changelog do indice; o changelog sem rodape passa; o defeito de antes do rodape
+    da ERRO na linha dele; o rodape fora do fim e, sem o modelo, o do fim sao linhas fora da
+    forma; e o modelo que nao serve sai com 2;
   - a configuracao fora do molde (tambem com os links dentro dela), de outra versao, sem
     tipo, com tipo vazio ou repetido, com o fim vazio ou com um nome de duas linhas; o
     arquivo dos links que nao existe, fora do molde, de outra versao, sem um modelo, com um
@@ -193,11 +197,12 @@ def grava(linhas, sufixo="\n", caminho=None):
     return caminho
 
 
-def roda(changelog_, config=CONFIGURACAO, indice=False, pasta=TRABALHO, links=None):
+def roda(changelog_, config=CONFIGURACAO, indice=False, pasta=TRABALHO, links=None, rodape=None):
     """A peca rodada da pasta dada, com o git sem a configuracao do sistema e da conta, e com o
-    arquivo dos links, quando dado."""
+    arquivo dos links e o modelo do rodape, quando dados."""
     return subprocess.run([sys.executable, "-I", str(PROGRAMA), str(config), str(changelog_),
-                           *(["--indice"] if indice else []), *(["--links", str(links)] if links else [])],
+                           *(["--indice"] if indice else []), *(["--links", str(links)] if links else []),
+                           *(["--rodape", str(rodape)] if rodape else [])],
                           capture_output=True, text=True, env=GIT, cwd=pasta)
 
 
@@ -207,17 +212,17 @@ def linhas_dos_erros(resultado, caminho):
     return [int(l[len(prefixo):].split(":", 1)[0]) for l in resultado.stdout.splitlines() if l.startswith(prefixo)]
 
 
-def passa(caso, linhas, links=None):
+def passa(caso, linhas, links=None, rodape=None):
     caminho = grava(linhas)
-    resultado = roda(caminho, links=links)
+    resultado = roda(caminho, links=links, rodape=rodape)
     confere(resultado.returncode == 0 and not linhas_dos_erros(resultado, caminho),
             f"passa: {caso}: saiu com {resultado.returncode}: {resultado.stdout[-600:]}")
 
 
-def acusa(caso, linhas, esperadas, sufixo="\n", links=None):
+def acusa(caso, linhas, esperadas, sufixo="\n", links=None, rodape=None):
     """O changelog da ERRO nas linhas esperadas (contadas de 1), e so nelas."""
     caminho = grava(linhas, sufixo)
-    resultado = roda(caminho, links=links)
+    resultado = roda(caminho, links=links, rodape=rodape)
     achadas = sorted(set(linhas_dos_erros(resultado, caminho)))
     confere(resultado.returncode == 1 and achadas == sorted(set(esperadas)),
             f"acusa: {caso}: esperado ERRO nas linhas {sorted(set(esperadas))}, saiu com {resultado.returncode} e "
@@ -396,6 +401,30 @@ for indice in (True, False):
     resultado = roda(CRLF, indice=indice)
     confere(resultado.returncode == 0, f"as quebras de linha do Windows se leem como as de um arquivo, com e sem "
                                        f"--indice ({indice}): {resultado.stdout[-300:]}")
+
+# ---- o rodapé ----
+
+ALVO_DO_RODAPE = TRABALHO / f"{palavra()}.txt"
+ALVO_DO_RODAPE.write_text(frase(), encoding="utf-8")
+RODAPE = ["---", "", f"*{frase()} [{palavra()}]({ALVO_DO_RODAPE.name}).*"]  # na pasta dos changelogs
+MODELO_DO_RODAPE = grava(RODAPE)
+passa("com o rodapé no fim e os links", COM_OS_LINKS + ["", *RODAPE], links=MODELOS, rodape=MODELO_DO_RODAPE)
+passa("com o rodapé no fim, sem os links", BASE + ["", *RODAPE], rodape=MODELO_DO_RODAPE)
+passa("com o modelo do rodapé e sem rodapé", BASE, rodape=MODELO_DO_RODAPE)
+caminho = grava(BASE + ["", *RODAPE])
+resultado = roda(caminho)
+confere(resultado.returncode == 1 and all(n > len(BASE) for n in linhas_dos_erros(resultado, caminho)),
+        f"sem o modelo, o rodapé é linha fora da forma: {resultado.stdout[-600:]}")
+acusa("com o rodapé, o defeito de antes dele", com(T[1] - 1) + ["", *RODAPE], [T[1]], rodape=MODELO_DO_RODAPE)
+acusa("o rodapé fora do fim", BASE + ["", *RODAPE, "", frase()],
+      range(len(BASE) + 1, len(BASE) + len(RODAPE) + 4), rodape=MODELO_DO_RODAPE)
+no_indice("CHANGELOG.md", "\n".join(BASE + ["", *RODAPE]) + "\n")
+grava(COM_ERRO, caminho=INDICE)
+resultado = roda(INDICE, indice=True, rodape=MODELO_DO_RODAPE)
+confere(resultado.returncode == 0 and not linhas_dos_erros(resultado, INDICE),
+        f"com --indice, o rodapé do changelog do índice fica fora da conferência: {resultado.stdout[-300:]}")
+resultado = roda(grava(BASE), rodape=TRABALHO / f"{palavra()}.md")
+confere(resultado.returncode == 2, f"o modelo do rodapé que não serve sai com 2: {resultado.stdout}")
 
 # ---- o que não serve ----
 

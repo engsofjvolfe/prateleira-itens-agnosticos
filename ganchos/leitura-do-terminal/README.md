@@ -48,3 +48,7 @@ pasta é a de uso geral: os prefixos do shell, que valem para qualquer programa.
 ## Testes
 
 Em [testes/](testes/README.md).
+
+---
+
+*Este documento está licenciado sob [CC BY-NC-SA 4.0](../../LICENSE-CONTENT.txt).*

@@ -21,13 +21,17 @@ arquivos de padroes proibidos:
 - palavras: as do corpo das secoes, sem os blocos de fecho e as linhas que casam com
   "fora_de"; fora do minimo e do maximo, sai um AVISO, que nao muda o codigo de saida.
 
+Com --rodape, o rodape do modelo dado que o texto tem no fim, lido pelo rodape_comum.py, da
+peca rodape, fica fora da conferencia: o texto se confere sem ele, cada linha no numero dela.
+
 Mostra uma linha "ERRO arquivo:linha: motivo" por problema, uma "AVISO arquivo: motivo"
-para o tamanho e um resumo; sai com 0 sem erro, 1 com erro e 2 quando a configuracao ou um
-argumento nao serve. Usa so a biblioteca padrao, o proibidos_comum.py, desta pasta, e o
-extrator_comum.py, da peca extrator, na pasta irma "extrator" ou na mesma pasta.
+para o tamanho e um resumo; sai com 0 sem erro, 1 com erro e 2 quando a configuracao, o
+modelo do rodape ou um argumento nao serve. Usa so a biblioteca padrao, o proibidos_comum.py,
+desta pasta, o extrator_comum.py, da peca extrator, e o rodape_comum.py, da peca rodape, nas
+pastas irmas ou na mesma pasta.
 
 Uso:
-    python3 -I confere_forma.py <configuracao.json> <texto.md>... [--proibidos <arquivo.json>]...
+    python3 -I confere_forma.py <configuracao.json> <texto.md>... [--proibidos <arquivo.json>]... [--rodape <modelo.md>]
 """
 
 import argparse
@@ -36,10 +40,11 @@ import sys
 from pathlib import Path
 
 PASTA = Path(__file__).resolve().parent
-for pasta in (PASTA.parent / "extrator", PASTA):  # na prateleira, a peca extrator fica na pasta irma
+for pasta in (PASTA.parent / "extrator", PASTA.parent / "rodape", PASTA):  # na prateleira, as pastas irmas
     sys.path.insert(0, str(pasta))
 from extrator_comum import ErroDeDados, expressao, le_conferido, le_texto  # noqa: E402
 from proibidos_comum import achados, regras_proibidas  # noqa: E402
+from rodape_comum import le_modelo, opcao_rodape, separa  # noqa: E402
 
 MOLDE = PASTA / "esquemas" / "confere-forma.schema.json"
 PALAVRA = re.compile(r"\w+")  # o que se conta como palavra
@@ -109,8 +114,8 @@ def nomes_fora_do_italico(linha, conf):
 
 
 def confere_texto(arquivo, conf):
-    """([(linha, motivo)], [aviso], palavras) de um texto."""
-    linhas = le_texto(arquivo).split("\n")
+    """([(linha, motivo)], [aviso], palavras) de um texto, sem o rodape do modelo que ele tem no fim."""
+    linhas = separa(le_texto(arquivo), conf["rodape"])[0].split("\n")
     erros = []
     secoes = [k for k, l in enumerate(linhas) if conf["secao"].search(l)]
     divisores = {k for k, l in enumerate(linhas) if conf["divisor"].search(l)}
@@ -186,13 +191,15 @@ def main(argv=None):
     p.add_argument("textos", type=Path, nargs="+")
     p.add_argument("--proibidos", type=Path, action="append", default=[], metavar="ARQUIVO",
                    help="um arquivo de dados com padrões proibidos; pode se repetir")
+    opcao_rodape(p, "o modelo do rodapé que os textos têm no fim, que fica fora da conferência")
     a = p.parse_args(argv)
     faltam = [str(t) for t in a.textos if not t.is_file()]
     if faltam:
         print(f"ERRO: não existe(m): {faltam}")
         return 2
     try:
-        conf = dict(le_configuracao(a.configuracao), proibidos=regras_proibidas(a.proibidos))
+        conf = dict(le_configuracao(a.configuracao), proibidos=regras_proibidas(a.proibidos),
+                    rodape=le_modelo(a.rodape))
         resultados = [(t, confere_texto(t, conf)) for t in a.textos]
     except ErroDeDados as e:
         print(f"ERRO: {e}")

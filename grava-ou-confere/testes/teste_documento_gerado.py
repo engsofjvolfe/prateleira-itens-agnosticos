@@ -3,9 +3,10 @@ de fora do ASCII. Conferem regras, nunca uma frase pronta: o cabecalho vem sem o
 as quebras do fim, e o vazio (tambem so de espacos e quebras), o que falta e o que nao se le
 em UTF-8 sao erro (ErroDeDados) que diz o arquivo; o destino que e uma das entradas, tambem
 por outro caminho que da no mesmo arquivo, e o que e uma pasta sao erro que diz o destino, e
-o que nao existe ou e outro arquivo serve; o texto e o cabecalho e os blocos, como vem, com
-uma linha em branco entre um e o seguinte e uma quebra de linha no fim, e, sem bloco, so o
-cabecalho com a quebra; duas montagens dao o mesmo. Uso:
+o que nao existe ou e outro arquivo serve, e a entrada que nao veio (None) nao conta; o
+texto e o cabecalho e os blocos, como vem, com uma linha em branco entre um e o seguinte e
+uma quebra de linha no fim, e, sem bloco, so o cabecalho com a quebra; duas montagens dao o
+mesmo. Uso:
     python3 -I teste_documento_gerado.py <pasta do documento_gerado.py> <pasta de trabalho nova>
 Precisa do extrator_comum.py, na pasta irma "extrator" da peca.
 """
@@ -81,6 +82,10 @@ OUTRO.write_text(texto(), encoding="utf-8")
 for destino in (TRABALHO / "novo" / "documento.md", OUTRO):
     confere(erro(confere_destino, destino, ENTRADAS) is None, f"o destino que não existe, ou é outro arquivo, serve: "
                                                               f"{destino}")
+COM_A_QUE_NAO_VEIO = [None, *ENTRADAS, None]
+confere(erro(confere_destino, OUTRO, COM_A_QUE_NAO_VEIO) is None
+        and str(ENTRADAS[1]) in (erro(confere_destino, ENTRADAS[1], COM_A_QUE_NAO_VEIO) or ""),
+        "a entrada que não veio (None) não conta, e as outras contam")
 
 BLOCOS = [linhas() for _ in range(SORTEIO.randint(1, 4))] + [f"{texto()}  ", f"\n{texto()}\n"]
 SORTEIO.shuffle(BLOCOS)

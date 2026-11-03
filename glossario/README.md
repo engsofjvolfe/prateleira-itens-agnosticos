@@ -6,19 +6,20 @@ o lugar do documento em que ele é definido. Serve a qualquer projeto que define
 que usa, numa lista com a definição tirada das fontes ou no próprio texto, com a marca do
 HTML para o termo definido.
 
-Usa só a biblioteca padrão do Python e cinco módulos de outras peças: o `extrator_comum.py`
+Usa só a biblioteca padrão do Python e seis módulos de outras peças: o `extrator_comum.py`
 e o `texto_comum.py`, do [extrator](../extrator/README.md), que leem a lista pelo molde dela
 e põem os termos na forma em que se comparam; o `markdown_comum.py`, do
 [documentos](../documentos/README.md#o-módulo-de-markdown), que lê os títulos e o texto
-fora do código; e o `documento_gerado.py` e o `grava_ou_confere.py`, do
-[grava-ou-confere](../grava-ou-confere/README.md), que leem o cabeçalho, conferem o arquivo
-do glossário, montam o texto dele e o gravam, ou conferem que ele está em dia. Na
-prateleira, eles são achados nas pastas irmãs; numa cópia fora da prateleira, na mesma
-pasta do script.
+fora do código e faz o caminho e o link para o lugar de uma marca; o `documento_gerado.py` e
+o `grava_ou_confere.py`, do [grava-ou-confere](../grava-ou-confere/README.md), que leem o
+cabeçalho, conferem o arquivo do glossário, montam o texto dele e o gravam, ou conferem que
+ele está em dia; e o `rodape_comum.py`, do [rodape](../rodape/README.md#o-módulo-do-rodapé),
+que põe o rodapé no fim do glossário. Na prateleira, eles são achados nas pastas irmãs; numa
+cópia fora da prateleira, na mesma pasta do script.
 
 ## Como rodar
 
-    python3 -I <prateleira>/glossario/glossario.py <definições.json> <cabeçalho.md> <glossário.md> [<documento.md>...] [--conferir]
+    python3 -I <prateleira>/glossario/glossario.py <definições.json> <cabeçalho.md> <glossário.md> [<documento.md>...] [--conferir] [--rodape <modelo.md>]
 
 - `<definições.json>`: a lista dos termos, só com dados (ver [A lista](#a-lista)).
 - `<cabeçalho.md>`: o começo do glossário, como o título e a abertura.
@@ -27,6 +28,8 @@ pasta do script.
   entre eles, fica de fora.
 - `--conferir`: nada é gravado; o glossário gravado tem de ser o que o script gravaria
   agora.
+- `--rodape`: o modelo do rodapé que vai no fim do glossário, como o aviso da licença, com
+  cada link a partir da pasta do glossário (ver o [rodape](../rodape/README.md#o-modelo)).
 
 ## A lista
 
@@ -64,7 +67,8 @@ sem contar acentos nem maiúsculas, o título de segundo nível (`## `) com o te
 
 O termo que está na lista e numa marca sai só com a definição da lista. Os blocos se
 separam por uma linha em branco, e o glossário termina com uma quebra de linha. Sem termo, o
-glossário é só o cabeçalho. A mesma entrada dá sempre o mesmo glossário.
+glossário é só o cabeçalho. Com o `--rodape`, depois do último bloco, uma linha em branco e o
+rodapé. A mesma entrada dá sempre o mesmo glossário.
 
 ## A fonte
 
@@ -97,8 +101,13 @@ termos e quantos erros.
 
 A entrada que não serve, que sai como `ERRO: <motivo>`: a lista, o cabeçalho ou um
 documento que faltam ou não se leem em UTF-8; a lista que não é JSON ou que sai do molde; o
-cabeçalho vazio; e o glossário que é a lista, o cabeçalho ou uma pasta.
+cabeçalho vazio; o modelo do rodapé que não serve; e o glossário que é a lista, o cabeçalho, o
+modelo ou uma pasta.
 
 ## Testes
 
 Em [testes/](testes/README.md).
+
+---
+
+*Este documento está licenciado sob [CC BY-NC-SA 4.0](../LICENSE-CONTENT.txt).*

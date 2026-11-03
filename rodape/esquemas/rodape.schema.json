@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "rodape.schema.json",
+  "type": "object",
+  "required": ["versao_schema", "documentos", "fora"],
+  "additionalProperties": false,
+  "properties": {
+    "versao_schema": { "const": 1 },
+    "documentos": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "$ref": "#/$defs/padrao" } },
+    "fora": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/padrao" } }
+  },
+  "$defs": {
+    "padrao": { "$ref": "comum.schema.json#/$defs/linha" }
+  }
+}

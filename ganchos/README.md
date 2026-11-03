@@ -39,3 +39,7 @@ deixa rodar a chamada de ferramenta que uma regra da lista do projeto permite, c
 com a forma exata da chamada e o trecho da documentação que a dá, e barra o resto na hora,
 também um programa que ainda não existe; e o registro, que grava cada chamada antes de ela
 rodar e não deixa rodar a que não consegue gravar (com testes).
+
+---
+
+*Este documento está licenciado sob [CC BY-NC-SA 4.0](../LICENSE-CONTENT.txt).*

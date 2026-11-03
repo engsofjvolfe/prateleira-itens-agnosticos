@@ -32,9 +32,9 @@ def le_cabecalho(caminho):
 
 def confere_destino(destino, entradas):
     """ErroDeDados quando o arquivo do documento nao serve: e um dos arquivos de entrada, pelo caminho inteiro, ou
-    existe e nao e um arquivo."""
+    existe e nao e um arquivo. A entrada que nao veio (None), como a de uma opcao que nao se deu, nao conta."""
     destino = Path(destino)
-    if destino.resolve() in {Path(e).resolve() for e in entradas}:
+    if destino.resolve() in {Path(e).resolve() for e in entradas if e is not None}:
         raise ErroDeDados(f"o documento é um dos arquivos de entrada: {destino}")
     if destino.exists() and not destino.is_file():
         raise ErroDeDados(f"o documento não é um arquivo: {destino}")

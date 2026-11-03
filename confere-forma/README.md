@@ -8,22 +8,27 @@ textos de estudo.
 
 Usa só a biblioteca padrão do Python, o `extrator_comum.py`, do
 [extrator](../extrator/README.md), que lê a configuração pelo molde dela e os textos em UTF-8,
-e o [módulo dos padrões proibidos](#o-módulo-dos-padrões-proibidos), desta pasta. Na
-prateleira, o extrator é achado na pasta irmã `extrator/`; numa cópia fora da prateleira, na
-mesma pasta do script.
+o [módulo dos padrões proibidos](#o-módulo-dos-padrões-proibidos), desta pasta, e o
+`rodape_comum.py`, do [rodape](../rodape/README.md#o-módulo-do-rodapé), que acha o rodapé no
+fim de um texto. Na prateleira, eles são achados nas pastas irmãs; numa cópia fora da
+prateleira, na mesma pasta do script.
 
 ## Como rodar
 
-    python3 -I confere_forma.py <configuração.json> <texto.md>... [--proibidos <arquivo.json>]...
+    python3 -I confere_forma.py <configuração.json> <texto.md>... [--proibidos <arquivo.json>]... [--rodape <modelo.md>]
 
 O `--proibidos` dá um arquivo de [padrões proibidos](#os-padrões-proibidos) e pode se
-repetir: as regras de todos se somam. Sem ele, nenhum padrão é proibido.
+repetir: as regras de todos se somam. Sem ele, nenhum padrão é proibido. O `--rodape` dá o
+modelo do rodapé que os textos têm no fim, como o aviso da licença: o rodapé do modelo no fim
+de um texto, com qualquer alvo nos links, fica fora da conferência e das palavras, e o resto
+se confere como sem ele, cada linha no número dela; o rodapé que não está no fim se confere
+como qualquer linha.
 
 Mostra uma linha `ERRO arquivo:linha: motivo` por problema, em ordem de linha; uma
 `AVISO arquivo: motivo` quando o tamanho sai dos limites; uma linha com as palavras de cada
 texto; e um resumo com quantos textos, erros e avisos. Sai com código 0 sem erro (o aviso
-não conta), 1 com erro e 2 quando a configuração ou um argumento não serve (então nada é
-conferido).
+não conta), 1 com erro e 2 quando a configuração, o modelo do rodapé ou um argumento não
+serve (então nada é conferido).
 
 ## O que se confere
 
@@ -98,3 +103,7 @@ o `extrator_comum.py`.
 ## Testes
 
 Em [testes/](testes/README.md).
+
+---
+
+*Este documento está licenciado sob [CC BY-NC-SA 4.0](../LICENSE-CONTENT.txt).*

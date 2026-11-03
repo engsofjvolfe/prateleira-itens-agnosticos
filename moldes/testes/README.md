@@ -92,3 +92,7 @@ das listas e das entradas, para o `teste_contar_e_separar.py`:
 
     python3 -I ../../copias-estragadas/estraga.py .. teste_moldes.py estragos.json <pasta de trabalho nova> --irma ../../extrator
     python3 -I ../../copias-estragadas/estraga.py .. teste_contar_e_separar.py estragos-contar-e-separar.json <pasta de trabalho nova> --irma ../../extrator
+
+---
+
+*Este documento está licenciado sob [CC BY-NC-SA 4.0](../../LICENSE-CONTENT.txt).*

@@ -174,3 +174,7 @@ pasta tem é `ERRO`, com código 2, e nada se grava.
 ## Testes
 
 Em [testes/](testes/README.md).
+
+---
+
+*Este documento está licenciado sob [CC BY-NC-SA 4.0](../LICENSE-CONTENT.txt).*

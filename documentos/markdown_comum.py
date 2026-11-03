@@ -2,15 +2,20 @@
 O que as pecas da prateleira fazem do mesmo jeito com um texto Markdown, lido como o GitHub
 o le: as linhas fora dos blocos de codigo, o texto sem os blocos e sem o codigo na linha, a
 ancora de um titulo, os titulos fora dos blocos de codigo, cada um com a linha, o nivel, o
-texto e a ancora (o titulo repetido ganha -1, -2... no fim dela), e os marcadores, o id e o
-name de cada tag HTML fora de codigo e de comentario.
+texto e a ancora (o titulo repetido ganha -1, -2... no fim dela), os marcadores, o id e o
+name de cada tag HTML fora de codigo e de comentario, os links fora de codigo, o caminho de
+um arquivo a partir de uma pasta, o alvo e o link como vao num documento, e os documentos de
+um repositorio git que seguem os padroes dados.
 
 Nao se roda: as pecas o importam da pasta irma "documentos" ou da propria pasta. So
-biblioteca padrao.
+biblioteca padrao e, nos documentos do repositorio, o git.
 """
 
 import collections
+import os
 import re
+import subprocess
+from pathlib import Path
 
 QUEBRA = "\n"  # o que separa as linhas do texto corrido
 CERCA = re.compile(r"^ {0,3}(`{3,}|~{3,})")
@@ -23,6 +28,14 @@ COMENTARIO_HTML = re.compile(r"<!--.*?-->", re.DOTALL)
 ATRIBUTO_HTML = re.compile(r"""\s+([A-Za-z_:][A-Za-z0-9_.:-]*)(?:\s*=\s*(?:([^\s"'=<>`]+)|'([^']*)'|"([^"]*)"))?""")
 TAG_DE_ABERTURA = re.compile(rf"<[A-Za-z][A-Za-z0-9-]*(?:{ATRIBUTO_HTML.pattern})*\s*/?>")
 ATRIBUTOS_DE_MARCADOR = ("id", "name")  # os atributos de uma tag HTML que um link alcanca pela ancora
+ANCORA = "#"  # o que separa, no alvo de um link, o arquivo da ancora
+ALVO_DE_LINK = r"<[^>]*>|[^)\s]+"  # o alvo de um link: entre < e >, ou sem espaco nem fecha-parenteses
+# um link [texto](alvo) ou ![texto](alvo), com colchetes no texto e o titulo entre aspas, se houver; o grupo 1 e o alvo
+LINK = re.compile(rf"!?\[(?:[^\[\]]|\[[^\[\]]*\])*\]\(\s*({ALVO_DE_LINK})(?:\s+\"[^\"]*\")?\s*\)")
+ESQUEMA = re.compile(r"^[A-Za-z][A-Za-z0-9+.-]*:")  # o comeco do alvo de um link externo, como https: ou mailto:
+ALVO_ENTRE_SINAIS = re.compile(r"[\s()]")  # o alvo de link com um destes vai entre < e >
+CODIFICACAO_DO_GIT = "utf-8"  # a dos caminhos que o git da
+FORA_DO_GIT = ":(exclude)"  # o comeco do padrao do git que deixa de fora os arquivos que seguem o resto dele
 
 Titulo = collections.namedtuple("Titulo", "linha nivel texto ancora")
 
@@ -81,3 +94,43 @@ def marcadores(texto):
     sem_comentario = COMENTARIO_HTML.sub("", texto_fora_de_codigo(texto))
     return {"".join(valor) for tag in TAG_DE_ABERTURA.finditer(sem_comentario)
             for nome, *valor in ATRIBUTO_HTML.findall(tag.group()) if nome.lower() in ATRIBUTOS_DE_MARCADOR}
+
+
+def alvo_sem_sinais(alvo):
+    """O alvo de um link como ele nomeia o lugar: sem os < e > em volta, quando vem entre eles."""
+    return alvo[1:-1] if alvo.startswith("<") and alvo.endswith(">") else alvo
+
+
+def links(texto):
+    """(numero da linha, alvo) de cada link [texto](alvo) e ![texto](alvo) fora de codigo, na ordem; o texto do link
+    pode quebrar de uma linha para a outra, a linha e a do comeco do alvo, e o alvo vem sem os < e > em volta."""
+    corrido = texto_fora_de_codigo(texto)
+    for m in LINK.finditer(corrido):
+        yield corrido.count(QUEBRA, 0, m.start(1)) + 1, alvo_sem_sinais(m.group(1))
+
+
+def caminho_relativo(arquivo, pasta):
+    """O caminho do arquivo a partir da pasta, os dois pelo caminho inteiro, com / entre as partes, como vai no
+    alvo de um link."""
+    return Path(os.path.relpath(Path(arquivo).resolve(), Path(pasta).resolve())).as_posix()
+
+
+def alvo_de_link(alvo):
+    """O alvo como vai num link Markdown: entre < e > quando tem espaco ou parenteses, e como vem nos outros casos."""
+    return f"<{alvo}>" if ALVO_ENTRE_SINAIS.search(alvo) else alvo
+
+
+def link_markdown(texto, alvo):
+    """O link Markdown com o texto e o alvo, como vem; o alvo vai entre < e > quando tem espaco ou parenteses."""
+    return f"[{texto}]({alvo_de_link(alvo)})"
+
+
+def documentos_do_repositorio(raiz, padroes, fora=()):
+    """Os caminhos, a partir da raiz, com / entre as partes e em ordem, dos arquivos de um repositorio git, os
+    versionados e os novos que o .gitignore nao deixa de fora, que existem e seguem um dos padroes do git (pathspec) e
+    nenhum dos de fora. O erro do git (subprocess.CalledProcessError) e a falta dele (FileNotFoundError) vao para a
+    peca que chama."""
+    saida = subprocess.run(["git", "-C", str(raiz), "ls-files", "--cached", "--others", "--exclude-standard", "-z",
+                            "--", *padroes, *(FORA_DO_GIT + p for p in fora)],
+                           capture_output=True, check=True).stdout.decode(CODIFICACAO_DO_GIT)
+    return sorted({p for p in saida.split("\0") if p and (Path(raiz) / p).is_file()})

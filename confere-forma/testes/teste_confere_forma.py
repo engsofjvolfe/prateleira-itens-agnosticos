@@ -12,9 +12,13 @@ duas marcas valem; a linha de fora nao e conferida). As regras proibidas vem de 
 arquivos de dados sorteados, uma em cada um: sem eles nada e proibido, e num arquivo so dao
 o mesmo. O marcas-de-ia.json da peca pega os exemplos do README, o caractere invisivel e o
 resto de citacao, na linha deles, e deixa passar o documento certo e a tipografia comum. O
-tamanho fora dos limites da AVISO e nao muda o codigo. Configuracao, arquivos de proibidos
-e argumentos que nao servem saem com 2, e o erro de um arquivo de proibidos diz o arquivo;
-duas rodadas dao o mesmo. Uso:
+tamanho fora dos limites da AVISO e nao muda o codigo. Com o modelo do rodape, o rodape do
+fim (com o divisor, um padrao proibido e um nome fora do italico) fica fora da conferencia e
+das palavras, o texto antes dele se confere como sem ele, o rodape que nao esta no fim se
+confere, e os textos sem rodape dao os mesmos ERRO; sem o modelo, o rodape se confere.
+Configuracao, arquivos de proibidos, o modelo do rodape e argumentos que nao servem saem com
+2, e o erro de um arquivo de proibidos ou do modelo diz o arquivo; duas rodadas dao o mesmo.
+Uso:
     python3 -I teste_confere_forma.py <pasta do confere_forma.py> <pasta de trabalho nova>
 """
 import json
@@ -51,10 +55,11 @@ def marca():
     return "".join(SORTEIO.choice(SIMBOLOS) for _ in range(3)) + palavra()
 
 
-def roda(configuracao, *textos, proibidos=None):
+def roda(configuracao, *textos, proibidos=None, rodape=None):
     """(codigo, [(arquivo, linha) de cada ERRO], [arquivo de cada AVISO], linhas que sairam);
-    proibidos: os arquivos de padroes proibidos, e None da os dois do teste."""
+    proibidos: os arquivos de padroes proibidos, e None da os dois do teste; rodape: o modelo do rodape, se houver."""
     extras = [a for p in (PROIBIDOS if proibidos is None else proibidos) for a in ("--proibidos", str(p))]
+    extras += ["--rodape", str(rodape)] if rodape is not None else []
     r = subprocess.run([sys.executable, "-I", str(SCRIPT), str(configuracao), *map(str, textos), *extras],
                        capture_output=True, text=True, encoding="utf-8")
     linhas = r.stdout.strip().split("\n") if r.stdout.strip() else []
@@ -242,8 +247,12 @@ codigo, erros, _, linhas = roda(CONF, MARCADO.grava(), proibidos=[MARCAS_DE_IA])
 confere(codigo == 1 and sorted(linha for _, linha in erros) == sorted(MARCADO.erros),
         f"o marcas-de-ia.json pega cada exemplo na linha dele e deixa passar a tipografia comum: {codigo}, {linhas}")
 
-LINHA_DAS_PALAVRAS = [l for l in roda(CONF, arquivos["certo"])[3] if " palavra" in l][0]
-PALAVRAS = int(re.search(r": (\d+) palavra", LINHA_DAS_PALAVRAS).group(1))
+def palavras(linhas):
+    """As palavras que a linha do tamanho de um texto, na saida, diz que ele tem."""
+    return int(re.search(r": (\d+) palavra", next(l for l in linhas if " palavra" in l)).group(1))
+
+
+PALAVRAS = palavras(roda(CONF, arquivos["certo"])[3])
 for minimo, maximo, descricao in ((PALAVRAS + 1, PALAVRAS + 9, "acima do tamanho"),
                                   (0, PALAVRAS - 1, "abaixo do tamanho")):
     conf = grava_configuracao(dict(CONFIGURACAO, palavras={"fora_de": FORA, "minimo": minimo, "maximo": maximo}))
@@ -252,6 +261,48 @@ for minimo, maximo, descricao in ((PALAVRAS + 1, PALAVRAS + 9, "acima do tamanho
             f"tamanho fora dos limites ({descricao}) dá AVISO e sai com 0: {codigo}, {avisos}")
 conf = grava_configuracao(dict(CONFIGURACAO, palavras={"fora_de": FORA, "minimo": PALAVRAS, "maximo": PALAVRAS}))
 confere(not roda(conf, arquivos["certo"])[2], "o tamanho igual aos limites não dá AVISO")
+
+ALVO_DO_RODAPE = TRABALHO / f"{palavra()}.txt"
+ALVO_DO_RODAPE.write_text(frase(3), encoding="utf-8")
+# o rodape, na pasta dos documentos, com o divisor, um padrao proibido e um nome fora do italico
+RODAPE = [DIVISOR, "", f"{frase(3)} {PROIBIDO} [{NOME_LONGO}]({ALVO_DO_RODAPE.name}) {frase(2)}."]
+MODELO = TRABALHO / f"{palavra()}.md"
+MODELO.write_text("\n".join(RODAPE) + "\n", encoding="utf-8")
+
+
+def com_rodape(caso, *depois):
+    """O documento do caso com o rodape no fim, depois de uma linha em branco, e as linhas dadas depois dele; os erros
+    sao os do caso, e rodape_em, a linha em que o rodape comeca."""
+    d = Documento()
+    d.linhas, d.erros = list(CASOS[caso].linhas), list(CASOS[caso].erros)
+    while d.linhas and not d.linhas[-1].strip():
+        d.linhas.pop()
+    d.rodape_em = len(d.linhas) + 2
+    d.linhas += ["", *RODAPE, *depois]
+    return d
+
+
+CERTO_COM_RODAPE = com_rodape("certo").grava()
+codigo, erros, avisos, linhas = roda(CONF, CERTO_COM_RODAPE, rodape=MODELO)
+confere(codigo == 0 and not erros and not avisos and palavras(linhas) == PALAVRAS,
+        f"com o modelo, o rodapé do fim fica fora da conferência e das palavras: {codigo}, {linhas}")
+codigo, erros, _, linhas = roda(CONF, CERTO_COM_RODAPE)
+confere(codigo == 1 and erros and all(linha >= com_rodape("certo").rodape_em for _, linha in erros),
+        f"sem o modelo, o rodapé se confere como o resto do texto: {codigo}, {linhas}")
+DEFEITO = com_rodape("texto depois do fecho")
+codigo, erros, _, linhas = roda(CONF, DEFEITO.grava(), rodape=MODELO)
+confere(codigo == 1 and sorted(linha for _, linha in erros) == sorted(DEFEITO.erros),
+        f"com o modelo, o texto antes do rodapé se confere como sem ele, cada linha no número dela: {linhas}")
+NO_MEIO = com_rodape("certo", "", frase(4))
+codigo, erros, _, linhas = roda(CONF, NO_MEIO.grava(), rodape=MODELO)
+confere(codigo == 1 and any(linha >= NO_MEIO.rodape_em for _, linha in erros),
+        f"o rodapé que não está no fim se confere como o resto do texto: {codigo}, {linhas}")
+confere(roda(CONF, *arquivos.values(), rodape=MODELO)[1] == ERROS_DE_TODOS,
+        "nos textos sem rodapé, o modelo não muda nenhum ERRO")
+SEM_MODELO = TRABALHO / f"{palavra()}.md"
+codigo, erros, _, linhas = roda(CONF, arquivos["certo"], rodape=SEM_MODELO)
+confere(codigo == 2 and not erros and str(SEM_MODELO) in "\n".join(linhas),
+        f"o modelo que não serve sai com 2, sem conferir, e o erro diz o arquivo: {codigo}, {linhas}")
 
 
 def com(caminho, valor):

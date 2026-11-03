@@ -22,20 +22,21 @@ confere-citacoes.
 Sao problema, e nada e gravado: o fato repetido, sem contar maiusculas, a forma Unicode e os
 espacos; e a forma que diz o mesmo que outra do mesmo fato, sem contar a forma Unicode e os
 espacos. Com --conferir, nada e gravado: o documento gravado tem de ser o que o script
-gravaria agora.
+gravaria agora. Com --rodape, o documento termina no rodape do modelo dado, pelo
+rodape_comum.py, da peca rodape, com cada link a partir da pasta do documento.
 
 Mostra uma linha ERRO por problema, com a lista e o caminho do valor nela, e um resumo. Sai
 com codigo 0 com o documento gravado ou em dia; 1 com problema na lista, ou com o documento
 que nao esta em dia; e 2, sem nada gravado, quando a lista ou o cabecalho nao se leem em
 UTF-8, a lista nao e JSON ou sai do molde, o cabecalho esta vazio, um rotulo nao e uma linha
-so com alguma letra (o molde esquemas/rotulos.schema.json), ou o documento e um dos
-arquivos de entrada ou nao e um arquivo. Precisa do extrator_comum.py e do texto_comum.py,
-do extrator, e do grava_ou_confere.py e do documento_gerado.py, do grava-ou-confere, nas
-pastas irmas ou na mesma pasta.
+so com alguma letra (o molde esquemas/rotulos.schema.json), o modelo do rodape nao serve, ou
+o documento e um dos arquivos de entrada ou nao e um arquivo. Precisa do extrator_comum.py e
+do texto_comum.py, do extrator, do grava_ou_confere.py e do documento_gerado.py, do
+grava-ou-confere, e do rodape_comum.py, do rodape, nas pastas irmas ou na mesma pasta.
 
 Uso:
     python3 -I divergencias.py <divergencias.json> <cabecalho.md> <documento.md>
-        --ensinada <rotulo> --outra <rotulo> [--conferir]
+        --ensinada <rotulo> --outra <rotulo> [--conferir] [--rodape <modelo.md>]
 """
 
 import argparse
@@ -43,11 +44,12 @@ import sys
 from pathlib import Path
 
 PASTA = Path(__file__).resolve().parent
-for pasta in (PASTA.parent / "grava-ou-confere", PASTA.parent / "extrator", PASTA):  # na prateleira, as pastas irmas
-    sys.path.insert(0, str(pasta))
+for pasta in (PASTA.parent / "grava-ou-confere", PASTA.parent / "extrator", PASTA.parent / "rodape", PASTA):
+    sys.path.insert(0, str(pasta))  # na prateleira, as pastas irmas
 from documento_gerado import confere_destino, em_blocos, le_cabecalho  # noqa: E402
 from extrator_comum import ErroDeDados, conferido, le_conferido  # noqa: E402
 from grava_ou_confere import grava_ou_confere, opcao_conferir  # noqa: E402
+from rodape_comum import com_rodape, le_modelo, opcao_rodape  # noqa: E402
 from texto_comum import espacos_juntos, nfc  # noqa: E402
 
 MOLDE = PASTA / "esquemas" / "divergencias.schema.json"  # o molde da lista
@@ -99,12 +101,12 @@ def documento(cabecalho, divergencias, ensinada, outra):
 
 
 def entrada(a):
-    """(divergencias, cabecalho): a lista, conferida pelo molde, e o cabecalho; ErroDeDados quando um rotulo, o
-    documento, o cabecalho ou a lista nao servem."""
+    """(divergencias, cabecalho, modelo do rodape): a lista, conferida pelo molde, o cabecalho e o modelo, ou None
+    sem ele; ErroDeDados quando um rotulo, o documento, o cabecalho, o modelo ou a lista nao servem."""
     conferido({"ensinada": a.ensinada, "outra": a.outra}, ROTULOS, "os rótulos do comando")
-    confere_destino(a.documento, (a.lista, a.cabecalho))
-    cabecalho = le_cabecalho(a.cabecalho)
-    return le_conferido(a.lista, MOLDE)["divergencias"], cabecalho
+    confere_destino(a.documento, (a.lista, a.cabecalho, a.rodape))
+    cabecalho, modelo = le_cabecalho(a.cabecalho), le_modelo(a.rodape)
+    return le_conferido(a.lista, MOLDE)["divergencias"], cabecalho, modelo
 
 
 def main(argv=None):
@@ -115,9 +117,10 @@ def main(argv=None):
     p.add_argument("--ensinada", required=True, help="o rótulo da forma que o material ensina, no documento")
     p.add_argument("--outra", required=True, help="o rótulo de cada uma das outras formas, no documento")
     opcao_conferir(p, "não grava: confere que o documento gravado é o que a lista dá")
+    opcao_rodape(p, "o modelo do rodapé, que vai no fim do documento")
     a = p.parse_args(argv)
     try:
-        divergencias, cabecalho = entrada(a)
+        divergencias, cabecalho, modelo = entrada(a)
     except ErroDeDados as e:
         print(f"ERRO: {e}")
         return 2
@@ -128,7 +131,8 @@ def main(argv=None):
         print(f"{len(divergencias)} divergência(s), {len(erros)} erro(s): nada foi gravado.")
         return 1
     n = len(divergencias)
-    return grava_ou_confere(a.documento, documento(cabecalho, divergencias, a.ensinada, a.outra), a.conferir,
+    texto = com_rodape(documento(cabecalho, divergencias, a.ensinada, a.outra), modelo, a.documento)
+    return grava_ou_confere(a.documento, texto, a.conferir,
                             falta=f"ERRO {a.documento}: não é o documento que a lista dá agora.",
                             em_dia=f"{n} divergência(s): o documento está em dia.",
                             gravado=f"{n} divergência(s) gravada(s) em {a.documento}.")

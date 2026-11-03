@@ -17,8 +17,9 @@ documentados no [README](README.md#como-as-peças-se-ligam).
 Nenhum caminho de máquina nos códigos e nos READMEs (os comandos usam `<prateleira>`). O
 que fica no código das peças é a forma que a peça trata, documentada no README dela: a
 sintaxe do Markdown em `confere-forma` (itálico entre marcas iguais, negrito com a marca
-dobrada, palavra como `\w+`), a tabela separada por tabulação em `custo-de-agentes` e, em
-`baralho-anki`, a tabela Markdown, as colunas do CSV e o esquema antigo da coleção do Anki. O
+dobrada, palavra como `\w+`), a tabela separada por tabulação em `custo-de-agentes`, em
+`baralho-anki`, a tabela Markdown, as colunas do CSV e o esquema antigo da coleção do Anki e,
+em `rodape`, o link Markdown em linha e os padrões do git para os documentos. O
 que é do programa em que a IA trabalha — os eventos dos ganchos, as chaves do evento, a
 forma das respostas, os nomes das ferramentas e dos campos — vem do protocolo, num arquivo
 do projeto, lido pelo `ganchos/protocolo`, e o código que barra uma chamada vem no comando.
@@ -72,3 +73,7 @@ Sem problema conhecido: as listagens são ordenadas e o sorteio dos testes tem s
 
 Sem problema conhecido: toda peça com código tem, em `testes/`, teste com dados inventados e
 sorteados, que confere regras, e uma lista de estragos que o teste pega inteira.
+
+---
+
+*Este documento está licenciado sob [CC BY-NC-SA 4.0](LICENSE-CONTENT.txt).*

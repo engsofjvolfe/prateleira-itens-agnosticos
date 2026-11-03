@@ -57,3 +57,7 @@ ou com outro campo entre chaves; e o número de uma leitura abaixo do menor que 
 ## Testes
 
 Em [testes/](testes/README.md).
+
+---
+
+*Este documento está licenciado sob [CC BY-NC-SA 4.0](../../LICENSE-CONTENT.txt).*

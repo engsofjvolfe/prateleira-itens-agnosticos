@@ -34,7 +34,7 @@ confere regras, nunca uma frase pronta:
   quebras), o que falta e o que não se lê em UTF-8 são `ErroDeDados` que diz o arquivo;
 - o destino que é uma das entradas, também por outro caminho que dá no mesmo arquivo, e o
   que é uma pasta são `ErroDeDados` que diz o destino, e o que não existe ou é outro arquivo
-  serve;
+  serve; a entrada que não veio (`None`) não conta, e as outras contam;
 - o texto é o cabeçalho e os blocos, como vêm, com uma linha em branco entre um e o seguinte
   e uma quebra de linha no fim, e, sem bloco, só o cabeçalho com a quebra;
 - duas montagens dão o mesmo.
@@ -43,3 +43,7 @@ Precisa do `extrator_comum.py`, na pasta irmã `extrator/` da peça. As cópias 
 módulo estão em `estragos-documento-gerado.json`, nesta pasta:
 
     python3 -I ../../copias-estragadas/estraga.py .. teste_documento_gerado.py estragos-documento-gerado.json <pasta de trabalho nova> --irma ../../extrator
+
+---
+
+*Este documento está licenciado sob [CC BY-NC-SA 4.0](../../LICENSE-CONTENT.txt).*

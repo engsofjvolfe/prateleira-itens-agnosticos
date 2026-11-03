@@ -114,3 +114,7 @@ passou, e sai com código 1. As cópias estragadas do módulo de texto estão em
 `estragos-texto-comum.json`, nesta pasta:
 
     python3 -I ../../copias-estragadas/estraga.py .. teste_texto_comum.py estragos-texto-comum.json <pasta de trabalho nova>
+
+---
+
+*Este documento está licenciado sob [CC BY-NC-SA 4.0](../../LICENSE-CONTENT.txt).*

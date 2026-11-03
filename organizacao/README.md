@@ -60,12 +60,16 @@ alguma ainda quebra.
       links-do-changelog.json      os modelos do link de cada versão no fim do changelog
       TODO.md                      o que falta fazer
       RELATORIO-AGNOSTICO.md       cada peça contra as regras
+      LICENSE                      a licença dos programas, a GPL-3.0
+      LICENSE-CONTENT.txt          a licença do conteúdo, a CC BY-NC-SA 4.0
+      rodape.md                    o modelo do rodapé da licença, no fim de cada documento
+      rodape.json                  os documentos que levam o rodapé e os que ficam sem ele
       .gitignore                   o cache do Python e as anotações de sessão dos ganchos
       organizacao/                 esta documentação
       baralho-anki/  confere-changelog/  confere-citacoes/  confere-forma/
       copia-para-projeto/  copias-estragadas/  custo-de-agentes/  dicionario-das-duvidas/
       divergencias/  documentos/  extrator/  ganchos/  glossario/  grava-ou-confere/
-      historico-de-arquivo/  itens-numerados/  marcas/  moldes/  texto-em-comum/
+      historico-de-arquivo/  itens-numerados/  marcas/  moldes/  rodape/  texto-em-comum/
 
 ## Como um projeto usa uma peça
 
@@ -84,3 +88,7 @@ depois se elas estão em dia.
     python3 -I <prateleira>/<peca>/testes/teste_<nome>.py <prateleira>/<peca> <pasta de trabalho nova>
     python3 -I <prateleira>/copias-estragadas/estraga.py <prateleira>/<peca> <prateleira>/<peca>/testes/teste_<nome>.py \
         <prateleira>/<peca>/testes/estragos.json <pasta de trabalho nova> --irma <prateleira>/<peca irmã>
+
+---
+
+*Este documento está licenciado sob [CC BY-NC-SA 4.0](../LICENSE-CONTENT.txt).*

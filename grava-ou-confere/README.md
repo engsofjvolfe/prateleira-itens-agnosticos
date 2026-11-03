@@ -35,9 +35,13 @@ fazem do mesmo jeito antes de gravá-lo. Não se roda: as peças o importam da p
 | Função | O que faz |
 | --- | --- |
 | `le_cabecalho(arquivo)` | o cabeçalho que o projeto escreve para o documento, como o título e a abertura, sem os espaços e as quebras do fim; `ErroDeDados`, que diz o arquivo, quando ele não se lê em UTF-8 ou está vazio |
-| `confere_destino(destino, entradas)` | `ErroDeDados`, que diz o destino, quando o arquivo do documento é um dos arquivos de entrada, pelo caminho inteiro, ou existe e não é um arquivo |
+| `confere_destino(destino, entradas)` | `ErroDeDados`, que diz o destino, quando o arquivo do documento é um dos arquivos de entrada, pelo caminho inteiro, ou existe e não é um arquivo; a entrada que não veio (`None`), como a de uma opção que não se deu, não conta |
 | `em_blocos(cabecalho, blocos)` | o texto do documento: o cabeçalho e os blocos, como vêm, com uma linha em branco entre um e o seguinte e uma quebra de linha no fim |
 
 ## Testes
 
 Em [testes/](testes/README.md).
+
+---
+
+*Este documento está licenciado sob [CC BY-NC-SA 4.0](../LICENSE-CONTENT.txt).*

@@ -30,10 +30,7 @@ entra no [CHANGELOG.md](CHANGELOG.md), na seção `Não publicado`. O
     trecho, sem texto no JSON; o caminho do link e o título do documento pelas funções do
     módulo de Markdown que o `glossario` também usa. O começo dela está no ramo
     `trechos-de-ia`, fora do `main`.
-11. As licenças da prateleira: o código sob GPL-3.0 (`LICENSE`) e os documentos e os dados sob
-    CC BY-NC-SA 4.0 (`LICENSE-CONTENT.txt`), com os badges e a seção da licença no README; e
-    uma peça que grava e confere o rodapé da licença no fim de cada documento de um
-    repositório, com o modelo do rodapé dado no comando e o link para o arquivo da licença a
-    partir da pasta de cada documento. O `confere-forma` (o rodapé depois da última seção) e
-    as peças que gravam documentos (`glossario` e `divergencias`, pelo `documento_gerado.py`)
-    passam a aceitar o rodapé.
+
+---
+
+*Este documento está licenciado sob [CC BY-NC-SA 4.0](LICENSE-CONTENT.txt).*

@@ -187,3 +187,7 @@ Não rodam sozinhas: os scripts desta pasta, e os de um projeto que as copie (co
 ## Testes
 
 Em [testes/](testes/README.md).
+
+---
+
+*Este documento está licenciado sob [CC BY-NC-SA 4.0](../LICENSE-CONTENT.txt).*

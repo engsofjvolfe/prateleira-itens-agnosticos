@@ -79,18 +79,29 @@ Confere:
 ## O módulo de Markdown
 
 O `teste_markdown_comum.py` confere o que só as peças que importam o `markdown_comum.py`
-usam; a âncora, o código na linha e os marcadores, o teste dos links confere. Ele monta um
-documento sorteado, com títulos de nível 1 a 6, com recuo de zero a três espaços e com ou
-sem os `#` do fim, um título repetido três vezes, parágrafos, blocos de código com cercas dos
-dois sinais, com títulos dentro e com cercas que não fecham o bloco (a do outro sinal, a mais
-curta e a com texto depois, cada uma com um título logo depois), e linhas que não são título
-(sete `#`, `#` sem espaço, recuo de quatro espaços). Confere:
+usam; a âncora, o código na linha, os marcadores e os links, o teste dos links confere. Ele
+monta um documento sorteado, com títulos de nível 1 a 6, com recuo de zero a três espaços e
+com ou sem os `#` do fim, um título repetido três vezes, parágrafos, blocos de código com
+cercas dos dois sinais, com títulos dentro e com cercas que não fecham o bloco (a do outro
+sinal, a mais curta e a com texto depois, cada uma com um título logo depois), e linhas que
+não são título (sete `#`, `#` sem espaço, recuo de quatro espaços); e um repositório git, com
+nomes sorteados, com espaço e letras de fora do ASCII. Confere:
 
 - cada título fora de bloco de código, e só ele, sai na ordem, com a linha, o nível, o texto
   sem os `#` e os espaços das pontas e a âncora, com `-1` e `-2` no título repetido;
 - as linhas fora de código são as do documento menos as dos blocos, cercas incluídas, cada
   uma com o número dela, a partir de 1;
+- o caminho de um arquivo a partir de uma pasta, de outra, da do arquivo e de uma dada com
+  `..`, com espaços nos nomes;
+- o alvo vai entre `<` e `>` com espaço, tabulação ou parênteses, e só então, também no link;
+- os documentos do repositório são, em ordem, os versionados e os novos que seguem um dos
+  padrões, sem os que o `.gitignore` deixa de fora, os apagados, os que seguem um padrão de
+  fora e os de outros padrões; sem os padrões de fora, os que seguem um deles entram; a pasta
+  sem git é erro do git;
 - duas leituras dão o mesmo.
+
+Ele precisa do git, que roda sem a configuração do sistema e da conta e sem subir da pasta de
+trabalho.
 
 ## As cópias estragadas
 
@@ -103,3 +114,7 @@ rodado desta pasta: `estragos-linhas-longas.json`, para o `teste_linhas_longas.p
     python3 -I ../../copias-estragadas/estraga.py .. teste_linhas_longas.py estragos-linhas-longas.json <pasta de trabalho nova> --irma ../../extrator
     python3 -I ../../copias-estragadas/estraga.py .. teste_confere_links.py estragos-confere-links.json <pasta de trabalho nova> --irma ../../extrator
     python3 -I ../../copias-estragadas/estraga.py .. teste_markdown_comum.py estragos-markdown-comum.json <pasta de trabalho nova>
+
+---
+
+*Este documento está licenciado sob [CC BY-NC-SA 4.0](../../LICENSE-CONTENT.txt).*

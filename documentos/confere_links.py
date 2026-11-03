@@ -14,7 +14,8 @@ Escreve uma linha ERRO por link quebrado, em ordem de arquivo e linha, e um resu
 com codigo 1 se houver erro e 2, so com o ERRO do que nao serve, se a pasta nao for um
 repositorio git ou se um documento, ou o Markdown de destino de uma ancora, nao se ler em
 UTF-8. Le os documentos com o extrator_comum.py, do extrator, na pasta irma "extrator" ou
-na mesma pasta, e le o Markdown com o markdown_comum.py, desta pasta.
+na mesma pasta, e le o Markdown, os links e os documentos do repositorio com o
+markdown_comum.py, desta pasta.
 """
 
 import re
@@ -27,22 +28,11 @@ PASTA = Path(__file__).resolve().parent
 for pasta in (PASTA.parent / "extrator", PASTA):  # na prateleira, o extrator fica na pasta irma
     sys.path.insert(0, str(pasta))
 from extrator_comum import ErroDeDados, le_texto  # noqa: E402
-from markdown_comum import QUEBRA, marcadores, texto_fora_de_codigo, titulos  # noqa: E402
+from markdown_comum import ANCORA, ESQUEMA, documentos_do_repositorio, links, marcadores, titulos  # noqa: E402
 
-CODIFICACAO = "utf-8"  # a da lista que o git da
 EXTENSAO = ".md"  # a dos documentos Markdown: os que se conferem e os unicos com ancora de titulo ou marcador
-ANCORA = "#"  # o que separa, no alvo de um link, o arquivo da ancora
 ERRO = "ERRO"  # o comeco de cada linha de erro
-LINK = re.compile(r"!?\[(?:[^\[\]]|\[[^\[\]]*\])*\]\(\s*(<[^>]*>|[^)\s]+)(?:\s+\"[^\"]*\")?\s*\)")
-ESQUEMA = re.compile(r"^[A-Za-z][A-Za-z0-9+.-]*:")
 LINHA = re.compile(r"L([1-9][0-9]*)")  # a ancora de uma linha do arquivo, pelo numero dela
-
-
-def documentos(raiz):
-    saida = subprocess.run(["git", "-C", str(raiz), "ls-files", "--cached", "--others",
-                            "--exclude-standard", "-z", "--", f"*{EXTENSAO}"],
-                           capture_output=True, check=True).stdout.decode(CODIFICACAO)
-    return sorted({p for p in saida.split("\0") if p and (raiz / p).is_file()})
 
 
 def ancoras(caminho, cache):
@@ -51,14 +41,6 @@ def ancoras(caminho, cache):
         texto = le_texto(caminho)
         cache[caminho] = {t.ancora for t in titulos(texto)} | marcadores(texto)
     return cache[caminho]
-
-
-def links(texto):
-    """(numero da linha, alvo) de cada link fora de codigo; o texto do link pode quebrar de
-    uma linha para a outra, e a linha e a do comeco do alvo."""
-    corrido = texto_fora_de_codigo(texto)
-    for m in LINK.finditer(corrido):
-        yield corrido.count(QUEBRA, 0, m.start(1)) + 1, m.group(1)
 
 
 def problema(origem, alvo, cache):
@@ -83,11 +65,9 @@ def problema(origem, alvo, cache):
 
 def confere(raiz):
     erros, total, com_ancora, cache = [], 0, 0, {}
-    for doc in documentos(raiz):
+    for doc in documentos_do_repositorio(raiz, [f"*{EXTENSAO}"]):
         origem = raiz / doc
         for n, alvo in links(le_texto(origem)):
-            if alvo.startswith("<"):
-                alvo = alvo[1:-1]
             if ESQUEMA.match(alvo):
                 continue
             total += 1

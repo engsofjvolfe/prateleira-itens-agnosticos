@@ -50,3 +50,7 @@ o [`estraga.py`](../../../copias-estragadas/README.md), com as pastas da leitura
 terminal, do extrator e do protocolo ao lado da cópia:
 
     python3 -I ../../../copias-estragadas/estraga.py .. teste_busca_por_palavra.py estragos.json <pasta de trabalho nova> --irma ../../leitura-do-terminal --irma ../../../extrator --irma ../../protocolo
+
+---
+
+*Este documento está licenciado sob [CC BY-NC-SA 4.0](../../../LICENSE-CONTENT.txt).*

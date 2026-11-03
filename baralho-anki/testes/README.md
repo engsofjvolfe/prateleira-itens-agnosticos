@@ -58,3 +58,7 @@ As cópias estragadas da peça estão em `estragos.json`, nesta pasta, para o
 confere-forma como pastas irmãs:
 
     python3 -I ../../copias-estragadas/estraga.py .. teste_baralho_anki.py estragos.json <pasta de trabalho nova> --irma ../../extrator --irma ../../documentos --irma ../../confere-forma
+
+---
+
+*Este documento está licenciado sob [CC BY-NC-SA 4.0](../../LICENSE-CONTENT.txt).*

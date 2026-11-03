@@ -75,3 +75,7 @@ os nomes dos campos são os das transcrições do programa que as grava.
 ## Testes
 
 Em [testes/](testes/README.md).
+
+---
+
+*Este documento está licenciado sob [CC BY-NC-SA 4.0](../LICENSE-CONTENT.txt).*

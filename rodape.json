@@ -1,0 +1,6 @@
+{
+  "versao_schema": 1,
+  "documentos": ["*.md"],
+  "fora": ["ganchos/*/busca.md", "ganchos/*/fim.md", "ganchos/*/gerais.md", "ganchos/*/motivo.md",
+           "ganchos/*/muda.md", "ganchos/*/sem-origem.md", "ganchos/*/terminal.md"]
+}

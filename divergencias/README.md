@@ -6,18 +6,19 @@ a fonte que a dá. Serve a qualquer projeto em que duas fontes, ou duas passagen
 mesma fonte, dizem um fato de formas diferentes e o material ensina uma delas, sem perder
 as outras.
 
-Usa só a biblioteca padrão do Python e quatro módulos de outras peças: o `extrator_comum.py`
+Usa só a biblioteca padrão do Python e cinco módulos de outras peças: o `extrator_comum.py`
 e o `texto_comum.py`, do [extrator](../extrator/README.md), que leem a lista pelo molde dela
-e põem os textos na forma em que se comparam, e o `documento_gerado.py` e o
+e põem os textos na forma em que se comparam; o `documento_gerado.py` e o
 `grava_ou_confere.py`, do [grava-ou-confere](../grava-ou-confere/README.md), que leem o
 cabeçalho, conferem o arquivo do documento, montam o texto dele e o gravam, ou conferem que
-ele está em dia. Na prateleira, eles são achados nas pastas irmãs; numa cópia fora da
-prateleira, na mesma pasta do script.
+ele está em dia; e o `rodape_comum.py`, do [rodape](../rodape/README.md#o-módulo-do-rodapé),
+que põe o rodapé no fim do documento. Na prateleira, eles são achados nas pastas irmãs; numa
+cópia fora da prateleira, na mesma pasta do script.
 
 ## Como rodar
 
     python3 -I <prateleira>/divergencias/divergencias.py <divergencias.json> <cabeçalho.md> <documento.md> \
-        --ensinada <rótulo> --outra <rótulo> [--conferir]
+        --ensinada <rótulo> --outra <rótulo> [--conferir] [--rodape <modelo.md>]
 
 - `<divergencias.json>`: a lista, só com dados (ver [A lista](#a-lista)).
 - `<cabeçalho.md>`: o começo do documento, como o título e a abertura.
@@ -26,9 +27,11 @@ prateleira, na mesma pasta do script.
   no documento, com a marcação que o projeto quiser, como `**Ensinada:**`.
 - `--conferir`: nada é gravado; o documento gravado tem de ser o que o script gravaria
   agora.
+- `--rodape`: o modelo do rodapé que vai no fim do documento, como o aviso da licença, com
+  cada link a partir da pasta do documento (ver o [rodape](../rodape/README.md#o-modelo)).
 
-O texto do documento, o cabeçalho e os rótulos, vem do projeto, no comando; a lista só tem
-dados.
+O texto do documento, o cabeçalho, os rótulos e o rodapé, vem do projeto, no comando; a lista
+só tem dados.
 
 ## A lista
 
@@ -53,8 +56,8 @@ lista:
   quebras das pontas.
 
 Os blocos se separam por uma linha em branco, e o documento termina com uma quebra de
-linha. Sem divergência, o documento é só o cabeçalho. A mesma entrada dá sempre o mesmo
-documento.
+linha. Sem divergência, o documento é só o cabeçalho. Com o `--rodape`, depois do último
+bloco, uma linha em branco e o rodapé. A mesma entrada dá sempre o mesmo documento.
 
 ## A fonte
 
@@ -90,8 +93,13 @@ A entrada que não serve, que sai como `ERRO: <motivo>`: a lista ou o cabeçalho
 leem em UTF-8; a lista que não é JSON ou que sai do molde (campo que ele não conhece, campo
 que falta, valor fora da forma); o cabeçalho vazio; o rótulo que falta, ou que não é uma
 linha só com alguma letra, pelo molde `esquemas/rotulos.schema.json`, que aponta a regra de
-linha do molde comum; e o documento que é a lista, o cabeçalho ou uma pasta.
+linha do molde comum; o modelo do rodapé que não serve; e o documento que é a lista, o
+cabeçalho, o modelo ou uma pasta.
 
 ## Testes
 
 Em [testes/](testes/README.md).
+
+---
+
+*Este documento está licenciado sob [CC BY-NC-SA 4.0](../LICENSE-CONTENT.txt).*

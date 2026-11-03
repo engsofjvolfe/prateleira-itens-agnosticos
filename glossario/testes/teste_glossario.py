@@ -10,19 +10,23 @@ ou o caminho, e o da secao no texto; a marca com atributos, em maiusculas, em du
 com tags dentro ou em NFD conta, e a que esta num bloco de codigo ou no codigo na linha nao;
 o termo da lista e de uma marca sai so com a definicao; o glossario dado entre os documentos
 fica de fora; sem termo, o glossario e so o cabecalho; com --conferir, nada e gravado, o
-glossario em dia sai com 0 e o mudado ou o que falta, com 1; o termo repetido na lista (com
+glossario em dia sai com 0 e o mudado ou o que falta, com 1; com o modelo do rodape, o
+glossario termina no rodape, com o link a partir da pasta dele, e esta em dia com o modelo e
+nao sem ele; o termo repetido na lista (com
 outras maiusculas, outra forma Unicode ou outros espacos), a marca vazia, o termo marcado em
 dois lugares e dois titulos com a mesma ancora (dois termos, ou um termo e o titulo do
 cabecalho) saem com 1, com o ERRO no lugar de cada um e nada gravado; a lista fora do molde,
 que nao e JSON ou nao se le em UTF-8, o cabecalho que falta, vazio ou fora do UTF-8, o
-documento que falta ou fora do UTF-8 e o glossario que e uma entrada ou uma pasta saem com 2,
-sem nada gravado; duas rodadas dao o mesmo. Uso:
+documento que falta ou fora do UTF-8, o modelo do rodape que falta e o glossario que e uma
+entrada (tambem o modelo) ou uma pasta saem com 2, sem nada gravado; duas rodadas dao o
+mesmo. Uso:
     python3 -I teste_glossario.py <pasta do glossario.py> <pasta de trabalho nova>
-Precisa do extrator_comum.py, do texto_comum.py, do markdown_comum.py, do grava_ou_confere.py
-e do documento_gerado.py, nas pastas irmas da peca.
+Precisa do extrator_comum.py, do texto_comum.py, do markdown_comum.py, do grava_ou_confere.py,
+do documento_gerado.py e do rodape_comum.py, nas pastas irmas da peca.
 """
 import copy
 import json
+import os
 import random
 import subprocess
 import sys
@@ -86,9 +90,10 @@ def grava_lista(caminho, termos, **outros):
     return grava(caminho, json.dumps({"versao_schema": 1, "termos": termos, **outros}, ensure_ascii=False, indent=1))
 
 
-def roda(lista, cabecalho, glossario, *documentos, conferir=False):
+def roda(lista, cabecalho, glossario, *documentos, conferir=False, rodape=None):
     comando = [sys.executable, "-I", str(PECA / "glossario.py"), str(lista), str(cabecalho), str(glossario),
-               *map(str, documentos)] + (["--conferir"] if conferir else [])
+               *map(str, documentos)] + (["--conferir"] if conferir else []) + (["--rodape", str(rodape)] if rodape
+                                                                                else [])
     r = subprocess.run(comando, capture_output=True, text=True)
     return r.returncode, r.stdout + r.stderr
 
@@ -177,6 +182,27 @@ cod, out = roda(grava_lista(TRABALHO / "nenhum.json", []), CABECALHO, VAZIO)
 confere(cod == 0 and VAZIO.is_file() and le(VAZIO) == le(CABECALHO).rstrip() + "\n",
         f"sem termo, o glossário é só o cabeçalho: {out}")
 
+LICENCA = grava(TRABALHO / f"{palavra()} {palavra()}" / f"{palavra()}.txt", frase())
+TEXTO_DO_RODAPE, TEXTO_DO_LINK = frase(), palavra()
+
+
+def rodape_de(pasta):
+    """O rodape de um documento na pasta dada, como o teste o calcula."""
+    return f"---\n\n*{TEXTO_DO_RODAPE} [{TEXTO_DO_LINK}](<{Path(os.path.relpath(LICENCA, pasta)).as_posix()}>).*"
+
+
+PASTA_DO_MODELO = TRABALHO / "dados" / palavra()  # mais funda que a do glossario: o link dela e outro
+MODELO = grava(PASTA_DO_MODELO / "rodape.md", f"{rodape_de(PASTA_DO_MODELO)}\n")
+COM_RODAPE = TRABALHO / "saida" / "com-rodape.md"
+cod, out = roda(LISTA, CABECALHO, COM_RODAPE, A, B, rodape=MODELO)
+COM_O_RODAPE = f"{ESPERADO.rstrip()}\n\n{rodape_de(COM_RODAPE.parent)}\n"
+confere(cod == 0 and COM_RODAPE.is_file() and le(COM_RODAPE) == COM_O_RODAPE,
+        f"com o modelo, o glossário termina no rodapé, com o link a partir da pasta dele: {out}")
+cod, out = roda(LISTA, CABECALHO, COM_RODAPE, A, B, conferir=True, rodape=MODELO)
+confere(cod == 0, f"com o modelo, o glossário com o rodapé está em dia no --conferir: {out}")
+cod, out = roda(LISTA, CABECALHO, COM_RODAPE, A, B, conferir=True)
+confere(cod == 1, f"sem o modelo, o glossário com o rodapé não está em dia no --conferir: {out}")
+
 ANTES = TRABALHO / "saida" / "antes.md"
 roda(LISTA, CABECALHO, ANTES, A, B)
 GUARDADO = ANTES.read_bytes() if ANTES.is_file() else b""
@@ -259,11 +285,15 @@ for numero, (nome, (cabecalho, documento)) in enumerate(ENTRADAS_RUINS.items()):
     saida = NAO_SERVEM / f"entrada-{numero}.md"
     cod, out = roda(LISTA, cabecalho, saida, A, documento)
     confere(cod == 2 and out.startswith("ERRO") and not saida.exists(), f"{nome}: sai com 2, sem gravar nada: {out}")
-for nome, entrada in (("a lista", LISTA), ("o cabeçalho", CABECALHO)):
+for nome, entrada in (("a lista", LISTA), ("o cabeçalho", CABECALHO), ("o modelo do rodapé", MODELO)):
     antes = entrada.read_bytes()
-    cod, out = roda(LISTA, CABECALHO, entrada, A)
+    cod, out = roda(LISTA, CABECALHO, entrada, A, rodape=MODELO)
     confere(cod == 2 and out.startswith("ERRO") and entrada.read_bytes() == antes,
             f"o glossário que é {nome}: sai com 2, sem gravar nada: {out}")
+saida = NAO_SERVEM / "sem-modelo.md"
+cod, out = roda(LISTA, CABECALHO, saida, A, rodape=NAO_SERVEM / "sumido.md")
+confere(cod == 2 and out.startswith("ERRO") and not saida.exists(), f"o modelo que falta: sai com 2, sem gravar nada: "
+                                                                    f"{out}")
 PASTA = NAO_SERVEM / "pasta.md"
 PASTA.mkdir(parents=True)
 cod, out = roda(LISTA, CABECALHO, PASTA, A)

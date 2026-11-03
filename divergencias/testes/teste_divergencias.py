@@ -5,7 +5,9 @@ o titulo de segundo nivel com o fato e, para cada forma, a ensinada primeiro e a
 ordem delas, o rotulo dela com o que ela diz e a fonte, sem os espacos e as quebras das
 pontas, com uma linha em branco entre os blocos e uma quebra de linha no fim; sem
 divergencia, o documento e so o cabecalho; com --conferir, nada e gravado, o documento em
-dia sai com 0 e o mudado ou o que falta, com 1; o fato repetido (com outras maiusculas,
+dia sai com 0 e o mudado ou o que falta, com 1; com o modelo do rodape, o documento termina no
+rodape, com o link a partir da pasta dele, e esta em dia com o modelo e nao sem ele; o modelo
+que falta e o documento que e o modelo saem com 2; o fato repetido (com outras maiusculas,
 outra forma Unicode ou outros espacos) e a forma que diz o mesmo que outra do mesmo fato
 (com outra forma Unicode ou outros espacos) saem com 1, com o caminho dos dois no ERRO e nada
 gravado, mas o que difere so em maiusculas no que a forma diz, e o que fatos diferentes
@@ -14,11 +16,12 @@ cabecalho que falta, que nao se le em UTF-8 ou que esta vazio, o rotulo que falt
 e uma linha so com alguma letra e o documento que e um dos arquivos de entrada ou uma pasta
 saem com 2, sem nada gravado; duas rodadas dao o mesmo. Uso:
     python3 -I teste_divergencias.py <pasta do divergencias.py> <pasta de trabalho nova>
-Precisa do extrator_comum.py, do texto_comum.py, do grava_ou_confere.py e do
-documento_gerado.py, nas pastas irmas da peca.
+Precisa do extrator_comum.py, do texto_comum.py, do grava_ou_confere.py, do
+documento_gerado.py, do rodape_comum.py e do markdown_comum.py, nas pastas irmas da peca.
 """
 import copy
 import json
+import os
 import random
 import string
 import subprocess
@@ -122,6 +125,31 @@ cod, out = roda(grava_lista(TRABALHO / "lista-vazia.json", []), CABECALHO, VAZIO
 confere(cod == 0 and VAZIO.is_file() and le(VAZIO) == le(CABECALHO).rstrip() + "\n",
         f"sem divergência, o documento é só o cabeçalho: {out}")
 
+LICENCA = TRABALHO / f"{palavra()} {palavra()}" / f"{palavra()}.txt"
+LICENCA.parent.mkdir()
+LICENCA.write_text(linha(), encoding="utf-8")
+TEXTO_DO_RODAPE, TEXTO_DO_LINK = linha(), palavra()
+
+
+def rodape_de(pasta):
+    """O rodape de um documento na pasta dada, como o teste o calcula."""
+    return f"---\n\n*{TEXTO_DO_RODAPE} [{TEXTO_DO_LINK}](<{Path(os.path.relpath(LICENCA, pasta)).as_posix()}>).*"
+
+
+PASTA_DO_MODELO = TRABALHO / "dados" / palavra()  # mais funda que a do documento: o link dela e outro
+PASTA_DO_MODELO.mkdir(parents=True)
+MODELO = PASTA_DO_MODELO / "rodape.md"
+MODELO.write_text(f"{rodape_de(PASTA_DO_MODELO)}\n", encoding="utf-8")
+COM_RODAPE = TRABALHO / "saida" / "com-rodape.md"
+cod, out = roda(LISTA, CABECALHO, COM_RODAPE, "--rodape", str(MODELO))
+confere(cod == 0 and COM_RODAPE.is_file() and le(COM_RODAPE) == f"{esperado(le(CABECALHO), DIVERGENCIAS).rstrip()}"
+                                                                 f"\n\n{rodape_de(COM_RODAPE.parent)}\n",
+        f"com o modelo, o documento termina no rodapé, com o link a partir da pasta dele: {out}")
+cod, out = roda(LISTA, CABECALHO, COM_RODAPE, "--rodape", str(MODELO), "--conferir")
+confere(cod == 0, f"com o modelo, o documento com o rodapé está em dia no --conferir: {out}")
+cod, out = roda(LISTA, CABECALHO, COM_RODAPE, "--conferir")
+confere(cod == 1, f"sem o modelo, o documento com o rodapé não está em dia no --conferir: {out}")
+
 VARIANTES = {"outras maiúsculas": str.swapcase, "a forma NFD": lambda t: unicodedata.normalize("NFD", t),
              "outros espaços": lambda t: f"  {t.replace(' ', ' ' + chr(9) + '  ')} "}
 ANTES = TRABALHO / "antes.md"
@@ -223,11 +251,15 @@ for opcao in ("ensinada", "outra"):
     cod, out = roda(LISTA, CABECALHO, saida, **{opcao: False})
     confere(cod == 2 and not saida.exists(), f"sem --{opcao}: sai com 2, sem gravar nada: {out}")
 
-for nome, entrada in (("a lista", LISTA), ("o cabeçalho", CABECALHO)):
+for nome, entrada in (("a lista", LISTA), ("o cabeçalho", CABECALHO), ("o modelo do rodapé", MODELO)):
     antes = entrada.read_bytes()
-    cod, out = roda(LISTA, CABECALHO, entrada)
+    cod, out = roda(LISTA, CABECALHO, entrada, "--rodape", str(MODELO))
     confere(cod == 2 and out.startswith("ERRO") and entrada.read_bytes() == antes,
             f"o documento que é {nome}: sai com 2, sem gravar nada: {out}")
+saida = NAO_SERVEM / "sem-modelo.md"
+cod, out = roda(LISTA, CABECALHO, saida, "--rodape", str(NAO_SERVEM / "sumido.md"))
+confere(cod == 2 and out.startswith("ERRO") and not saida.exists(), f"o modelo que falta: sai com 2, sem gravar nada: "
+                                                                    f"{out}")
 PASTA_NO_LUGAR = NAO_SERVEM / "pasta.md"
 PASTA_NO_LUGAR.mkdir()
 cod, out = roda(LISTA, CABECALHO, PASTA_NO_LUGAR)

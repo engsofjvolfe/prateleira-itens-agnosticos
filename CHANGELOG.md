@@ -41,6 +41,11 @@ prateleira segue o [Versionamento Semântico](https://semver.org/lang/pt-BR/spec
   título, os títulos, com a linha, o nível e a âncora de cada um, e os marcadores; e o teste
   dele, com a lista de estragos. O `confere_links.py`, que fazia isso por conta própria, passa
   a usá-lo.
+- `documentos`: no módulo de Markdown, os links fora de código, com o alvo sem os `<` e `>`, o
+  caminho de um arquivo a partir de uma pasta, o alvo e o link como vão num documento e os
+  documentos de um repositório git pelos padrões do git, com os de fora; o `confere_links.py`,
+  que lia os documentos e os links por conta própria, e o `glossario`, que fazia o caminho e o
+  link, passam a usá-los.
 - `extrator`: o molde dos moldes (`esquemas/molde.schema.json`), que diz as palavras do
   JSON Schema que o leitor de molde do módulo comum entende e a forma do valor de cada uma;
   e o teste do módulo comum, com a lista de estragos dele.
@@ -92,8 +97,18 @@ prateleira segue o [Versionamento Semântico](https://semver.org/lang/pt-BR/spec
   gerado, que não pode estar vazio, confere que o arquivo dele não é uma das entradas nem uma
   pasta e monta o texto, com o cabeçalho e os blocos; e o teste dele, com a lista de
   estragos. O `divergencias` e o `glossario` o usam.
+- `rodape`: grava o rodapé de um modelo Markdown no fim de cada documento de um repositório
+  git, com cada link do modelo a partir da pasta do documento e o rodapé velho do fim trocado
+  pelo dele, ou confere que todos o têm, com os documentos pelos padrões do git da
+  configuração; o módulo comum, `rodape_comum.py`, que lê o modelo, dá o rodapé de um
+  documento, o põe no fim de um texto e o separa dele, com a opção `--rodape`; e os testes,
+  com as listas de estragos deles.
 - O link de cada versão no fim deste changelog, com os modelos em `links-do-changelog.json`,
   que o gancho do git dá ao `confere-changelog`.
+- As licenças: os programas sob a GPL-3.0, no `LICENSE`, e o conteúdo sob a CC BY-NC-SA 4.0,
+  no `LICENSE-CONTENT.txt`, com os badges e a seção da licença no README; e o rodapé da
+  licença no fim de cada documento, com o modelo em `rodape.md` e, em `rodape.json`, os
+  documentos que ficam sem ele, os textos que os ganchos mostram.
 
 ### Modificado
 
@@ -106,6 +121,9 @@ prateleira segue o [Versionamento Semântico](https://semver.org/lang/pt-BR/spec
 - `confere-citacoes`, `custo-de-agentes`, `itens-numerados`, `marcas`, `moldes` e
   `texto-em-comum`: precisam do `texto_comum.py`, do `extrator`, na pasta irmã ou na mesma
   pasta.
+- `confere-changelog` e `confere-forma`: o `--rodape` dá o modelo do rodapé, e o rodapé do
+  modelo no fim do texto fica fora da conferência; os dois precisam do `rodape_comum.py`, do
+  `rodape`, na pasta irmã ou na mesma pasta.
 - `confere-forma`: os padrões proibidos saem da configuração e vêm de arquivos de dados
   próprios, com o molde `esquemas/proibidos.schema.json`, dados pelo `--proibidos`, que pode
   se repetir; as regras de todos se somam, e duas com o mesmo nome são erro.
@@ -115,6 +133,9 @@ prateleira segue o [Versionamento Semântico](https://semver.org/lang/pt-BR/spec
   `historico-de-arquivo` escreve o `ERRO` na saída padrão, como as outras peças.
 - `copia-para-projeto`: lê os arquivos pelo `le_texto` do módulo comum e precisa do
   `extrator_comum.py`, do `extrator`, na pasta irmã ou na mesma pasta.
+- `divergencias` e `glossario`: o `--rodape` dá o modelo do rodapé, que vai no fim do
+  documento gravado, e o documento não pode ser o modelo; os dois precisam do
+  `rodape_comum.py`, do `rodape`, na pasta irmã ou na mesma pasta.
 - `documentos`: na forma de uma peça. O `teste_linhas_longas.py`, que não é teste, passa a
   se chamar `linhas_longas.py`; os testes ficam em `testes/`, com o README deles, e o dos
   links sorteia os dados e confere regras, e não mais as linhas de saída prontas.
@@ -141,6 +162,8 @@ prateleira segue o [Versionamento Semântico](https://semver.org/lang/pt-BR/spec
 - `ganchos/regras-de-codigo`: a configuração é lida pelo leitor de molde do módulo comum,
   que diz o caminho de cada valor fora do molde, e não mais por uma conferência própria,
   que parava no primeiro.
+- `grava-ou-confere`: no `documento_gerado.py`, a entrada que não veio (`None`), como a de uma
+  opção que não se deu, não conta na conferência do arquivo do documento.
 - `itens-numerados`: o tamanho do grupo menor que 1 é pego pelo molde da configuração, que
   diz o caminho do campo.
 - `itens-numerados`: a expressão do número sozinho e a de cada forma se compilam pelo
@@ -204,3 +227,7 @@ prateleira segue o [Versionamento Semântico](https://semver.org/lang/pt-BR/spec
 
 [Não publicado]: https://github.com/engsofjvolfe/prateleira-itens-agnosticos/compare/v0.1.0...HEAD
 [0.1.0]: https://github.com/engsofjvolfe/prateleira-itens-agnosticos/releases/tag/v0.1.0
+
+---
+
+*Este documento está licenciado sob [CC BY-NC-SA 4.0](LICENSE-CONTENT.txt).*

@@ -48,3 +48,7 @@ cópia:
     python3 -I <prateleira>/copias-estragadas/estraga.py <pasta da peça> \
         <pasta da peça>/testes/teste_chamadas_permitidas.py <pasta da peça>/testes/estragos.json \
         <pasta de trabalho nova> --irma <prateleira>/ganchos/protocolo --irma <prateleira>/extrator
+
+---
+
+*Este documento está licenciado sob [CC BY-NC-SA 4.0](../../../LICENSE-CONTENT.txt).*

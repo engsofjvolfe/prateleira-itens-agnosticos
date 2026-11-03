@@ -25,14 +25,16 @@ qualquer repositorio, cada um so com os links dele.
 
 Toda outra linha e erro. O changelog e o arquivo dado ou, com --indice, o texto que o indice
 do git tem dele, o que vai no proximo commit, lido pelo git, com as quebras de linha lidas
-como na leitura de um arquivo de texto. Mostra uma linha "ERRO arquivo:linha: motivo" por
-problema, em ordem de linha, e um resumo; sai com 0 sem erro, 1 com erro e 2 quando a
-configuracao, os links, o changelog ou um argumento nao serve. Usa so a biblioteca padrao, o
-git (com --indice) e o extrator_comum.py, da peca extrator, na pasta irma "extrator" ou na
-mesma pasta.
+como na leitura de um arquivo de texto. Com --rodape, o rodape do modelo dado que o changelog
+tem no fim, lido pelo rodape_comum.py, da peca rodape, fica fora da conferencia. Mostra uma
+linha "ERRO arquivo:linha: motivo" por problema, em ordem de linha, e um resumo; sai com 0 sem
+erro, 1 com erro e 2 quando a configuracao, os links, o modelo do rodape, o changelog ou um
+argumento nao serve. Usa so a biblioteca padrao, o git (com --indice), o extrator_comum.py, da
+peca extrator, e o rodape_comum.py, da peca rodape, nas pastas irmas ou na mesma pasta.
 
 Uso:
     python3 -I confere_changelog.py <configuracao.json> <CHANGELOG.md> [--indice] [--links <links.json>]
+        [--rodape <modelo.md>]
 """
 
 import argparse
@@ -44,9 +46,10 @@ import sys
 from pathlib import Path
 
 PASTA = Path(__file__).resolve().parent
-for pasta in (PASTA.parent / "extrator", PASTA):  # na prateleira, a peca extrator fica na pasta irma
+for pasta in (PASTA.parent / "extrator", PASTA.parent / "rodape", PASTA):  # na prateleira, as pastas irmas
     sys.path.insert(0, str(pasta))
 from extrator_comum import ErroDeDados, le_conferido, le_texto, preenche  # noqa: E402
+from rodape_comum import le_modelo, opcao_rodape, separa  # noqa: E402
 
 MOLDE = PASTA / "esquemas" / "confere-changelog.schema.json"
 MOLDE_DOS_LINKS = PASTA / "esquemas" / "links.schema.json"  # o do arquivo do --links
@@ -337,10 +340,11 @@ def main(argv=None):
     p.add_argument("--indice", action="store_true",
                    help="confere o changelog como o índice do git o tem, o que vai no próximo commit")
     p.add_argument("--links", type=Path, metavar="ARQUIVO", help="o arquivo de dados com os modelos dos links")
+    opcao_rodape(p, "o modelo do rodapé que o changelog tem no fim, que fica fora da conferência")
     a = p.parse_args(argv)
     try:
         conf = dict(le_configuracao(a.configuracao), links=le_links(a.links))
-        texto = le_changelog(a.changelog, a.indice)
+        texto = separa(le_changelog(a.changelog, a.indice), le_modelo(a.rodape))[0]
     except ErroDeDados as e:
         print(f"ERRO: {e}")
         return 2

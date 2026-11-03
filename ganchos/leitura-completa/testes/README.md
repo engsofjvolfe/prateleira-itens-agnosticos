@@ -57,3 +57,7 @@ As cópias estragadas da peça estão em `estragos.json`, nesta pasta, para o
 do extrator e do protocolo ao lado da cópia:
 
     python3 -I ../../../copias-estragadas/estraga.py .. teste_leitura_completa.py estragos.json <pasta de trabalho nova> --irma ../../leitura-do-terminal --irma ../../../extrator --irma ../../protocolo
+
+---
+
+*Este documento está licenciado sob [CC BY-NC-SA 4.0](../../../LICENSE-CONTENT.txt).*

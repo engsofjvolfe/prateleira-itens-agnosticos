@@ -38,3 +38,7 @@ do protocolo e do extrator ao lado da cópia; as da leitura do terminal e as do 
 estão na pasta de testes de cada um:
 
     python3 -I ../../../copias-estragadas/estraga.py .. teste_regras_de_codigo.py estragos.json <pasta de trabalho nova> --irma ../../leitura-do-terminal --irma ../../protocolo --irma ../../../extrator
+
+---
+
+*Este documento está licenciado sob [CC BY-NC-SA 4.0](../../../LICENSE-CONTENT.txt).*

@@ -25,3 +25,7 @@ código 1.
 As cópias estragadas da própria peça estão em `estragos.json`, nesta pasta:
 
     python3 -I ../estraga.py .. teste_estraga.py estragos.json <pasta de trabalho nova> --irma ../../extrator
+
+---
+
+*Este documento está licenciado sob [CC BY-NC-SA 4.0](../../LICENSE-CONTENT.txt).*

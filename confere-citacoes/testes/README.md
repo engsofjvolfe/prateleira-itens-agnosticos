@@ -34,3 +34,7 @@ As cópias estragadas da peça estão em `estragos.json`, nesta pasta, para o
 [`estraga.py`](../../copias-estragadas/README.md), com o extrator como pasta irmã:
 
     python3 -I ../../copias-estragadas/estraga.py .. teste_confere_citacoes.py estragos.json <pasta de trabalho nova> --irma ../../extrator
+
+---
+
+*Este documento está licenciado sob [CC BY-NC-SA 4.0](../../LICENSE-CONTENT.txt).*

@@ -182,3 +182,7 @@ fora da prateleira, ao lado do script). Usa só a biblioteca padrão do Python.
 ## Testes
 
 Em [testes/](testes/README.md).
+
+---
+
+*Este documento está licenciado sob [CC BY-NC-SA 4.0](../LICENSE-CONTENT.txt).*

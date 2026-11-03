@@ -29,3 +29,7 @@ As cópias estragadas da peça estão em `estragos.json`, nesta pasta, para o
 pastas irmãs:
 
     python3 -I ../../copias-estragadas/estraga.py .. teste_custo.py estragos.json <pasta de trabalho nova> --irma ../../extrator --irma ../../historico-de-arquivo
+
+---
+
+*Este documento está licenciado sob [CC BY-NC-SA 4.0](../../LICENSE-CONTENT.txt).*
