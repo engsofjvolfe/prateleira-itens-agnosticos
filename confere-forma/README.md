@@ -6,10 +6,11 @@ os padrões proibidos, os nomes que só podem aparecer em itálico e o tamanho d
 a qualquer coleção de documentos que seguem um mesmo modelo, como fichas, relatórios ou
 textos de estudo.
 
-Usa só a biblioteca padrão do Python e o `extrator_comum.py`, do
-[extrator](../extrator/README.md), que lê a configuração e os arquivos de padrões proibidos
-pelo molde de cada um, e os textos em UTF-8. Na prateleira, ele é achado na pasta irmã
-`extrator/`; numa cópia fora da prateleira, na mesma pasta do script.
+Usa só a biblioteca padrão do Python, o `extrator_comum.py`, do
+[extrator](../extrator/README.md), que lê a configuração pelo molde dela e os textos em UTF-8,
+e o [módulo dos padrões proibidos](#o-módulo-dos-padrões-proibidos), desta pasta. Na
+prateleira, o extrator é achado na pasta irmã `extrator/`; numa cópia fora da prateleira, na
+mesma pasta do script.
 
 ## Como rodar
 
@@ -81,6 +82,18 @@ os arquivos desta pasta, com o caso comum a qualquer projeto:
 existe ou que não se lê como JSON, fora do molde (como o campo que ele não conhece e a regra
 sem nome ou sem padrão), expressão que não compila, e duas regras com o mesmo nome, no mesmo
 arquivo ou em dois.
+
+## O módulo dos padrões proibidos
+
+O `proibidos_comum.py` lê os padrões proibidos num lugar só, para toda peça que confere um
+texto contra eles, como o [baralho-anki](../baralho-anki/README.md). Não se roda; a peça o
+importa desta pasta, na prateleira a pasta irmã `confere-forma/`. Usa só a biblioteca padrão e
+o `extrator_comum.py`.
+
+| Função | O que faz |
+| --- | --- |
+| `regras_proibidas(caminhos)` | lê os arquivos de padrões proibidos, cada um pelo molde dele, e dá as regras, na ordem dos arquivos e, em cada um, na da lista, cada uma com o nome, o padrão e o exceto (ou nenhum), compilados; os erros acima são `ErroDeDados` |
+| `achados(texto, regras)` | os nomes das regras em que o texto cai, na ordem delas: o padrão casa com ele, e o exceto, quando há, não casa |
 
 ## Testes
 

@@ -17,7 +17,8 @@ documentados no [README](README.md#como-as-peças-se-ligam).
 Nenhum caminho de máquina nos códigos e nos READMEs (os comandos usam `<prateleira>`). O
 que fica no código das peças é a forma que a peça trata, documentada no README dela: a
 sintaxe do Markdown em `confere-forma` (itálico entre marcas iguais, negrito com a marca
-dobrada, palavra como `\w+`) e a tabela separada por tabulação em `custo-de-agentes`. O
+dobrada, palavra como `\w+`), a tabela separada por tabulação em `custo-de-agentes` e, em
+`baralho-anki`, a tabela Markdown, as colunas do CSV e o esquema antigo da coleção do Anki. O
 que é do programa em que a IA trabalha — os eventos dos ganchos, as chaves do evento, a
 forma das respostas, os nomes das ferramentas e dos campos — vem do protocolo, num arquivo
 do projeto, lido pelo `ganchos/protocolo`, e o código que barra uma chamada vem no comando.

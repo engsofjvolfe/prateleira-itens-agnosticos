@@ -62,9 +62,9 @@ alguma ainda quebra.
       RELATORIO-AGNOSTICO.md       cada peça contra as regras
       .gitignore                   o cache do Python e as anotações de sessão dos ganchos
       organizacao/                 esta documentação
-      confere-changelog/  confere-citacoes/  confere-forma/  copia-para-projeto/
-      copias-estragadas/  custo-de-agentes/  dicionario-das-duvidas/  divergencias/
-      documentos/  extrator/  ganchos/  glossario/  grava-ou-confere/
+      baralho-anki/  confere-changelog/  confere-citacoes/  confere-forma/
+      copia-para-projeto/  copias-estragadas/  custo-de-agentes/  dicionario-das-duvidas/
+      divergencias/  documentos/  extrator/  ganchos/  glossario/  grava-ou-confere/
       historico-de-arquivo/  itens-numerados/  marcas/  moldes/  texto-em-comum/
 
 ## Como um projeto usa uma peça

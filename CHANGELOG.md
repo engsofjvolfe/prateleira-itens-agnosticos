@@ -9,6 +9,11 @@ prateleira segue o [Versionamento Semântico](https://semver.org/lang/pt-BR/spec
 
 ### Adicionado
 
+- `baralho-anki`: gera um baralho do Anki a partir de uma tabela Markdown de palavras-chave:
+  o CSV com a pergunta, a resposta e o trecho da fonte de cada cartão, a conferência dele
+  contra a tabela, as fontes e os padrões proibidos, o pacote no esquema antigo da coleção, o
+  mesmo para o mesmo CSV, e o registro do sha256 da tabela e das fontes da última conferência
+  de conteúdo; e o teste, com a lista de estragos dele.
 - `confere-changelog`: confere a forma de um changelog, a do Keep a Changelog 1.1.0, com as
   versões do Versionamento Semântico 2.0.0 inteiro, também com o pré-lançamento e os
   metadados de construção, pela expressão que a especificação dá, na ordem da precedência
@@ -19,6 +24,9 @@ prateleira segue o [Versionamento Semântico](https://semver.org/lang/pt-BR/spec
 - `confere-forma`: o `marcas-de-ia.json`, com as marcas que uma ferramenta de IA deixa num
   texto (o caractere invisível ou o espaço especial, e o resto de citação), para qualquer
   projeto dar ao conferidor ao lado dos padrões dele.
+- `confere-forma`: o módulo dos padrões proibidos, `proibidos_comum.py`, que lê os arquivos
+  de padrões proibidos, cada um pelo molde dele, e diz as regras em que um texto cai; o
+  `confere_forma.py`, que fazia isso por conta própria, e o `baralho-anki` o usam.
 - `dicionario-das-duvidas`: confere os códigos dos títulos de um dicionário das dúvidas (só
   códigos entre as marcas, cada um com as partes na forma dada, nenhum o começo de outro, em
   ordem natural), com a forma dos códigos na configuração; e o teste, com a lista de

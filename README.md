@@ -15,9 +15,10 @@ pega os defeitos. Nos comandos dos READMEs, `<prateleira>` é a pasta onde a pra
 
 | Peça | O que faz |
 | --- | --- |
+| [baralho-anki/](baralho-anki/README.md) | gerar, de uma tabela Markdown de palavras-chave feita a partir de textos, um baralho do Anki com um cartão por célula: o CSV com a pergunta, a resposta e o trecho do texto que a sustenta, escritos à mão, a conferência dele contra a tabela e os textos, o pacote determinístico e o registro da conferência de conteúdo (com testes) |
 | [confere-changelog/](confere-changelog/README.md) | conferir a forma de um changelog, a do Keep a Changelog, com as versões do Versionamento Semântico inteiro, também a do índice do git, como gancho antes do commit (com testes) |
 | [confere-citacoes/](confere-citacoes/README.md) | conferir que cada trecho citado num texto Markdown está, letra por letra, na transcrição da fonte e nas páginas citadas, com os pedaços na ordem da fonte e cada supressão no lugar de alguma coisa (com testes) |
-| [confere-forma/](confere-forma/README.md) | conferir a forma de documentos Markdown contra uma descrição dela: abertura, seções, divisores, fecho, padrões proibidos, nomes em itálico e tamanho; e as marcas que uma ferramenta de IA deixa num texto, para qualquer projeto (com testes) |
+| [confere-forma/](confere-forma/README.md) | conferir a forma de documentos Markdown contra uma descrição dela: abertura, seções, divisores, fecho, padrões proibidos, nomes em itálico e tamanho; as marcas que uma ferramenta de IA deixa num texto, para qualquer projeto; e o módulo comum que lê os padrões proibidos (com testes) |
 | [copia-para-projeto/](copia-para-projeto/README.md) | levar os arquivos de uma peça para um projeto, com o cabeçalho dos scripts dele, e conferir que as cópias estão em dia (com testes) |
 | [copias-estragadas/](copias-estragadas/README.md) | provar que o teste de uma peça pega os defeitos dela, rodando-o contra cópias estragadas (com testes) |
 | [custo-de-agentes/](custo-de-agentes/README.md) | mostrar o uso de tokens de cada transcrição de sessão, como as dos agentes de um programa de IA (com testes) |
@@ -52,9 +53,10 @@ prateleira) ou na própria pasta (numa cópia fora da prateleira).
 
 | Módulo comum | Da peça | Peças que o usam |
 | --- | --- | --- |
-| `extrator_comum.py`: ler um texto em UTF-8, ler JSON pelo molde, pegar um campo com o tipo pedido, achar os valores repetidos de uma lista, compilar uma expressão, conferir que uma codificação existe, dividir uma transcrição em páginas | [extrator](extrator/README.md#o-módulo-comum) | confere-changelog, confere-citacoes, confere-forma, copia-para-projeto, copias-estragadas, custo-de-agentes, dicionario-das-duvidas, divergencias, documentos, glossario, historico-de-arquivo, itens-numerados, marcas, moldes, ganchos/busca-por-palavra, ganchos/chamadas-permitidas, ganchos/destino-da-limpeza, ganchos/leitura-completa, ganchos/leitura-do-terminal, ganchos/protocolo, ganchos/regras-de-codigo |
-| `texto_comum.py`: passar um texto para a forma Unicode NFC e juntar os espaços | [extrator](extrator/README.md#o-módulo-de-texto) | confere-citacoes, custo-de-agentes, divergencias, extrator, glossario, itens-numerados, marcas, moldes, texto-em-comum |
-| `markdown_comum.py`: ler um texto Markdown como o GitHub o lê: as linhas fora dos blocos de código, o texto sem o código, a âncora de um título, os títulos com a linha, o nível e a âncora de cada um, e os marcadores | [documentos](documentos/README.md#o-módulo-de-markdown) | dicionario-das-duvidas, documentos, glossario |
+| `extrator_comum.py`: ler um texto em UTF-8, ler JSON pelo molde, pegar um campo com o tipo pedido, achar os valores repetidos de uma lista, compilar uma expressão, conferir que uma codificação existe, dividir uma transcrição em páginas | [extrator](extrator/README.md#o-módulo-comum) | baralho-anki, confere-changelog, confere-citacoes, confere-forma, copia-para-projeto, copias-estragadas, custo-de-agentes, dicionario-das-duvidas, divergencias, documentos, glossario, historico-de-arquivo, itens-numerados, marcas, moldes, ganchos/busca-por-palavra, ganchos/chamadas-permitidas, ganchos/destino-da-limpeza, ganchos/leitura-completa, ganchos/leitura-do-terminal, ganchos/protocolo, ganchos/regras-de-codigo |
+| `texto_comum.py`: passar um texto para a forma Unicode NFC e juntar os espaços | [extrator](extrator/README.md#o-módulo-de-texto) | baralho-anki, confere-citacoes, custo-de-agentes, divergencias, extrator, glossario, itens-numerados, marcas, moldes, texto-em-comum |
+| `proibidos_comum.py`: ler os arquivos de padrões proibidos, cada um pelo molde dele, e dizer as regras em que um texto cai | [confere-forma](confere-forma/README.md#o-módulo-dos-padrões-proibidos) | baralho-anki, confere-forma |
+| `markdown_comum.py`: ler um texto Markdown como o GitHub o lê: as linhas fora dos blocos de código, o texto sem o código, a âncora de um título, os títulos com a linha, o nível e a âncora de cada um, e os marcadores | [documentos](documentos/README.md#o-módulo-de-markdown) | baralho-anki, dicionario-das-duvidas, documentos, glossario |
 | `transcricoes.py`: ler as transcrições de sessão, um evento por linha | [historico-de-arquivo](historico-de-arquivo/README.md) | historico-de-arquivo, custo-de-agentes |
 | `grava_ou_confere.py`: gravar um documento gerado ou conferir que está em dia | [grava-ou-confere](grava-ou-confere/README.md) | copia-para-projeto, divergencias, glossario |
 | `documento_gerado.py`: ler o cabeçalho de um documento gerado, conferir que o arquivo dele não é uma entrada nem uma pasta e montar o texto, com o cabeçalho e os blocos | [grava-ou-confere](grava-ou-confere/README.md#o-documento-gerado) | divergencias, glossario |
@@ -74,6 +76,11 @@ E os encadeamentos, em que uma peça grava o arquivo que a próxima lê:
   → os títulos fora da regra.
 - A lista das definições + o cabeçalho + os documentos com as marcas → `glossario/glossario.py`
   → o glossário → `confere-citacoes` (a citação da fonte de cada definição).
+- Uma tabela Markdown de palavras-chave + a configuração do baralho → `baralho-anki/gera_csv.py`
+  → o CSV, com a pergunta, a resposta e o trecho escritos pelas fontes →
+  `baralho-anki/confere_baralho.py` (contra a tabela, as fontes e os padrões proibidos) →
+  `baralho-anki/gera_apkg.py` → o pacote do Anki; e a tabela + as fontes →
+  `baralho-anki/conferido.py` → o registro da conferência de conteúdo.
 - Análises + a forma delas + as regras de lugar → `moldes/contar.py` e `moldes/separar.py`.
 - Transcrições de sessão → `historico-de-arquivo` (o histórico de um arquivo) e
   `custo-de-agentes` (o custo de cada uma).

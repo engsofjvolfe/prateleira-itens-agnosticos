@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "conferido.schema.json",
+  "type": "object",
+  "required": ["versao_schema", "tabela", "fontes"],
+  "additionalProperties": false,
+  "properties": {
+    "versao_schema": { "const": 1 },
+    "tabela": { "$ref": "#/$defs/sha256" },
+    "fontes": { "type": "object", "additionalProperties": { "$ref": "#/$defs/sha256" } }
+  },
+  "$defs": {
+    "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+  }
+}

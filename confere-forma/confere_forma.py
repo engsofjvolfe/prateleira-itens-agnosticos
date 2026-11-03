@@ -13,8 +13,8 @@ arquivos de padroes proibidos:
   fora de um bloco de fecho e erro;
 - proibidos: cada linha que casa com o "padrao" de uma regra, e nao com o "exceto" dela;
   as regras vem de arquivos de dados proprios, cada um dado com --proibidos e conferido
-  contra o molde dele, como o marcas-de-ia.json desta pasta; as de todos se somam, e duas
-  com o mesmo nome sao erro;
+  contra o molde dele pelo proibidos_comum.py desta pasta, como o marcas-de-ia.json; as de
+  todos se somam, e duas com o mesmo nome sao erro;
 - italico: cada nome da lista so aparece dentro de italico, nas linhas que nao casam com
   "fora_de"; italico e o trecho entre duas marcas iguais da lista, coladas ao texto, e a
   marca dobrada (negrito) nao conta;
@@ -23,8 +23,8 @@ arquivos de padroes proibidos:
 
 Mostra uma linha "ERRO arquivo:linha: motivo" por problema, uma "AVISO arquivo: motivo"
 para o tamanho e um resumo; sai com 0 sem erro, 1 com erro e 2 quando a configuracao ou um
-argumento nao serve. Usa so a biblioteca padrao e o extrator_comum.py, da peca extrator, na
-pasta irma "extrator" ou na mesma pasta.
+argumento nao serve. Usa so a biblioteca padrao, o proibidos_comum.py, desta pasta, e o
+extrator_comum.py, da peca extrator, na pasta irma "extrator" ou na mesma pasta.
 
 Uso:
     python3 -I confere_forma.py <configuracao.json> <texto.md>... [--proibidos <arquivo.json>]...
@@ -38,10 +38,10 @@ from pathlib import Path
 PASTA = Path(__file__).resolve().parent
 for pasta in (PASTA.parent / "extrator", PASTA):  # na prateleira, a peca extrator fica na pasta irma
     sys.path.insert(0, str(pasta))
-from extrator_comum import ErroDeDados, compila, expressao, le_conferido, le_texto, repetidos  # noqa: E402
+from extrator_comum import ErroDeDados, expressao, le_conferido, le_texto  # noqa: E402
+from proibidos_comum import achados, regras_proibidas  # noqa: E402
 
 MOLDE = PASTA / "esquemas" / "confere-forma.schema.json"
-MOLDE_DOS_PROIBIDOS = PASTA / "esquemas" / "proibidos.schema.json"  # o de cada arquivo do --proibidos
 PALAVRA = re.compile(r"\w+")  # o que se conta como palavra
 
 
@@ -69,26 +69,6 @@ def le_configuracao(caminho):
     if conf["minimo"] > conf["maximo"]:
         raise ErroDeDados("o mínimo de palavras é maior que o máximo")
     return conf
-
-
-def regras_proibidas(caminhos):
-    """[(nome, padrao, exceto)] das regras dos arquivos de padroes proibidos, na ordem dos
-    arquivos e, em cada um, na da lista, com as expressoes compiladas (exceto e None na regra
-    sem ele); cada arquivo e conferido contra o molde dele, e o erro diz o arquivo e a regra.
-    Duas regras com o mesmo nome, no mesmo arquivo ou em dois, sao erro."""
-    regras, lugares = [], []
-    for caminho in caminhos:
-        for k, regra in enumerate(le_conferido(caminho, MOLDE_DOS_PROIBIDOS)["proibidos"]):
-            onde = f"{caminho}: /proibidos/{k}"
-            exceto = compila(regra["exceto"], f"{onde}/exceto") if "exceto" in regra else None
-            regras.append((regra["nome"], compila(regra["padrao"], f"{onde}/padrao"), exceto))
-            lugares.append(onde)
-    nomes = [nome for nome, _, _ in regras]
-    mesmos = [f"{nome!r} em {', '.join(lugar for n, lugar in zip(nomes, lugares) if n == nome)}"
-              for nome in repetidos(nomes)]
-    if mesmos:
-        raise ErroDeDados(f"padrão proibido com o mesmo nome em mais de uma regra: {'; '.join(mesmos)}")
-    return regras
 
 
 def casa(item, linha):
@@ -119,13 +99,13 @@ def sem_italico(linha, marcas):
 def nomes_fora_do_italico(linha, conf):
     """Os nomes da lista que aparecem fora de italico na linha; o mais longo primeiro, e o
     lugar dele nao conta para um mais curto que esteja dentro dele."""
-    resto, achados = sem_italico(linha, conf["marcas"]), []
+    resto, fora = sem_italico(linha, conf["marcas"]), []
     for nome in sorted(conf["nomes"], key=lambda n: (-len(n), n)):
         rx = re.compile(f"(?<!\\w){re.escape(nome)}(?!\\w)")
         if rx.search(resto):
-            achados.append(nome)
+            fora.append(nome)
             resto = rx.sub(" ", resto)
-    return achados
+    return fora
 
 
 def confere_texto(arquivo, conf):
@@ -188,9 +168,8 @@ def confere_texto(arquivo, conf):
     for k, l in enumerate(linhas):
         if k not in nos_blocos and conf["fecho_continua"].search(l):
             erros.append((k + 1, "linha de bloco fora do bloco de fecho"))
-        for nome, padrao, exceto in conf["proibidos"]:
-            if padrao.search(l) and not (exceto and exceto.search(l)):
-                erros.append((k + 1, f"padrão proibido: {nome}"))
+        for nome in achados(l, conf["proibidos"]):
+            erros.append((k + 1, f"padrão proibido: {nome}"))
         if not conf["italico_fora"].search(l):
             for nome in nomes_fora_do_italico(l, conf):
                 erros.append((k + 1, f"nome fora do itálico: {nome}"))
