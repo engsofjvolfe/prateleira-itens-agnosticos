@@ -2,13 +2,13 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "confere-forma.schema.json",
   "type": "object",
-  "required": ["versao_schema", "abertura", "secao", "titulos", "divisor", "fecho", "italico", "palavras"],
+  "required": ["versao_schema", "secao", "divisor", "fecho", "italico", "palavras"],
   "additionalProperties": false,
   "properties": {
-    "versao_schema": { "const": 1 },
-    "abertura": { "type": "array", "items": { "$ref": "#/$defs/linha" } },
+    "versao_schema": { "const": 2 },
+    "lacunas": { "type": "array", "items": { "$ref": "#/$defs/lacuna" } },
     "secao": { "$ref": "#/$defs/expressao" },
-    "titulos": { "type": "array", "items": { "$ref": "#/$defs/texto" } },
+    "comeco_das_secoes": { "$ref": "#/$defs/expressao" },
     "divisor": { "$ref": "#/$defs/expressao" },
     "fecho": {
       "type": "object",
@@ -17,6 +17,18 @@
       "properties": {
         "abre": { "$ref": "#/$defs/expressao" },
         "continua": { "$ref": "#/$defs/expressao" }
+      }
+    },
+    "siglas": {
+      "type": "object",
+      "required": ["padrao", "fora_de"],
+      "additionalProperties": false,
+      "properties": {
+        "padrao": { "$ref": "#/$defs/expressao" },
+        "antes": { "$ref": "#/$defs/expressao" },
+        "depois": { "$ref": "#/$defs/expressao" },
+        "fora_de": { "$ref": "#/$defs/expressao" },
+        "trechos_fora": { "$ref": "#/$defs/expressao" }
       }
     },
     "italico": {
@@ -43,13 +55,12 @@
   "$defs": {
     "texto": { "type": "string", "minLength": 1 },
     "expressao": { "type": "string", "minLength": 1 },
-    "linha": {
+    "lacuna": {
       "type": "object",
-      "minProperties": 1,
-      "maxProperties": 1,
+      "required": ["marca", "padrao"],
       "additionalProperties": false,
       "properties": {
-        "igual": { "type": "string" },
+        "marca": { "$ref": "comum.schema.json#/$defs/linha" },
         "padrao": { "$ref": "#/$defs/expressao" }
       }
     }

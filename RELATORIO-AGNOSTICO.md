@@ -29,14 +29,11 @@ do projeto, lido pelo `ganchos/protocolo`, e o código que barra uma chamada vem
 1. **Narração no JSON de saída do `itens-numerados`.** Cada problema leva um `detalhe`, uma
    frase pronta, no JSON que outro programa lê. Correção: o que o problema diz em campos de
    dados, e a frase só na tela.
-2. **Texto narrado na configuração do `confere-forma`.** O texto da abertura (`igual`) e os
-   `titulos` das seções são texto do documento conferido, dentro do JSON. Correção: esse
-   texto num arquivo dado no comando, e o JSON só com a forma.
-3. **Texto corrido na lista do `glossario`.** Em `glossario/esquemas/glossario.schema.json:18`,
+2. **Texto corrido na lista do `glossario`.** Em `glossario/esquemas/glossario.schema.json:18`,
    a `definicao` e a `fonte` de cada termo são texto do documento dentro do JSON. Correção: o
    glossário só pelas marcas dos documentos, com o link para o lugar em que cada termo é
    explicado, sem a lista das definições.
-4. **Texto corrido na lista do `divergencias`.** Em
+3. **Texto corrido na lista do `divergencias`.** Em
    `divergencias/esquemas/divergencias.schema.json:17`, o que cada forma `diz` e a `fonte`
    dela, e o `fato`, na linha 26, são texto do documento dentro do JSON. Correção: cada forma
    pelo lugar dela na transcrição da fonte (o arquivo e as linhas), com o trecho copiado pela
@@ -48,7 +45,7 @@ Sem problema conhecido: as listagens são ordenadas e o sorteio dos testes tem s
 
 ## Preparo para o novo
 
-5. **A lista de estragos conferida só no meio da rodada.** Em
+4. **A lista de estragos conferida só no meio da rodada.** Em
    `copias-estragadas/estraga.py:53`, o arquivo de cada estrago é lido com o `read_text`
    direto, quando a rodada já começou: o `arquivo` da lista que não existe na peça, ou que
    não se lê em UTF-8, só aparece depois dos estragos de antes dele, com o erro do Python; e
@@ -56,12 +53,12 @@ Sem problema conhecido: as listagens são ordenadas e o sorteio dos testes tem s
    embora a docstring diga que, com erro na lista, nada roda. Correção: antes da rodada, ler
    o arquivo de cada estrago escolhido pelo `le_texto` do módulo comum e contar nele o texto
    `de`, com o `ERRO` que diz o estrago e o arquivo e o código 2.
-6. **O documento gravado lido sem conferir a codificação.** Em
+5. **O documento gravado lido sem conferir a codificação.** Em
    `grava-ou-confere/grava_ou_confere.py:34`, o `--conferir` lê o documento gravado com o
    `read_text` direto: o que não se lê em UTF-8 dá o erro do Python, e não a mensagem de
    falta. Correção: o documento gravado que não se lê em UTF-8 é diferente do texto e sai
    com a mensagem de falta e o código 1.
-7. **O comando de busca só de espaços aceito pela configuração.** Em
+6. **O comando de busca só de espaços aceito pela configuração.** Em
    `ganchos/busca-por-palavra/esquemas/busca-por-palavra.schema.json:20`, o `comando` de uma
    busca só precisa ser um texto não vazio: o que só tem espaços passa pelo molde, vira uma
    lista sem palavras e, em todo comando de terminal, quebra o gancho com o erro do Python,

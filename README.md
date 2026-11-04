@@ -22,7 +22,7 @@ pega os defeitos. Nos comandos dos READMEs, `<prateleira>` é a pasta onde a pra
 | [baralho-anki/](baralho-anki/README.md) | gerar, de uma tabela Markdown de palavras-chave feita a partir de textos, um baralho do Anki com um cartão por célula: o CSV com a pergunta, a resposta e o trecho do texto que a sustenta, escritos à mão, a conferência dele contra a tabela e os textos, o pacote determinístico e o registro da conferência de conteúdo (com testes) |
 | [confere-changelog/](confere-changelog/README.md) | conferir a forma de um changelog, a do Keep a Changelog, com as versões do Versionamento Semântico inteiro, também a do índice do git, como gancho antes do commit (com testes) |
 | [confere-citacoes/](confere-citacoes/README.md) | conferir que cada trecho citado num texto Markdown está, letra por letra, na transcrição da fonte e nas páginas citadas, com os pedaços na ordem da fonte e cada supressão no lugar de alguma coisa (com testes) |
-| [confere-forma/](confere-forma/README.md) | conferir a forma de documentos Markdown contra uma descrição dela: abertura, seções, divisores, fecho, padrões proibidos, nomes em itálico e tamanho; as marcas que uma ferramenta de IA deixa num texto, para qualquer projeto; e o módulo comum que lê os padrões proibidos (com testes) |
+| [confere-forma/](confere-forma/README.md) | conferir a forma de documentos Markdown contra o esqueleto deles, com o texto que todos têm igual, e uma descrição só com a forma: abertura, seções, divisores, começo das seções, fecho, siglas, padrões proibidos, nomes em itálico e tamanho; as marcas que uma ferramenta de IA deixa num texto, para qualquer projeto; e o módulo comum que lê os padrões proibidos (com testes) |
 | [copia-para-projeto/](copia-para-projeto/README.md) | levar os arquivos de uma peça para um projeto, com o cabeçalho dos scripts dele, e conferir que as cópias estão em dia (com testes) |
 | [copias-estragadas/](copias-estragadas/README.md) | provar que o teste de uma peça pega os defeitos dela, rodando-o contra cópias estragadas (com testes) |
 | [custo-de-agentes/](custo-de-agentes/README.md) | mostrar o uso de tokens de cada transcrição de sessão, como as dos agentes de um programa de IA (com testes) |
@@ -77,7 +77,8 @@ E os encadeamentos, em que uma peça grava o arquivo que a próxima lê:
 
 - Documentos + configuração do extrator → `extrator/extrator.py` → transcrições, página por
   página → `confere-citacoes` (como fontes) e `itens-numerados/itens.py`.
-- Textos Markdown → `confere-forma` (a forma) e `confere-citacoes` (as citações).
+- Textos Markdown → `confere-forma` (a forma, com o esqueleto deles) e `confere-citacoes` (as
+  citações).
 - O `CHANGELOG.md` de um repositório, o do índice do git → `confere-changelog`, antes de
   cada commit, pelo gancho do git.
 - Os documentos de um repositório + o modelo do rodapé + os padrões dos documentos →

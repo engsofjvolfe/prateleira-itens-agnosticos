@@ -27,6 +27,11 @@ prateleira segue o [Versionamento Semântico](https://semver.org/lang/pt-BR/spec
 - `confere-forma`: o módulo dos padrões proibidos, `proibidos_comum.py`, que lê os arquivos
   de padrões proibidos, cada um pelo molde dele, e diz as regras em que um texto cai; o
   `confere_forma.py`, que fazia isso por conta própria, e o `baralho-anki` o usam.
+- `confere-forma`: a regra do começo das seções, com a expressão que a primeira linha com
+  texto de cada seção casa, e a das siglas, com cada sigla, na primeira vez em que aparece,
+  na forma dada pelo que vem logo antes e logo depois dela, como o nome completo e a sigla
+  entre parênteses, fora dos trechos da linha que não se leem como sigla; cada uma só quando
+  a configuração a tem.
 - `dicionario-das-duvidas`: confere os códigos dos títulos de um dicionário das dúvidas (só
   códigos entre as marcas, cada um com as partes na forma dada, nenhum o começo de outro, em
   ordem natural), com a forma dos códigos na configuração; e o teste, com a lista de
@@ -127,6 +132,10 @@ prateleira segue o [Versionamento Semântico](https://semver.org/lang/pt-BR/spec
 - `confere-forma`: os padrões proibidos saem da configuração e vêm de arquivos de dados
   próprios, com o molde `esquemas/proibidos.schema.json`, dados pelo `--proibidos`, que pode
   se repetir; as regras de todos se somam, e duas com o mesmo nome são erro.
+- `confere-forma`: a abertura e os títulos das seções saem da configuração e vêm do
+  esqueleto dos documentos, um Markdown com o texto que todos têm igual, dado no comando logo
+  depois dela; o que muda de um documento para outro vai numa lacuna, com a marca no
+  esqueleto e a expressão na configuração, que passa à versão 2, só com a forma.
 - `copia-para-projeto`, `copias-estragadas`, `documentos` (o `linhas_longas.py`),
   `extrator`, `historico-de-arquivo`, `itens-numerados` e `moldes`: a entrada que não serve
   sai com código 2, e não mais com 1, que fica para o problema achado; o
