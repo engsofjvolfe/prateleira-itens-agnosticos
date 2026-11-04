@@ -33,6 +33,11 @@ entra no [CHANGELOG.md](CHANGELOG.md), na seção `Não publicado`. O
     o `confere-changelog` (item 1 do relatório).
 11. O CSV do `baralho-anki` lido pelo `forma_do_arquivo.py`, do `listas-e-tabelas`, que passa
     a módulo comum (item 2 do relatório).
+12. A peça que lista os caracteres de fora do ASCII que não são letra e que entraram nos
+    arquivos mudados de um repositório git desde uma revisão de base, com o nome Unicode de
+    cada um, para o gancho do commit poder rodá-la.
+13. Rodar o teste e as cópias estragadas de uma peça de uma vez, como opção do
+    `copias-estragadas`, e o teste de todas as peças de uma prateleira, numa peça.
 
 ---
 
