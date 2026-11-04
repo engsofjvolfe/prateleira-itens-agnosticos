@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "confere-commit.schema.json",
+  "type": "object",
+  "required": ["versao_schema", "conferencias"],
+  "additionalProperties": false,
+  "properties": {
+    "versao_schema": { "const": 1 },
+    "conferencias": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/conferencia" } }
+  },
+  "$defs": {
+    "linha": { "$ref": "comum.schema.json#/$defs/linha" },
+    "conferencia": {
+      "type": "object",
+      "required": ["nome", "arquivos", "fora", "comando"],
+      "additionalProperties": false,
+      "properties": {
+        "nome": { "$ref": "#/$defs/linha" },
+        "arquivos": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "$ref": "#/$defs/linha" } },
+        "fora": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/linha" } },
+        "comando": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/linha" } }
+      }
+    }
+  }
+}

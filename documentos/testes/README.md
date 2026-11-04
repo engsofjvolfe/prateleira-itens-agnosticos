@@ -97,7 +97,9 @@ nomes sorteados, com espaço e letras de fora do ASCII. Confere:
 - os documentos do repositório são, em ordem, os versionados e os novos que seguem um dos
   padrões, sem os que o `.gitignore` deixa de fora, os apagados, os que seguem um padrão de
   fora e os de outros padrões; sem os padrões de fora, os que seguem um deles entram; a pasta
-  sem git é erro do git;
+  sem git é erro do git, com a mensagem dele;
+- o git roda na pasta dada: a saída dele é a raiz do repositório, e os caminhos que ele dá
+  com `-z` são os do índice, cada um uma vez, sem nenhum vazio;
 - duas leituras dão o mesmo.
 
 Ele precisa do git, que roda sem a configuração do sistema e da conta e sem subir da pasta de

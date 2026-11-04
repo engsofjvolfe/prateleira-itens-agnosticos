@@ -64,11 +64,16 @@ a biblioteca padrão do Python e, nos documentos do repositório, o git.
 | `caminho_relativo(arquivo, pasta)` | o caminho do arquivo a partir da pasta, os dois pelo caminho inteiro, com `/` entre as partes, como vai no alvo de um link |
 | `alvo_de_link(alvo)` | o alvo como vai num link: entre `<` e `>` quando tem espaço ou parênteses |
 | `link_markdown(texto, alvo)` | o link `[texto](alvo)`, com o alvo como `alvo_de_link` o dá |
+| `padroes_do_git(padroes, fora)` | os padrões do git (pathspec) que dão os arquivos que seguem um dos padrões e nenhum dos de fora, cada um destes com o `:(exclude)` na frente, como vão depois do `--` de um comando do git |
+| `saida_do_git(pasta, *argumentos)` | o que o git mostra, em texto, de um comando rodado na pasta; o erro do git, com a mensagem dele, e a falta dele vão para a peça que chama |
+| `caminhos_do_git(pasta, *argumentos)` | os caminhos que um comando do git com `-z`, rodado na pasta, dá, na ordem dele, sem os vazios; os erros, como na `saida_do_git` |
 | `documentos_do_repositorio(raiz, padroes, fora)` | os caminhos, a partir da raiz e em ordem, dos arquivos de um repositório git, os versionados e os novos que o `.gitignore` não deixa de fora, que existem e seguem um dos padrões do git (pathspec) e nenhum dos de fora; o erro do git e a falta dele vão para a peça que chama |
 
 As expressões `LINK`, do link inteiro, com o alvo no grupo 1, `ALVO_DE_LINK`, do alvo, e
 `ESQUEMA`, do começo do alvo de um link externo, como `https:`, e o sinal da âncora no alvo,
-`ANCORA`, também ficam no módulo, para as peças que leem os links do mesmo jeito.
+`ANCORA`, também ficam no módulo, para as peças que leem os links do mesmo jeito; e a
+codificação do que o git mostra, `CODIFICACAO_DO_GIT`, para as que leem a mensagem do erro
+dele.
 
 ## Testes
 

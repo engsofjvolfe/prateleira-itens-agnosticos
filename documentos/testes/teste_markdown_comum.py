@@ -16,7 +16,9 @@ com "..", com espacos nos nomes; o alvo vai entre < e > com espaco, tabulacao ou
 e so entao, tambem no link; os documentos de um repositorio git inventado, com nomes
 sorteados, sao, em ordem, os versionados e os novos que seguem um dos padroes, sem os que o
 .gitignore deixa de fora, os apagados, os que seguem um padrao de fora e os de outros
-padroes, e a pasta sem git e erro do git; duas leituras dao o mesmo. Uso:
+padroes, e a pasta sem git e erro do git; o git roda na pasta dada: a saida dele e a raiz do
+repositorio, e os caminhos que ele da com -z sao os do indice, cada um uma vez, sem nenhum
+vazio; duas leituras dao o mesmo. Uso:
     python3 -I teste_markdown_comum.py <pasta do markdown_comum.py> <pasta de trabalho nova>
 Precisa do git, que o teste roda sem a configuracao do sistema e da conta e sem subir da
 pasta de trabalho.
@@ -30,8 +32,8 @@ from pathlib import Path
 
 PECA, TRABALHO = Path(sys.argv[1]).resolve(), Path(sys.argv[2]).resolve()
 sys.path.insert(0, str(PECA))
-from markdown_comum import (alvo_de_link, ancora, caminho_relativo, documentos_do_repositorio,  # noqa: E402
-                            linhas_fora_de_codigo, link_markdown, titulos)
+from markdown_comum import (alvo_de_link, ancora, caminho_relativo, caminhos_do_git,  # noqa: E402
+                            documentos_do_repositorio, linhas_fora_de_codigo, link_markdown, saida_do_git, titulos)
 
 FALHAS = []
 SORTEIO = random.Random(1)
@@ -146,13 +148,22 @@ sem_fora = documentos_do_repositorio(REPOSITORIO, PADROES)
 confere(sem_fora == sorted(seguem + [de_fora, sozinho]),
         f"sem os padrões de fora, os que seguem um deles entram: {sem_fora!r}")
 confere(documentos_do_repositorio(REPOSITORIO, PADROES, FORA) == achados, "duas listas dão o mesmo")
+NO_INDICE = versionados + [apagado, de_fora, sozinho]
+caminhos = caminhos_do_git(REPOSITORIO, "ls-files", "--cached", "-z")
+confere(len(caminhos) == len(NO_INDICE) and set(caminhos) == set(NO_INDICE),
+        f"os caminhos que o git dá com -z, na pasta dada, são os do índice, cada um uma vez, sem nenhum vazio: "
+        f"{caminhos!r}")
+raiz = saida_do_git(REPOSITORIO, "rev-parse", "--show-toplevel").rstrip("\n")
+confere(raiz == str(REPOSITORIO.resolve()), f"o git roda na pasta dada: {raiz!r}")
 SEM_GIT = TRABALHO / "sem-git"
 SEM_GIT.mkdir()
-try:
-    documentos_do_repositorio(SEM_GIT, PADROES)
-    confere(False, "a pasta sem git é erro do git")
-except subprocess.CalledProcessError:
-    pass
+for nome_da_funcao, funcao in (("documentos_do_repositorio", lambda: documentos_do_repositorio(SEM_GIT, PADROES)),
+                               ("saida_do_git", lambda: saida_do_git(SEM_GIT, "rev-parse", "--show-toplevel"))):
+    try:
+        funcao()
+        confere(False, f"{nome_da_funcao}: a pasta sem git é erro do git")
+    except subprocess.CalledProcessError as e:
+        confere(e.stderr.strip(), f"{nome_da_funcao}: o erro do git traz a mensagem dele")
 
 for f in FALHAS:
     print("FALHA:", f)

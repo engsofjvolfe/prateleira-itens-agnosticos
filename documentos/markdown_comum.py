@@ -4,8 +4,8 @@ o le: as linhas fora dos blocos de codigo, o texto sem os blocos e sem o codigo 
 ancora de um titulo, os titulos fora dos blocos de codigo, cada um com a linha, o nivel, o
 texto e a ancora (o titulo repetido ganha -1, -2... no fim dela), os marcadores, o id e o
 name de cada tag HTML fora de codigo e de comentario, os links fora de codigo, o caminho de
-um arquivo a partir de uma pasta, o alvo e o link como vao num documento, e os documentos de
-um repositorio git que seguem os padroes dados.
+um arquivo a partir de uma pasta, o alvo e o link como vao num documento, os padroes do git
+de uma lista com os de fora, e os documentos de um repositorio git que seguem os padroes dados.
 
 Nao se roda: as pecas o importam da pasta irma "documentos" ou da propria pasta. So
 biblioteca padrao e, nos documentos do repositorio, o git.
@@ -35,6 +35,7 @@ LINK = re.compile(rf"!?\[(?:[^\[\]]|\[[^\[\]]*\])*\]\(\s*({ALVO_DE_LINK})(?:\s+\
 ESQUEMA = re.compile(r"^[A-Za-z][A-Za-z0-9+.-]*:")  # o comeco do alvo de um link externo, como https: ou mailto:
 ALVO_ENTRE_SINAIS = re.compile(r"[\s()]")  # o alvo de link com um destes vai entre < e >
 CODIFICACAO_DO_GIT = "utf-8"  # a dos caminhos que o git da
+SEPARADOR_DO_GIT = "\0"  # o que separa os caminhos que o git da com -z
 FORA_DO_GIT = ":(exclude)"  # o comeco do padrao do git que deixa de fora os arquivos que seguem o resto dele
 
 Titulo = collections.namedtuple("Titulo", "linha nivel texto ancora")
@@ -125,12 +126,29 @@ def link_markdown(texto, alvo):
     return f"[{texto}]({alvo_de_link(alvo)})"
 
 
+def padroes_do_git(padroes, fora=()):
+    """Os padroes do git (pathspec) que dao os arquivos que seguem um dos padroes e nenhum dos de fora, como vao
+    depois do -- de um comando do git."""
+    return [*padroes, *(FORA_DO_GIT + p for p in fora)]
+
+
+def saida_do_git(pasta, *argumentos):
+    """O que o git mostra, em texto, de um comando rodado na pasta. O erro do git (subprocess.CalledProcessError, com
+    a mensagem dele no stderr) e a falta dele (FileNotFoundError) vao para a peca que chama."""
+    return subprocess.run(["git", "-C", str(pasta), *argumentos], capture_output=True,
+                          check=True).stdout.decode(CODIFICACAO_DO_GIT)
+
+
+def caminhos_do_git(pasta, *argumentos):
+    """Os caminhos que um comando do git com -z, rodado na pasta, da, na ordem dele; os erros, como na saida_do_git."""
+    return [p for p in saida_do_git(pasta, *argumentos).split(SEPARADOR_DO_GIT) if p]
+
+
 def documentos_do_repositorio(raiz, padroes, fora=()):
     """Os caminhos, a partir da raiz, com / entre as partes e em ordem, dos arquivos de um repositorio git, os
     versionados e os novos que o .gitignore nao deixa de fora, que existem e seguem um dos padroes do git (pathspec) e
     nenhum dos de fora. O erro do git (subprocess.CalledProcessError) e a falta dele (FileNotFoundError) vao para a
     peca que chama."""
-    saida = subprocess.run(["git", "-C", str(raiz), "ls-files", "--cached", "--others", "--exclude-standard", "-z",
-                            "--", *padroes, *(FORA_DO_GIT + p for p in fora)],
-                           capture_output=True, check=True).stdout.decode(CODIFICACAO_DO_GIT)
-    return sorted({p for p in saida.split("\0") if p and (Path(raiz) / p).is_file()})
+    caminhos = caminhos_do_git(raiz, "ls-files", "--cached", "--others", "--exclude-standard", "-z", "--",
+                               *padroes_do_git(padroes, fora))
+    return sorted({p for p in caminhos if (Path(raiz) / p).is_file()})

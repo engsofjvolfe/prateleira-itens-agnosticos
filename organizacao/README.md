@@ -66,7 +66,7 @@ alguma ainda quebra.
       rodape.json                  os documentos que levam o rodapé e os que ficam sem ele
       .gitignore                   o cache do Python e as anotações de sessão dos ganchos
       organizacao/                 esta documentação
-      baralho-anki/  confere-changelog/  confere-citacoes/  confere-forma/
+      baralho-anki/  confere-changelog/  confere-citacoes/  confere-commit/  confere-forma/
       copia-para-projeto/  copias-estragadas/  custo-de-agentes/  dicionario-das-duvidas/
       divergencias/  documentos/  extrator/  ganchos/  glossario/  grava-ou-confere/
       historico-de-arquivo/  itens-numerados/  marcas/  moldes/  rodape/  texto-em-comum/

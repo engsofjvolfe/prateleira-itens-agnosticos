@@ -21,6 +21,11 @@ prateleira segue o [Versionamento Semântico](https://semver.org/lang/pt-BR/spec
   gancho do git antes do commit; a configuração da peça traz a forma em português do Brasil
   do changelog desta prateleira, e os modelos dos links de cada versão vêm de um arquivo
   próprio, dado no `--links`; e o teste, com a lista de estragos dele.
+- `confere-commit`: confere um commit antes de ele se fazer, ligado no gancho do git: roda as
+  conferências de uma lista, cada uma com os padrões do git dos arquivos dela, os de fora e o
+  comando, sobre os arquivos do commit como estão no índice, numa cópia dele, com o
+  `{arquivos}` e o `{principal}` no comando, e barra o commit quando alguma falha; e o teste,
+  com a lista de estragos dele.
 - `confere-forma`: o `marcas-de-ia.json`, com as marcas que uma ferramenta de IA deixa num
   texto (o caractere invisível ou o espaço especial, e o resto de citação), para qualquer
   projeto dar ao conferidor ao lado dos padrões dele.
@@ -51,6 +56,9 @@ prateleira segue o [Versionamento Semântico](https://semver.org/lang/pt-BR/spec
   documentos de um repositório git pelos padrões do git, com os de fora; o `confere_links.py`,
   que lia os documentos e os links por conta própria, e o `glossario`, que fazia o caminho e o
   link, passam a usá-los.
+- `documentos`: no módulo de Markdown, os padrões do git de uma lista com os de fora, o que o
+  git mostra de um comando e os caminhos que ele dá com `-z`; a lista dos documentos de um
+  repositório, que fazia isso por conta própria, e o `confere-commit` os usam.
 - `extrator`: o molde dos moldes (`esquemas/molde.schema.json`), que diz as palavras do
   JSON Schema que o leitor de molde do módulo comum entende e a forma do valor de cada uma;
   e o teste do módulo comum, com a lista de estragos dele.
