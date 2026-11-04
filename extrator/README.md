@@ -125,15 +125,18 @@ dele). O que as outras peças usam:
 | `le_conferido(arquivo, molde)` | os dados de um arquivo JSON, conferidos contra o molde (JSON Schema), com `ErroDeDados` que diz o arquivo, o molde e o caminho de cada valor fora dele |
 | `conferido(dados, molde, nome)` | o mesmo, com dados já lidos, como as partes de um evento; o erro diz o nome dado a eles |
 | `fora_do_molde(dados, molde)` | o caminho e o motivo de cada valor dos dados fora do molde, todos, não só o primeiro |
-| `le_texto(arquivo)` | o texto de um arquivo em UTF-8, com `ErroDeDados` que diz o arquivo quando ele falta ou não se lê |
+| `le_texto(arquivo, exato=False)` | o texto de um arquivo em UTF-8, com cada quebra de linha, `\r\n` ou `\r`, como `\n`, e, com `exato=True`, com cada quebra como está no arquivo, para o texto que se grava de volta nele igual; `ErroDeDados` que diz o arquivo quando ele falta ou não se lê |
 | `le_json(arquivo)` | os dados de um arquivo JSON em UTF-8, sem molde, com `ErroDeDados` que diz o arquivo quando ele falta ou não se lê como JSON |
+| `de_json(texto, origem)` | os dados de um texto JSON já lido, como o de `le_texto` com `exato=True`, com `ErroDeDados` que diz a origem dada quando ele não se lê como JSON |
 | `campo(dados, "a/b", tipo)` | o valor no caminho, do tipo pedido (um tipo ou uma tupla), com `ErroDeDados` que diz o caminho quando ele falta ou é de outro tipo; um booleano só vale quando o tipo pedido é `bool` |
 | `expressao(dados, "a/b")` | a expressão regular do campo, compilada, com `ErroDeDados` que diz o caminho quando não compila |
 | `compila(texto, onde)` | a expressão regular de um texto, compilada, com `ErroDeDados` que diz onde ela está quando não compila, para a expressão que não está num campo só, como a de uma lista |
 | `codificacao(dados, "a/b")` | a codificação do campo, quando o Python a conhece, com `ErroDeDados` que diz o caminho e a codificação quando ela não existe |
 | `repetidos(valores)` | os valores que aparecem mais de uma vez na lista, cada um uma vez, em ordem; nenhum quando nada se repete |
+| `igual(a, b)` | se dois valores JSON são o mesmo: o booleano só é igual a booleano, o número, ao número de mesmo valor, e as listas e os objetos, item por item |
+| `do_tipo(valor, tipo)` | se o valor JSON é do tipo do JSON Schema dado, como `string` ou `integer`: o booleano não é número, e o inteiro é o número escrito sem ponto; o tipo que o leitor não conhece é `ErroDeDados` |
 | `paginas_da_transcricao(texto, modelo)` | as páginas de uma transcrição pelo modelo do título de página (`{rotulo}` e `{arquivo}`), cada uma com as linhas numeradas |
-| `preenche(modelo, campo=valor)` | o modelo com cada `{campo}` trocado; campo sem valor é `ErroDeDados` |
+| `preenche(modelo, campo=valor)` | o modelo com cada `{campo}` trocado; campo sem valor é `ErroDeDados`; a expressão `CAMPO` acha cada `{campo}` de um modelo |
 
 O leitor de molde entende o que o molde dos moldes, `esquemas/molde.schema.json`, diz, e
 confere cada molde contra ele antes de usá-lo: o molde com uma palavra que o leitor não

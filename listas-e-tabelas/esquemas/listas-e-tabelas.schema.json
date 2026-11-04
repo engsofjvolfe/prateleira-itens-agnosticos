@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "listas-e-tabelas.schema.json",
+  "type": "object",
+  "required": ["versao_schema"],
+  "additionalProperties": false,
+  "properties": {
+    "versao_schema": { "const": 1 },
+    "modelos": { "type": "object", "minProperties": 1, "additionalProperties": { "$ref": "#/$defs/modelo" } },
+    "listas": { "type": "object", "minProperties": 1, "additionalProperties": { "$ref": "#/$defs/lista" } },
+    "tabelas": { "type": "object", "minProperties": 1, "additionalProperties": { "$ref": "#/$defs/tabela" } }
+  },
+  "$defs": {
+    "linha": { "$ref": "comum.schema.json#/$defs/linha" },
+    "modelo": {
+      "type": "object",
+      "required": ["item"],
+      "additionalProperties": false,
+      "properties": {
+        "item": { "$ref": "#/$defs/linha" },
+        "entre": { "$ref": "#/$defs/linha" }
+      }
+    },
+    "lista": {
+      "type": "object",
+      "required": ["arquivo", "lista"],
+      "additionalProperties": false,
+      "properties": {
+        "arquivo": { "$ref": "#/$defs/linha" },
+        "lista": { "$ref": "#/$defs/linha" },
+        "unico": { "$ref": "#/$defs/linha" },
+        "montados": { "type": "object", "minProperties": 1, "additionalProperties": { "$ref": "#/$defs/linha" } }
+      }
+    },
+    "tabela": {
+      "type": "object",
+      "required": ["arquivo", "chave"],
+      "additionalProperties": false,
+      "properties": {
+        "arquivo": { "$ref": "#/$defs/linha" },
+        "chave": { "$ref": "#/$defs/linha" }
+      }
+    }
+  }
+}

@@ -1,6 +1,7 @@
 """
 O que o extrator, os leitores dele e as outras pecas da prateleira fazem do mesmo jeito,
-num lugar so: ler um texto em UTF-8, ler um arquivo de dados JSON e conferir os dados contra
+num lugar so: ler um texto em UTF-8, com as quebras de linha trocadas por "\\n" ou como estao
+no arquivo, ler os dados de um arquivo ou de um texto JSON e conferir os dados contra
 o molde deles (JSON Schema), que antes e conferido contra o molde dos moldes (o que o leitor
 de molde entende), pegar um campo dos dados com o tipo pedido, achar os valores repetidos de
 uma lista, compilar a expressao regular de um campo, conferir que a codificacao de um campo
@@ -19,6 +20,7 @@ from pathlib import Path
 CAMPO = re.compile(r"\{(\w+)\}")
 MOLDES = Path(__file__).resolve().parent / "esquemas"  # o molde de cada entrada do extrator, e os moldes comuns
 MOLDE_DOS_MOLDES = MOLDES / "molde.schema.json"  # as palavras do JSON Schema que o leitor entende, e o valor de cada
+QUEBRAS_COMO_ESTAO = ""  # o newline do open que le cada quebra de linha como ela esta no arquivo
 
 # o molde de onde partem as referencias de "#", o arquivo dele (None quando ele nao vem de um molde comum) e a pasta
 # em que se acha, antes da pasta dos moldes, o molde comum que uma referencia nomeia
@@ -33,11 +35,14 @@ class ErroDeDados(Exception):
     """O que impede o trabalho; a mensagem diz o que e onde."""
 
 
-def le_texto(caminho):
+def le_texto(caminho, exato=False):
     """O texto de um arquivo em UTF-8; erro (ErroDeDados) que diz o arquivo quando ele nao
-    existe ou nao se le."""
+    existe ou nao se le. Cada quebra de linha "\\r\\n" ou "\\r" vem como "\\n", como o Python le
+    um texto; com exato, as quebras vem como estao no arquivo, para o texto que se grava de
+    volta nele igual."""
     try:
-        return Path(caminho).read_text(encoding="utf-8")
+        with open(caminho, encoding="utf-8", newline=QUEBRAS_COMO_ESTAO if exato else None) as arquivo:
+            return arquivo.read()
     except (OSError, UnicodeDecodeError) as e:
         raise ErroDeDados(f"{caminho}: não se lê como texto em UTF-8 ({e})")
 
@@ -45,11 +50,16 @@ def le_texto(caminho):
 def le_json(caminho):
     """Os dados de um arquivo JSON em UTF-8; erro (ErroDeDados) que diz o arquivo quando ele
     nao se le."""
-    texto = le_texto(caminho)
+    return de_json(le_texto(caminho), caminho)
+
+
+def de_json(texto, origem):
+    """Os dados de um texto JSON; erro (ErroDeDados) que diz a origem dele, como o arquivo,
+    quando ele nao se le como JSON."""
     try:
         return json.loads(texto)
     except json.JSONDecodeError as e:
-        raise ErroDeDados(f"{caminho}: não se lê como JSON ({e})")
+        raise ErroDeDados(f"{origem}: não se lê como JSON ({e})")
 
 
 def mostra(valor):

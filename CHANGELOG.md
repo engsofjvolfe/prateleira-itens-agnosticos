@@ -86,6 +86,11 @@ prateleira segue o [Versionamento Semântico](https://semver.org/lang/pt-BR/spec
   pelo nome, como `comum.schema.json#/$defs/linha`, achado na pasta do molde que o aponta
   ou na pasta dos moldes. O `confere-forma`, nos arquivos de padrões proibidos, o
   `divergencias`, também nos rótulos do comando, e o `glossario` o usam.
+- `extrator`: no módulo comum, a opção `exato` do `le_texto`, que dá o texto com as quebras de
+  linha como estão no arquivo, para o texto que se grava de volta nele igual, e a função
+  `de_json`, que dá os dados de um texto JSON já lido, com o erro que diz a origem dele; o
+  `le_json`, que fazia isso por conta própria, passa a usá-la. Na tabela do README, também o
+  `igual`, o `do_tipo` e a expressão `CAMPO`, que o `listas-e-tabelas` usa.
 - `ganchos/leitura-completa`: o gancho que faz todo documento se ler inteiro. Ele barra o
   comando de terminal que corta um documento, as ferramentas de busca e as que resumem, e a
   leitura que não começa na primeira linha, não continua na seguinte à última lida nem
@@ -110,6 +115,12 @@ prateleira segue o [Versionamento Semântico](https://semver.org/lang/pt-BR/spec
   gerado, que não pode estar vazio, confere que o arquivo dele não é uma das entradas nem uma
   pasta e monta o texto, com o cabeçalho e os blocos; e o teste dele, com a lista de
   estragos. O `divergencias` e o `glossario` o usam.
+- `listas-e-tabelas`: junta entradas ao fim de listas de arquivos JSON e troca campos de
+  linhas de tabelas CSV, pelas mudanças de um arquivo de dados, e grava cada arquivo na forma
+  que ele já tem, tirada dele e conferida na ida e volta, sem gravar nada com problema, como o
+  arquivo que não volta igual, a entrada repetida e a linha ou a coluna que a tabela não tem;
+  o campo de texto que se monta de dados vem nas mudanças só com eles, e um modelo do projeto,
+  num arquivo, o monta; e o teste, com a lista de estragos dele.
 - `rodape`: grava o rodapé de um modelo Markdown no fim de cada documento de um repositório
   git, com cada link do modelo a partir da pasta do documento e o rodapé velho do fim trocado
   pelo dele, ou confere que todos o têm, com os documentos pelos padrões do git da

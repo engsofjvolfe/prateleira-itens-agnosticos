@@ -69,7 +69,8 @@ alguma ainda quebra.
       baralho-anki/  confere-changelog/  confere-citacoes/  confere-commit/  confere-forma/
       copia-para-projeto/  copias-estragadas/  custo-de-agentes/  dicionario-das-duvidas/
       divergencias/  documentos/  extrator/  ganchos/  glossario/  grava-ou-confere/
-      historico-de-arquivo/  itens-numerados/  marcas/  moldes/  rodape/  texto-em-comum/
+      historico-de-arquivo/  itens-numerados/  listas-e-tabelas/  marcas/  moldes/  rodape/
+      texto-em-comum/
 
 ## Como um projeto usa uma peça
 

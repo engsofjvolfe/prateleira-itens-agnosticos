@@ -1,6 +1,6 @@
 """Testes do que o extrator_comum.py da para as pecas lerem os proprios dados: o leitor de
-molde (fora_do_molde, confere_molde, conferido e le_conferido), le_texto, campo, expressao,
-codificacao e repetidos. Nao precisa de PDF.
+molde (fora_do_molde, confere_molde, conferido e le_conferido), de_json, le_texto, campo,
+expressao, codificacao e repetidos. Nao precisa de PDF.
 
 Os nomes dos campos e os valores sao sorteados, com semente fixa (o sorteio e o mesmo em toda
 rodada; outra semente vem com --semente), e cada molde e inventado aqui. Os testes conferem
@@ -29,9 +29,11 @@ regras, nunca uma frase pronta:
   - le_conferido da os dados do arquivo que segue o molde e, senao, erro com o arquivo, o
     molde e o caminho de cada valor fora; o arquivo que falta ou que nao e JSON e erro; o
     molde fora do molde dos moldes e erro, com o arquivo dele e o lugar; conferido faz o
-    mesmo com dados ja lidos, e o erro diz o nome dado a eles;
-  - le_texto da o texto do arquivo em UTF-8, como ele e, e o arquivo que falta ou que nao se
-    le em UTF-8 e erro, que diz o arquivo;
+    mesmo com dados ja lidos, e o erro diz o nome dado a eles; de_json da os dados de um
+    texto JSON, e o texto que nao e JSON e erro, que diz a origem dada;
+  - le_texto da o texto do arquivo em UTF-8, como ele e, com cada quebra de linha, \\r\\n ou
+    \\r, como \\n, e, com exato, com cada quebra como esta no arquivo; o arquivo que falta ou
+    que nao se le em UTF-8 e erro, que diz o arquivo;
   - campo da o valor no caminho com o tipo pedido e da erro, dizendo o caminho, quando ele
     falta ou e de outro tipo; expressao compila o campo ou da erro, dizendo o caminho;
   - codificacao da a codificacao do campo, quando o Python a conhece, e da erro, dizendo o
@@ -240,6 +242,12 @@ QUEBRADO.write_text("{" + TEXTO, encoding="utf-8")
 for arquivo, descricao in ((FALTA, "que falta"), (QUEBRADO, "que não é JSON")):
     mensagem = erro_de(extrator_comum.le_conferido, arquivo, MOLDE)
     confere(mensagem is not None and arquivo.name in mensagem, f"o arquivo {descricao} é erro, que o diz: {mensagem}")
+ORIGEM = nome()
+confere(extrator_comum.de_json(json.dumps(CERTOS, ensure_ascii=False), ORIGEM) == CERTOS,
+        "de_json dá os dados do texto JSON")
+mensagem = erro_de(extrator_comum.de_json, "{" + TEXTO, ORIGEM)
+confere(mensagem is not None and ORIGEM in mensagem, f"de_json: o texto que não é JSON é erro, que diz a origem: "
+                                                     f"{mensagem}")
 MAL_FEITO = grava(f"{nome()}.schema.json", {"properties": {A: {"minLength": TEXTO}}})
 mensagem = erro_de(extrator_comum.le_conferido, grava(f"{nome()}.json", CERTOS), MAL_FEITO)
 confere(mensagem is not None and all(p in mensagem for p in (MAL_FEITO.name, f"/properties/{A}/minLength")),
@@ -294,10 +302,21 @@ LIDO, SEM_UTF8 = TRABALHO / f"{nome()}.txt", TRABALHO / f"{nome()}.txt"
 LIDO.write_bytes(ESCRITO.encode("utf-8"))
 SEM_UTF8.write_bytes(f"{TEXTO} ç".encode("latin-1"))
 confere(extrator_comum.le_texto(LIDO) == ESCRITO, "le_texto dá o texto do arquivo em UTF-8, como ele é")
-for arquivo, descricao in ((TRABALHO / f"{nome()}.txt", "que falta"), (SEM_UTF8, "que não se lê em UTF-8")):
-    mensagem = erro_de(extrator_comum.le_texto, arquivo)
-    confere(mensagem is not None and arquivo.name in mensagem, f"le_texto: o arquivo {descricao} é erro, que o diz: "
-                                                               f"{mensagem}")
+TIPOS_DE_QUEBRA = ["\n", "\r\n", "\r"]
+QUEBRAS = TIPOS_DE_QUEBRA + [SORTE.choice(TIPOS_DE_QUEBRA) for _ in range(SORTE.randint(1, 4))]  # cada uma, ao menos
+SORTE.shuffle(QUEBRAS)
+COM_QUEBRAS = "".join(f"{nome()} çã{quebra}" for quebra in QUEBRAS)
+MISTURADO = TRABALHO / f"{nome()}.txt"
+MISTURADO.write_bytes(COM_QUEBRAS.encode("utf-8"))
+confere(extrator_comum.le_texto(MISTURADO) == "".join(f"{linha}\n" for linha in COM_QUEBRAS.splitlines()),
+        "le_texto dá cada quebra de linha, \\r\\n ou \\r, como \\n")
+confere(extrator_comum.le_texto(MISTURADO, exato=True) == COM_QUEBRAS,
+        "com exato, le_texto dá cada quebra de linha como está no arquivo")
+for exato in (False, True):
+    for arquivo, descricao in ((TRABALHO / f"{nome()}.txt", "que falta"), (SEM_UTF8, "que não se lê em UTF-8")):
+        mensagem = erro_de(extrator_comum.le_texto, arquivo, exato)
+        confere(mensagem is not None and arquivo.name in mensagem,
+                f"le_texto, com exato {exato}: o arquivo {descricao} é erro, que o diz: {mensagem}")
 
 # ---- campo e expressao ----
 

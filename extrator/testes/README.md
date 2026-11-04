@@ -45,8 +45,8 @@ As cópias estragadas do extrator estão em `estragos.json`, nesta pasta, para o
     python3 -I teste_extrator_comum.py <pasta do extrator> <pasta de trabalho nova> [--semente N]
 
 Testa o que o `extrator_comum.py` dá para as peças lerem os próprios dados: o leitor de
-molde (`fora_do_molde`, `confere_molde`, `conferido` e `le_conferido`), `le_texto`, `campo`,
-`expressao`, `codificacao` e `repetidos`. Não precisa de PDF. Os nomes dos campos e os
+molde (`fora_do_molde`, `confere_molde`, `conferido` e `le_conferido`), `de_json`,
+`le_texto`, `campo`, `expressao`, `codificacao` e `repetidos`. Não precisa de PDF. Os nomes dos campos e os
 valores são sorteados, sempre iguais, porque a semente é fixa (outra vem com `--semente`),
 e cada molde é inventado no teste. O teste confere regras, nunca uma frase pronta:
 
@@ -74,9 +74,11 @@ e cada molde é inventado no teste. O teste confere regras, nunca uma frase pron
 - `le_conferido` dá os dados do arquivo que segue o molde e, senão, erro com o arquivo, o
   molde e o caminho de cada valor fora; o arquivo que falta ou que não é JSON é erro; o
   molde fora do molde dos moldes é erro, com o arquivo dele e o lugar; `conferido` faz o
-  mesmo com dados já lidos, e o erro diz o nome dado a eles;
-- `le_texto` dá o texto do arquivo em UTF-8, como ele é, e o arquivo que falta ou que não
-  se lê em UTF-8 é erro, que diz o arquivo;
+  mesmo com dados já lidos, e o erro diz o nome dado a eles; `de_json` dá os dados de um
+  texto JSON, e o texto que não é JSON é erro, que diz a origem dada;
+- `le_texto` dá o texto do arquivo em UTF-8, como ele é, com cada quebra de linha, `\r\n` ou
+  `\r`, como `\n`, e, com `exato`, com cada quebra como está no arquivo, com as três
+  sorteadas; o arquivo que falta ou que não se lê em UTF-8 é erro, que diz o arquivo;
 - `campo` dá o valor no caminho com o tipo pedido e dá erro, dizendo o caminho, quando ele
   falta ou é de outro tipo; `expressao` compila o campo ou dá erro, dizendo o caminho;
 - `codificacao` dá a codificação do campo, quando o Python a conhece, e dá erro, dizendo o
